@@ -153,6 +153,12 @@ const router = createRouter({
       component: () => import('../views/company/EmployeesManagement.vue')
     },
 
+    {
+      path: '/company/bookings',
+      name: 'company/bookings',
+      component: () => import('../views/company/TaskHistory.vue')
+    },
+
     //CUSTOMER PAGES
     {
       path: '/customer/dashboard',

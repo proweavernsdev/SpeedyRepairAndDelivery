@@ -122,7 +122,7 @@
               <span class="flex justify-center mr-2">
                 <i v-html="icons.Report" class="text-slate-500 hover:text-[#AA0927]"></i>
               </span>
-              <span>Requests</span>
+              <span>Reports</span>
             </li>
           </RouterLink>
         </ul>
@@ -299,7 +299,7 @@
               <span>Book Delivery Service</span>
             </li>
           </RouterLink>
-          <RouterLink class-active="active" :to="`/company/reports/request/${userId}`">
+          <RouterLink class-active="active" :to="`/company/bookings`">
             <li
               class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
               <span class="flex items-center mr-2">

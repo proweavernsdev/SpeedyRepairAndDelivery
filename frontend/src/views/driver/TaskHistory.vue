@@ -200,10 +200,24 @@
             </div>
             <hr class="w-full border">
             <div class="flex flex-col gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
-                <h2 class="text-lg font-medium sm:text-lg">Report</h2>
+                <select name="report" id="report_type" class="text-lg font-medium rounded-md sm:text-lg bg-slate-50"
+                    @change="reportBooking">
+                    <option disabled selected>Issue Type</option>
+                    <option value="packageIssues">Package Issues</option>
+                    <option value="pickupDropoffIssues">Pickup/Drop-off Issues</option>
+                    <option value="handlingIssues">Handling Issues</option>
+                    <option value="technicalIssues">Technical Issues</option>
+                    <option value="customerCompanyIssues">Customer/Company Issues</option>
+                    <option value="vehicleIssues">Vehicle Issues</option>
+                    <option value="feedbackAndImprovement">Feedback and Improvement</option>
+                    <option value="other">Other</option>
+                </select>
                 <textarea
                     class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border"
-                    name="report" id="report" cols="30" rows="10"></textarea>
+                    name="report" id="report" cols="30" rows="10" placeholder="Describe the issue"></textarea>
+                <input type="file" accept="image/png, image/gif, image/jpeg" id="report_file" name="report_file"
+                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-[#630617] dark:border-none dark:placeholder-gray-400"
+                    multiple>
             </div>
             <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
                 <button class="w-full p-2 text-red-700 border border-red-700 rounded-md hover:opacity-80">Submit
@@ -344,6 +358,7 @@ import { getBookingHistory } from "@/services/ApiServices.js";
 
 const taskTable = ref('all');
 const itemName = ref('');
+const reportType = ref('');
 
 function openDialog(dialogName, action) {
     const dialog = document.getElementById(dialogName);
@@ -380,6 +395,11 @@ function load() {
         console.log(error);
     }
 };
+
+function reportBooking(event) {
+    reportType.value = event.target.value;
+    console.log(reportType.value);
+}
 
 onMounted(load);
 
