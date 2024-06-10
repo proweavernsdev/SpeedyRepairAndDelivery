@@ -134,4 +134,4 @@ Speedy Repair Delivery is a comprehensive web and mobile application designed to
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Contact
-For any questions or suggestions, please contact the project maintainer at [maintainer@example.com].
+For any questions or suggestions, please contact the project maintainer at [prodevns@gmail.com].
