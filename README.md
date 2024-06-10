@@ -135,4 +135,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Contact
 For any questions or suggestions, please contact the project maintainer at [maintainer@example.com].
-```
