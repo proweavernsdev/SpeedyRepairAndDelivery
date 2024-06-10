@@ -1,0 +1,7 @@
+{
+  "name": "speedyrepair",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}
