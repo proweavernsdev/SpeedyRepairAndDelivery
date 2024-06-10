@@ -22,8 +22,8 @@ Speedy Repair Delivery is a comprehensive web and mobile application designed to
 ### Installation
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/speedy-repair-delivery.git
-   cd speedy-repair-delivery
+   git clone https://github.com/proweavernsdev/SpeedyRepairAndDelivery.git
+   cd SpeedyRepairAndDelivery
    ```
 
 2. **Install front-end dependencies:**
@@ -55,7 +55,7 @@ Speedy Repair Delivery is a comprehensive web and mobile application designed to
    - Backend:
      ```bash
      cd backend
-     php -S localhost:8000
+     php artisan serve
      ```
 
 ## Project Workflow
