@@ -107,13 +107,22 @@
               <span>Book Delivery Service</span>
             </li>
           </RouterLink>
-          <RouterLink class-active="active" :to="`/admin/reports/request`">
+          <RouterLink class-active="active" :to="`/admin/bookings`">
             <li
               class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
               <span class="flex justify-center mr-2">
                 <i v-html="icons.Booking" class="text-slate-500 hover:text-[#AA0927]"></i>
               </span>
               <span>Booking History</span>
+            </li>
+          </RouterLink>
+          <RouterLink class-active="active" :to="`/admin/reports`">
+            <li
+              class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
+              <span class="flex justify-center mr-2">
+                <i v-html="icons.Report" class="text-slate-500 hover:text-[#AA0927]"></i>
+              </span>
+              <span>Requests</span>
             </li>
           </RouterLink>
         </ul>
