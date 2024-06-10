@@ -1,4 +1,5 @@
 <template>
+  <div>
   <SRModalSlots v-show="isOpen == true" @close="isOpen = false">
     <template #Modal-Header>
       <div class="flex justify-between px-5 md:px-3 py-5 md:py-3 bg-[#AA0927] text-white text-3xl font-semibold">
@@ -22,31 +23,68 @@
         <form v-show="ChangeDeliveryAddress == true" id="changeDeliveryAddress"
           @submit.prevent="changeDeliveryAddressForm"
           class="flex flex-col gap-5 pt-5 md:pt-3 text-3xl font-bold text-center w-max-[400px] w-full">
-          <div class="flex items-center justify-center w-full">
-            <div id="map" class="w-[400px] h-[300px] rounded md:h-[200px]"></div>
+          <div class="flex items-center justify-center w-full relative">
+            <div id="map" class="w-[400px] h-[300px] rounded md:h-[200px] relative">
+              <input
+              type="text"
+              v-model="searchQuery"
+              @input="searchLocation"
+              class="absolute top-2 left-2 w-[80%] bg-white border rounded py-1 px-2 text-xs z-10"
+              placeholder="Search Location"
+              />
+              <ul v-if="searchResults.length" class="absolute top-12 left-2 w-[80%] bg-white border rounded py-1 px-2 text-xs overflow-auto z-20 max-h-[150px]">
+                <li
+                v-for="(result, index) in searchResults"
+                :key="index"
+                 @click="selectLocation(result)"
+                 class="py-1 cursor-pointer hover:bg-gray-200"
+                 >
+                 {{ result.place_name }}
+                </li>
+              </ul>
+            </div>
           </div>
-          <div class="flex flex-col items-center justify-center w-full gap-2">
+          <div class="flex flex-col items-center justify-center w-full gap-2 text-base">
             <div class="flex w-full gap-3">
               <input type="text" name="fullname" placeholder="Full Name" id="fullname" v-model="receiverfullname"
-                class="w-full p-2 text-xs font-medium border rounded-md focus:outline-none focus:border-red-400"
-                required>
+              class="w-full p-2 text-sm font-medium border rounded-md focus:outline-none focus:border-red-400"
+              required>
               <input type="tel" name="phonenumber" id="phonenumber" placeholder="Phone Number" v-model="receiverphone"
-                class="w-full p-2 text-xs font-medium border rounded-md focus:outline-none focus:border-red-400"
-                required>
+              class="w-full p-2 text-sm font-medium border rounded-md focus:outline-none focus:border-red-400"
+              required>
             </div>
-            <input disabled type="text" name="fullAddress" :placeholder="receivingLocation" id="fullAddress"
-              v-model="receiverfullAddress"
-              class="w-full p-2 text-xs font-medium placeholder-black border rounded-md focus:outline-none focus:border-red-400">
+            <input type="text" name="fullAddress" placeholder="Select a Delivery Address" id="fullAddress"
+            v-model="receiverfullAddress"
+            class="w-full p-2 text-sm font-medium border rounded-md focus:outline-none focus:border-red-400" required readonly>
             <textarea name="addressinfo" id="addressinfo" cols="30" placeholder="Street Name, Building Name, House No."
-              v-model="receiveraddressInfo"
-              class="w-full p-2 text-xs font-medium border rounded-md focus:outline-none focus:border-red-400"
-              required></textarea>
+            v-model="receiveraddressInfo"
+            class="w-full p-2 text-sm font-medium border rounded-md focus:outline-none focus:border-red-400"
+            required></textarea>
           </div>
         </form>
-        <form v-show="ChangePickupAddress == true" id="changePickupAddress" @submit.prevent="changePickupAddressForm"
+        <form v-show="ChangePickupAddress == true" id="changePickupAddress" 
+          @submit.prevent="changePickupAddressForm"
           class="flex flex-col gap-5 pt-5 md:pt-3 text-3xl font-bold text-center w-max-[400px] w-full">
           <div class="flex items-center justify-center w-full">
-            <div id="map2" class="w-[400px] h-[300px] rounded md:h-[200px]"></div>
+            <div id="map2" class="w-[400px] h-[300px] rounded md:h-[200px]">
+              <input
+              type="text"
+              v-model="searchQuery"
+              @input="searchLocation"
+              class="absolute top-2 left-2 w-[80%] bg-white border rounded py-1 px-2 text-xs z-10"
+              placeholder="Search Location"
+              />
+              <ul v-if="searchResults.length" class="absolute top-12 left-2 w-[80%] bg-white border rounded py-1 px-2 text-xs overflow-auto z-20 max-h-[150px]">
+                <li
+                v-for="(result, index) in searchResults"
+                :key="index"
+                 @click="selectLocation2(result)"
+                 class="py-1 cursor-pointer hover:bg-gray-200"
+                 >
+                 {{ result.place_name }}
+                </li>
+              </ul>
+            </div>
           </div>
           <div class="flex flex-col items-center justify-center w-full gap-2">
             <div class="flex w-full gap-3">
@@ -57,9 +95,9 @@
                 class="w-full p-2 text-xs font-medium border rounded-md focus:outline-none focus:border-red-400"
                 required>
             </div>
-            <input disabled type="text" name="fullAddress" :placeholder="deliveryLocation" id="fullAddress"
+            <input disabled type="text" name="fullAddress" placeholder="Select a Pickup Address" id="fullAddress"
               v-model="senderfullAddress"
-              class="w-full p-2 text-xs font-medium placeholder-black border rounded-md focus:outline-none focus:border-red-400">
+              class="w-full p-2 text-xs font-medium border rounded-md focus:outline-none focus:border-red-400">
             <textarea name="addressinfo" id="addressinfo" cols="30" placeholder="Street Name, Building Name, House No."
               v-model="senderaddressInfo"
               class="w-full p-2 text-xs font-medium border rounded-md focus:outline-none focus:border-red-400"
@@ -77,7 +115,7 @@
             </div>
             <div class="flex items-center justify-between">
               <p class="w-1/2 font-bold">Delivery Address</p>
-              <p class="w-1/2 text-right opacity-70">{{ receiveraddressInfo }}, {{ receivingLocation }}</p>
+              <p class="w-1/2 text-right opacity-70">{{ receiveraddressInfo }}, {{ receiverfullAddress }}</p>
             </div>
             <hr class="w-[90%] mx-auto border-dashed border-slate-300 border-t">
             <div class="flex items-center justify-between">
@@ -101,55 +139,29 @@
             </div>
           </div>
         </div>
-        <form v-show="UpdateSize == true" id="updateSize" @submit.prevent="updateSizeForm"
-          class="flex flex-col gap-5 pt-5 md:pt-3 text-3xl font-bold text-center w-max-[400px] w-full">
-          <div>
-            <div class="flex flex-col w-full gap-5 p-3 md:p-px lg:flex-col lg:[&>*]:w-full">
-              <div class="flex items-center justify-between w-full gap-3">
-                <p class="w-1/3 text-xl font-medium md:text-base">Length:</p>
-                <span class="flex w-full gap-2">
-                  <input type="number" min="1" max="999" name="length" id="length" v-model="length"
-                    class="w-full p-2 border-b-2 rounded focus:border-red-400 focus:outline-none bg-[#fcfcfc] text-xl font-medium md:text-base">
-                  <select name="lengthdropdown" id="lengthdropdown" v-model="lengthDropdown"
-                    class="p-2 rounded bg-[#fbf8f8] text-xl font-medium md:w-1/2 md:text-base">
-                    <option disabled value="">Please select one</option>
-                    <option>Feet</option>
-                    <option>Inches</option>
-                    <option>Meters</option>
-                    <option>Centimeters</option>
-                  </select>
-                </span>
-              </div>
-              <div class="flex items-center justify-between w-full gap-3">
-                <p class="w-1/3 text-xl font-medium md:text-base">Width:</p>
-                <span class="flex w-full gap-2">
-                  <input type="number" min="1" max="999" name="width" id="width" v-model="width"
-                    class="w-full p-2 border-b-2 rounded focus:border-red-400 focus:outline-none bg-[#fcfcfc] text-xl font-medium md:text-base">
-                  <select name="widthdropdown" id="widthdropdown" v-model="widthDropdown"
-                    class="p-2 rounded bg-[#fbf8f8] text-xl font-medium md:w-1/2 md:text-base">
-                    <option disabled value="">Please select one</option>
-                    <option>Feet</option>
-                    <option>Inches</option>
-                    <option>Meters</option>
-                    <option>Centimeters</option>
-                  </select>
-                </span>
-              </div>
-              <div class="flex items-center justify-between w-full gap-3">
-                <p class="w-1/3 text-xl font-medium md:text-base">Height:</p>
-                <span class="flex w-full gap-2">
-                  <input type="number" min="1" max="999" name="height" id="height" v-model="height"
-                    class="w-full p-2 border-b-2 rounded focus:border-red-400 focus:outline-none bg-[#fcfcfc] text-xl font-medium md:text-base">
-                  <select name="heightdropdown" id="heightdropdown" v-model="heightDropdown"
-                    class="p-2 rounded bg-[#fbf8f8] text-xl font-medium md:w-1/2 md:text-base">
-                    <option disabled value="">Please select one</option>
-                    <option>Feet</option>
-                    <option>Inches</option>
-                    <option>Meters</option>
-                    <option>Centimeters</option>
-                  </select>
-                </span>
-              </div>
+        <form v-show="UpdateSize == true" id="updateSize" @submit.prevent="updateSizeForm" class="flex flex-col gap-6 max-w-lg mx-auto text-center">
+          <div class="flex flex-col gap-4 bg-white shadow-md rounded-lg p-6">
+            <div class="flex flex-col text-left gap-2">
+              <label for="sizeDropdown" class="text-lg font-medium">Select Unit:</label>
+              <select name="sizeDropdown" id="sizeDropdown" v-model="sizeDropdown" class="p-3 border rounded bg-white text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option disabled value="">Please select one</option>
+                <option>Feet</option>
+                <option>Inches</option>
+                <option>Meters</option>
+                <option>Centimeters</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-4">
+              <label for="length" class="w-1/4 text-lg font-medium text-left">Length:</label>
+              <input type="number" pattern="[0-9]*" min="1" max="999" name="length" id="length" v-model="length" class="w-3/4 p-3 border rounded bg-white text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex items-center gap-4">
+              <label for="width" class="w-1/4 text-lg font-medium text-left">Width:</label>
+              <input type="number" pattern="[0-9]*" min="1" max="999" name="width" id="width" v-model="width" class="w-3/4 p-3 border rounded bg-white text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex items-center gap-4">
+              <label for="height" class="w-1/4 text-lg font-medium text-left">Height:</label>
+              <input type="number" pattern="[0-9]*" min="1" max="999" name="height" id="height" v-model="height" class="w-3/4 p-3 border rounded bg-white text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
         </form>
@@ -179,11 +191,11 @@
       <div class="flex justify-end w-full px-6 py-5 md:py-2 md:px-3">
         <div v-show="ChangeDeliveryAddress == true">
           <button class="w-[139px] h-[40px] rounded-lg bg-[#550514] text-lg text-white font-bold hover:opacity-80"
-            form="changeDeliveryAddress" @click="isOpen = false">Submit</button>
+            form="changeDeliveryAddress" @click="isOpen = validateAddress('changeDeliveryAddress')">Submit</button>
         </div>
         <div v-show="ChangePickupAddress == true">
           <button class="w-[139px] h-[40px] rounded-lg bg-[#550514] text-lg text-white font-bold hover:opacity-80"
-            form="changePickupAddress" @click="isOpen = false">Submit</button>
+            form="changePickupAddress" @click="isOpen = validateAddress('changePickupAddress')">Submit</button>
         </div>
         <div v-show="ConfirmBooking == true" class="space-x-2.5">
           <button @click="isOpen = false"
@@ -217,9 +229,9 @@
                 <p>{{ receiverphone }}</p>
               </div>
               <div class="flex items-center gap-3 sm:flex-col sm:[&>*]:w-full sm:w-full">
-                <p class="text-sm text-slate-500 ">{{ receiveraddressInfo }}. {{ receivingLocation }}</p>
+                <p class="text-sm text-slate-500 ">{{ receiveraddressInfo }}. {{ receiverfullAddress }}</p>
                 <button
-                  @click="ChangeDeliveryAddress = true, ChangePickupAddress = false, ConfirmBooking = false, UpdateSize = false, UpdateWeight = false, isOpen = true"
+                  @click="ChangeDeliveryAddress = true, ChangePickupAddress = false, ConfirmBooking = false, UpdateSize = false, UpdateWeight = false,  isOpen = true"
                   href="" class="text-base p-2 text-[#AA0927] rounded-lg hover:bg-[#fbf8f8] ">Change</button>
               </div>
             </div>
@@ -233,9 +245,9 @@
                 <p>{{ senderphone }}</p>
               </div>
               <div class="flex items-center gap-3 sm:w-full sm:flex-col sm:[&>*]:w-full">
-                <p class="text-sm text-slate-500">{{ senderaddressInfo }}. {{ deliveryLocation }}</p>
+                <p class="text-sm text-slate-500">{{ senderaddressInfo }}. {{ senderfullAddress }}</p>
                 <button
-                  @click="ChangePickupAddress = true, ChangeDeliveryAddress = false, ConfirmBooking = false, UpdateSize = false, UpdateWeight = false, isOpen = true"
+                  @click="ChangePickupAddress = true, ChangeDeliveryAddress = false, ConfirmBooking = false, UpdateSize = false, UpdateWeight = false,  isOpen = true"
                   href="" class="text-base p-2 text-[#AA0927] rounded-lg hover:bg-[#fbf8f8]">Change</button>
               </div>
             </div>
@@ -284,74 +296,61 @@
             </div>
           </div>
           <hr class="w-[90%] mx-auto border-dashed border-slate-300 border-t">
-          <dialog id="fragilityDescription" class="w-2/3 p-2 rounded-xl">
-            <div class="flex justify-end">
-              <button class="text-xl size-10 hover:bg-red-50 hover:border hover:border-red-100 hover:rounded-md"
-                @click="openDialog('fragilityDescription', 'close')">✖</button>
-            </div>
-            <hr class="w-[90%] m-auto text-center border-2 rounded-xl">
-            <div class="flex p-3">
-              <p class="w-full text-center">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque in, ab quis
-                veritatis fugiat voluptatibus! Labore expedita sint magnam laudantium.</p>
-            </div>
-          </dialog>
-          <div class="flex w-full gap-3 p-3 lg:flex-col lg:[&>*]:w-full">
-            <div class="flex items-center justify-between w-full gap-5 ">
-              <p class="whitespace-nowrap ">Fragility:</p>
-              <span class="flex w-full gap-4">
-                <select name="fragility" id="fragility" v-model="fragility" class="w-full p-2 rounded bg-red-50">
-                  <option>Fragile</option>
-                  <option>Non-Fragile</option>
-                </select>
-                <button class="w-[42.5px] h-[40px] rounded-full bg-[#AA0927] text-white sm:hidden"
-                  @click="openDialog('fragilityDescription', 'open')">i</button>
-              </span>
-            </div>
-          </div>
-          <dialog id="vehicleDescription" class="w-2/3 p-2 rounded-xl">
-            <div class="flex justify-end">
-              <button class="text-xl size-10 hover:bg-red-50 hover:border hover:border-red-100 hover:rounded-md"
-                @click="openDialog('vehicleDescription', 'close')">✖</button>
-            </div>
-            <hr class="w-[90%] m-auto text-center border-2 rounded-xl">
-            <div class="flex p-3">
-              <p class="w-full text-center">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae doloribus
-                itaque tempora facere minima rerum.</p>
-            </div>
-          </dialog>
-          <div class="flex w-full gap-3 p-3 2xl:flex-col 2xl:[&>*]:w-full">
-            <div class="flex items-center justify-between w-2/3 gap-5 ">
-              <p class="whitespace-nowrap ">Vehicle Type:</p>
-              <span class="flex w-full gap-4">
-                <select name="vehicletype" id="vehicletype" v-model="vehicleType" class="w-full p-2 rounded bg-rose-50">
-                  <option>Truck</option>
-                  <option>Van</option>
-                  <option>Motorcycle</option>
-                </select>
-                <button class="w-[42.5px] h-[40px] rounded-full bg-[#AA0927] text-white sm:hidden"
-                  @click="openDialog('vehicleDescription', 'open')">i</button>
-              </span>
-            </div>
-            <dialog id="vehicleSuggestion" class="w-2/3 p-2 rounded-xl">
-              <div class="flex justify-end">
-                <button class="text-xl size-10 hover:bg-red-50 hover:border hover:border-red-100 hover:rounded-md"
-                  @click="openDialog('vehicleSuggestion', 'close')">✖</button>
-              </div>
-              <hr class="w-[90%] m-auto text-center border-2 rounded-xl">
-              <div class="flex p-3">
-                <p class="w-full text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque, iusto.
-                </p>
-              </div>
-            </dialog>
-            <div class="flex items-center justify-between w-1/3">
-              <p class="font-bold">Suggestion:</p>
-              <span class="flex items-center justify-center w-4/5 gap-1 text-center">
-                <p class="font-medium text-red-700"> {{ suggestedVehicle }}</p>
-                <!-- <p class="text-sm">(Size: ({{ sizeCategory }}) ✖ Weight: ({{ weightCategory }}))</p> -->
-              </span>
-              <button class="p-1 underline sm:hidden" @click="openDialog('vehicleSuggestion', 'open')">?</button>
-            </div>
-          </div>
+          <dialog id="fragilityDescription" class="w-1/2 p-4 rounded-lg shadow-lg">
+  <div class="flex justify-end">
+    <button class="text-xl hover:bg-gray-200 hover:rounded-full p-2"
+      @click="openDialog('fragilityDescription', 'close')">✖</button>
+  </div>
+  <hr class="w-3/4 m-auto border-gray-300">
+  <div class="flex p-4">
+    <p class="w-full text-center">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque in, ab quis veritatis fugiat voluptatibus! Labore expedita sint magnam laudantium.</p>
+  </div>
+</dialog>
+
+<dialog id="vehicleDescription" class="w-1/2 p-4 rounded-lg shadow-lg">
+  <div class="flex justify-end">
+    <button class="text-xl hover:bg-gray-200 hover:rounded-full p-2"
+      @click="openDialog('vehicleDescription', 'close')">✖</button>
+  </div>
+  <hr class="w-3/4 m-auto border-gray-300">
+  <div class="flex p-4">
+    <p class="w-full text-center">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae doloribus itaque tempora facere minima rerum.</p>
+  </div>
+</dialog>
+
+<div class="flex flex-col gap-6 p-4 w-full">
+  <div class="flex lg:flex-col lg:[&>*]:w-full w-full gap-6 items-center justify-between">
+    <div class="flex items-center gap-4 w-1/2">
+      <label for="fragility" class="text-lg font-medium">Fragility:</label>
+      <div class="relative flex-grow">
+        <select id="fragility" v-model="fragility"
+          class="w-full p-3 pr-10 rounded bg-red-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option>Fragile</option>
+          <option>Non-Fragile</option>
+        </select>
+        <button @click="openDialog('fragilityDescription', 'open')"
+          class="absolute inset-y-0 right-0 w-10 h-full text-lg text-white bg-[#AA0927] rounded-r focus:outline-none">
+          i
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center gap-4 w-1/2">
+      <label for="vehicletype" class="text-lg font-medium">Vehicle Type:</label>
+      <div class="relative flex-grow">
+        <select id="vehicletype" v-model="vehicleType"
+          class="w-full p-3 pr-10 rounded bg-rose-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option>Truck</option>
+          <option>Van</option>
+          <option>Motorcycle</option>
+        </select>
+        <button @click="openDialog('vehicleDescription', 'open')"
+          class="absolute inset-y-0 right-0 w-10 h-full text-lg text-white bg-[#AA0927] rounded-r focus:outline-none">
+          i
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
           <hr class="w-[90%] mx-auto border-dashed border-slate-300 border-t">
           <div class="flex flex-col w-full gap-3 p-3">
@@ -384,6 +383,7 @@
       </div>
     </template>
   </SRContents>
+</div>
 </template>
 <script setup>
 import icons from "@/assets/icons";
@@ -417,6 +417,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+const toast = useToast();
+
 const router = useRouter();
 
 // Mapbox access token
@@ -426,13 +428,11 @@ mapboxgl.accessToken = accessToken;
 // Reactive variables
 const receiverfullname = ref('');
 const receiverphone = ref('');
-const receiverfullAddress = ref('');
 const receiveraddressInfo = ref('');
 const receivercoordinatesLong = ref('');
 const receivercoordinatesLat = ref('')
 const senderfullname = ref('');
 const senderphone = ref('');
-const senderfullAddress = ref('');
 const senderaddressInfo = ref('');
 const sendercoordinatesLong = ref('');
 const sendercoordinatesLat = ref('');
@@ -440,17 +440,14 @@ const sendercoordinatesLat = ref('');
 
 const itemName = ref('');
 const length = ref('');
-const lengthDropdown = ref('');
 const width = ref('');
-const widthDropdown = ref('');
 const height = ref('');
-const heightDropdown = ref('');
+const sizeDropdown = ref('');
 const weight = ref('');
 const weightDropdown = ref('');
 const fragility = ref('');
 const vehicleType = ref('');
 const notes = ref('');
-const completeAddress = ref('');
 const arrivalTime = ref('');
 const arrivalDate = ref('');
 
@@ -469,8 +466,14 @@ const marker = ref(null);
 const map2 = ref(null);
 const marker2 = ref(null);
 
-const receivingLocation = ref("");
-const deliveryLocation = ref("");
+const receiverfullAddress = ref("");
+const senderfullAddress = ref("");
+
+const selectedLocation = ref({ lng: -74.5, lat: 40, place_name: '' });
+const selectedLocation2 = ref({ lng: -74.5, lat: 40, place_name: '' });
+
+const searchQuery = ref('');
+const searchResults = ref([]);
 
 // Computed property to check if delivery info is complete
 const isDeliveryInfoComplete = computed(() => {
@@ -485,41 +488,40 @@ const isDeliveryInfoComplete = computed(() => {
     sendercoordinatesLat.value &&
     senderaddressInfo.value &&
     length.value &&
-    lengthDropdown.value &&
+    sizeDropdown.value &&
     width.value &&
-    widthDropdown.value &&
     height.value &&
-    heightDropdown.value &&
     weight.value &&
     weightDropdown.value &&
     itemName.value &&
     fragility.value &&
     vehicleType.value &&
     notes.value;
-  return result;
+    console.log("isDeliveryInfoComplete: " + (result? true : false));
+  return result? true : false;
 });
 
 
 // Map initialization
 const initializeMap = (mapRef, markerRef, containerId, updateMarkerFn) => {
-  navigator.geolocation.getCurrentPosition(position => {
-    const { longitude, latitude } = position.coords;
     mapRef.value = new mapboxgl.Map({
       container: containerId,
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [longitude, latitude],
+      center: [selectedLocation.value.lng, selectedLocation.value.lat],
       zoom: 13
     });
-    markerRef.value = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(mapRef.value);
+    markerRef.value = new mapboxgl.Marker().setLngLat([selectedLocation.value.lng, selectedLocation.value.lat]).addTo(mapRef.value);
     mapRef.value.on('move', updateMarkerFn);
     mapRef.value.on('zoom', updateMarkerFn);
     mapRef.value.dragRotate.disable();
-  });
-};
+}
 
 onMounted(() => {
-  initializeMap(map, marker, 'map', updateMarkerAndStoreCoordinates);
-  initializeMap(map2, marker2, 'map2', updateMarkerAndStoreCoordinates2);
+  navigator.geolocation.getCurrentPosition(position => {
+    selectedLocation.value = { lng: position.coords.longitude, lat: position.coords.latitude };
+    initializeMap(map, marker, 'map', updateMarkerAndStoreCoordinates);
+    initializeMap(map2, marker2, 'map2', updateMarkerAndStoreCoordinates2);
+  });
 });
 
 const fetchGeocodingData = (lng, lat, locationRef) => {
@@ -542,7 +544,7 @@ const updateMarkerAndStoreCoordinates = () => {
   receivercoordinatesLong.value = center.lng;
   receivercoordinatesLat.value = center.lat;
   console.info("receivercoordinatesLong:" + receivercoordinatesLong.value, "receivercoordinatesLat: " + receivercoordinatesLat.value);
-  fetchGeocodingData(center.lng, center.lat, receivingLocation);
+  fetchGeocodingData(center.lng, center.lat, receiverfullAddress);
 };
 
 const updateMarkerAndStoreCoordinates2 = () => {
@@ -551,8 +553,96 @@ const updateMarkerAndStoreCoordinates2 = () => {
   sendercoordinatesLong.value = center.lng;
   sendercoordinatesLat.value = center.lat;
   console.info("sendercoordinatesLong:" + sendercoordinatesLong.value, "sendercoordinatesLat: " + sendercoordinatesLat.value);
-  fetchGeocodingData(center.lng, center.lat, deliveryLocation);
+  fetchGeocodingData(center.lng, center.lat, senderfullAddress);
 };
+
+const validateAddress = (form) => {
+  if(form == "changeDeliveryAddress"){
+    if(!receiverfullAddress.value) {
+      toast.error("Please select a pickup location");
+      return true;
+    }
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    const phoneRegex = /^[\d-]+$/;
+
+    if(!receiverfullname.value || !receiverphone.value || !receiveraddressInfo.value) {
+      toast.error("Please fill in all the fields");
+      return true;
+    }
+
+    if(!nameRegex.test(receiverfullname.value)) {
+      toast.error("Invalid name format");
+      return true;
+    }
+
+    if(!phoneRegex.test(receiverphone.value)) {
+      toast.error("Invalid phone number format");
+      return true;
+    }
+    return false;
+  }
+  if(form == "changePickupAddress"){
+    if(!senderfullAddress.value) {
+      toast.error("Please select a pickup location");
+      return true;
+    }
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    const phoneRegex = /^[\d-]+$/;
+
+    if(!senderfullname.value || !senderphone.value || !senderaddressInfo.value) {
+      toast.error("Please fill in all the fields");
+      return true;
+    }
+
+    if(!nameRegex.test(senderfullname.value)) {
+      toast.error("Invalid name format");
+      return true;
+    }
+    if(!phoneRegex.test(senderphone.value)) {
+      toast.error("Invalid phone number format");
+      return true;
+    }
+    return false;
+  }
+}
+async function searchLocation() {
+  if (!searchQuery.value) {
+    searchResults.value = [];
+    return;
+  }
+  const searchUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${searchQuery.value}.json?access_token=${mapboxgl.accessToken}&autocomplete=true`;
+  try {
+    const response = await axios.get(searchUrl);
+    searchResults.value = response.data.features;
+  } catch (error) {
+    console.error('Error searching location:', error);
+  }
+}
+
+function selectLocation(location) {
+  selectedLocation.value = {
+    lng: location.center[0],
+    lat: location.center[1],
+    place_name: location.place_name,
+  };
+  searchQuery.value = location.place_name;
+  searchResults.value = [];
+  map.value.flyTo({ center: [location.center[0], location.center[1]], essential: true });
+  marker.value.setLngLat([location.center[0], location.center[1]]);
+}
+
+function selectLocation2(location) {
+  selectedLocation2.value = {
+    lng: location.center[0],
+    lat: location.center[1],
+    place_name: location.place_name,
+  };
+  searchQuery.value = location.place_name;
+  searchResults.value = [];
+  map2.value.flyTo({ center: [location.center[0], location.center[1]], essential: true });
+  marker2.value.setLngLat([location.center[0], location.center[1]]);
+
+}
 
 onBeforeUnmount(() => {
   if (map.value) map.value.remove();
@@ -610,12 +700,12 @@ const calculateDistanceAndDirections = async () => {
 const sizeCategory = ref("");
 const sizeMeasurements = ref("");
 const updateSizeForm = () => {
-  const volumeCubicFeet = convertToCubicFeet(length, lengthDropdown) *
-    convertToCubicFeet(width, widthDropdown) *
-    convertToCubicFeet(height, heightDropdown);
-  sizeMeasurements.value = `(${length.value} ${lengthDropdown.value.toLowerCase()} ✖ ` +
-    `${width.value} ${widthDropdown.value.toLowerCase()} ✖ ` +
-    `${height.value} ${heightDropdown.value.toLowerCase()})`;
+  const volumeCubicFeet = convertToCubicFeet(length, sizeDropdown) *
+    convertToCubicFeet(width, sizeDropdown) *
+    convertToCubicFeet(height, sizeDropdown);
+  sizeMeasurements.value = `(${length.value} ${sizeDropdown.value.toLowerCase()} ✖ ` +
+    `${width.value} ${sizeDropdown.value.toLowerCase()} ✖ ` +
+    `${height.value} ${sizeDropdown.value.toLowerCase()})`;
 
   sizeCategory.value = volumeCubicFeet <= 1 ? "Small" : volumeCubicFeet <= 5 ? "Medium" : "Large";
 };
@@ -659,21 +749,20 @@ watch(
     }
   });
 
-const suggestedVehicle = ref("");
 const suggestVehicle = () => {
   const size = sizeCategory.value;
   const weight = weightCategory.value;
 
   if (size === "Small" && weight === "Light") {
-    suggestedVehicle.value = "Motorcycle";
+    vehicleType.value = "Motorcycle";
   } else if (size === "Medium" && (weight === "Light" || weight === "Moderate")) {
-    suggestedVehicle.value = "Van";
+    vehicleType.value = "Van";
   } else if (size === "Large" || weight === "Heavy") {
-    suggestedVehicle.value = "Truck";
+    vehicleType.value = "Truck";
   } else if (size === "Medium" && weight === "Heavy") {
-    suggestedVehicle.value = "Truck";
+    vehicleType.value = "Truck";
   } else {
-    suggestedVehicle.value = "Van";
+    vehicleType.value = "Van";
   }
 };
 
