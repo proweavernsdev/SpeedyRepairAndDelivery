@@ -1,3 +1,6 @@
+<!--TODO: -->
+<!---->
+
 <template>
   <div>
   <SRModalSlots v-show="isOpen == true" @close="isOpen = false">
@@ -22,9 +25,9 @@
       <div class="mx-6 mb-6 md:mx-3 md:mb-2">
         <form v-show="ChangeDeliveryAddress == true" id="changeDeliveryAddress"
           @submit.prevent="changeDeliveryAddressForm"
-          class="flex flex-col gap-5 pt-5 md:pt-3 text-3xl font-bold text-center w-max-[400px] w-full">
+          class="flex flex-col gap-5 pt-5 md:pt-3 text-3xl font-bold text-center  w-full">
           <div class="flex items-center justify-center w-full relative">
-            <div id="map" class="w-[400px] h-[300px] rounded md:h-[200px] relative">
+            <div id="map" class="w-full h-[300px] rounded md:h-[200px] relative">
               <input
               type="text"
               v-model="searchQuery"
@@ -64,9 +67,9 @@
         </form>
         <form v-show="ChangePickupAddress == true" id="changePickupAddress" 
           @submit.prevent="changePickupAddressForm"
-          class="flex flex-col gap-5 pt-5 md:pt-3 text-3xl font-bold text-center w-max-[400px] w-full">
+          class="flex flex-col gap-5 pt-5 md:pt-3 text-3xl font-bold text-center  w-full">
           <div class="flex items-center justify-center w-full">
-            <div id="map2" class="w-[400px] h-[300px] rounded md:h-[200px]">
+            <div id="map2" class="w-full h-[300px] rounded md:h-[200px]">
               <input
               type="text"
               v-model="searchQuery"
@@ -795,9 +798,9 @@ function bookingConfirm() {
 </script>
 
 <style lang="scss" scoped>
-* {
-  //border: 1px solid red;
-}
+// * {
+//   border: 1px solid red;
+// }
 
 .map-disabled {
   pointer-events: none;
