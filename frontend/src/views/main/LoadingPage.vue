@@ -137,6 +137,7 @@ onMounted(() => {
     const promise = retrieveData();
     promise
       .then((data) => {
+        console.info("data: ", data);
         const level = JSON.stringify(data.data.UserAccess);
         accessLevelNumber.value = level;
         console.info("level: ", level);
@@ -151,10 +152,8 @@ onMounted(() => {
               company: btoa(data.data.Company),
             },
           });
-        } else if (level == 'undefined') {
-          const adminStatus = level;
-          accessLevelNumber.value = adminStatus;
-          switch (adminStatus) {
+        } else {
+          switch (level) {
             case '"0"':
               userType.value = "Super Admin";
               router.push(`/admin/dashboard`);
@@ -163,12 +162,6 @@ onMounted(() => {
               userType.value = "Admin";
               router.push(`/admin/dashboard`);
               break;
-            default:
-              router.push(`./ErrorPage.vue`);
-              break;
-          }
-        } else {
-          switch (level) {
             case '"2"':
               compRetrieveData().then((dat) => {
                 information.value = dat.result;
@@ -221,6 +214,7 @@ onMounted(() => {
               break;
 
             default:
+              console.info("default: ", level);
               router.push(`./ErrorPage.vue`);
               break;
           }

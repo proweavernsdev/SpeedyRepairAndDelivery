@@ -143,19 +143,28 @@ const router = createRouter({
     },
     // COMPANY PAGES
     {
-      path: '/company/account/:id',
+      path: '/company/dashboard',
+      name: 'company/dashboard',
+      component: () => import('../views/company/DashboardView.vue')
+    },
+    {
+      path: '/company/account',
       name: 'company/account',
       component: () => import('../views/company/AccountManagement.vue')
     },
     {
-      path: '/company/manage/employees/:id',
+      path: '/company/manage/employees',
       name: 'company/manage/employees',
       component: () => import('../views/company/EmployeesManagement.vue')
     },
-
     {
       path: '/company/bookings',
       name: 'company/bookings',
+      component: () => import('../views/company/DeliveryService.vue')
+    },
+    {
+      path: '/company/reports/request',
+      name: 'company/reports/request',
       component: () => import('../views/company/TaskHistory.vue')
     },
 

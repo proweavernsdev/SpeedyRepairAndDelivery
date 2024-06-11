@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseUrl = "https://speedyrepairanddelivery.com/api-delivery/";
+// const baseUrl = "https://speedyrepairanddelivery.com/api-delivery/";
+const baseUrl = 'http://localhost/speedy/';
 
 let pwauth = localStorage.getItem("token");
 let updateToken = () => {
@@ -513,6 +514,7 @@ export async function createCompany(
 //Retrieves data from the Company API endpoint.
 export async function compRetrieveData() {
   updateToken();
+  console.log();
   const res = await axios.get(baseUrl + "Company", {
     headers: {
       PWAUTH: pwauth,

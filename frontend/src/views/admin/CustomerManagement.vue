@@ -144,7 +144,7 @@ import SRSearchDisplay from "@/components/SRSearchDisplay.vue";
 import SRScroll from "@/components/SRScroll.vue";
 import SRTable from "@/components/SRTable.vue";
 import SRContents from "@/layouts/SRContents.vue";
-import { compRetrieveData, setCompStatus } from "@/services/ApiServices.js";
+import { userRetrieveData, setCompStatus } from "@/services/ApiServices.js";
 
 const isOpen = ref(false);
 const StatusView = ref(false);
@@ -162,7 +162,7 @@ function update(companyID, status) {
 }
 
 function getData() {
-  compRetrieveData()
+  userRetrieveData()
     .then((info) => {
       data.value = info.result;
       console.log("Retrieved data:", data.value);

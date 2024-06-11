@@ -86,7 +86,7 @@
                     <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
                     <p class="sm:text-sm">{{ format(viewOngoingTask.bh_destinationLat) }}, {{
                         format(viewOngoingTask.bh_destinationLong)
-                    }}</p>
+                        }}</p>
                 </div>
                 <div>
                     <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
@@ -129,7 +129,7 @@
                     <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
                     <p class="sm:text-sm">{{ format(viewCompletedTask.bh_destinationLa) }}, {{
                         format(viewCompletedTask.bh_destinationLong)
-                    }}</p>
+                        }}</p>
                 </div>
                 <div>
                     <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
@@ -320,7 +320,7 @@
                                     </td>
                                     <td>{{ format(booking.bh_destinationLat) }}, {{
                                         format(booking.bh_destinationLong)
-                                    }}</td>
+                                        }}</td>
                                     <td>{{ booking.bh_total }}</td>
                                     <td>{{ booking.bh_driver === null ? 'Not Assigned' : booking.bh_driver }}</td>
                                     <td>{{ booking.bh_notes }}</td>
@@ -485,16 +485,16 @@ function viewBooking(status, bookingID) {
 
 function load() {
     try {
-        const getBookings = getBookingHistory();
-        getBookings.then((response) => {
-            bookings.value = response.data;
-            inpoolBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "In-pool");
-            completedBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "Completed");
-            cancelledBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "Cancelled");
-            ongoingBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "On-going");
-        }).catch((error) => {
-            console.log(error);
-        });
+        // const getBookings = getBookingHistory();
+        // getBookings.then((response) => {
+        //     bookings.value = response.data;
+        //     inpoolBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "In-pool");
+        //     completedBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "Completed");
+        //     cancelledBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "Cancelled");
+        //     ongoingBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "On-going");
+        // }).catch((error) => {
+        //     console.log(error);
+        // });
     } catch (error) {
         console.log(error);
     }

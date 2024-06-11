@@ -1,59 +1,59 @@
 <template>
     <div class="flex flex-col w-full gap-10 pt-5 md:flex-col md:justify-start">
-        <dialog id="searchDialog" class="w-2/3 p-5 rounded-xl">
+        <dialog id="searchDialog" class="w-2/3 p-5 md:w-full rounded-xl">
             <form id="searchTask" class="flex flex-col gap-3" @submit.prevent>
                 <div class="flex items-center justify-between">
-                    <h2 class="text-3xl font-medium text-red-800">Search</h2>
-                    <button type="button" class="text-3xl size-12"
+                    <h2 class="text-3xl font-medium text-red-800 md:text-lg">Search</h2>
+                    <button type="button" class="text-3xl size-12 md:text-lg"
                         @click="openDialog('searchDialog', 'close')">✖</button>
                 </div>
                 <hr class="w-full border">
-                <div class="flex [&>*]:p-2 [&>*]:border-2">
+                <div class="flex [&>*]:p-2 [&>*]:border-2 md:flex-col">
                     <input type="text" name="search" id="searchInput" placeholder="Search tasks"
-                        class="w-11/12 focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border">
+                        class="md:text-base w-11/12 md:w-full focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border">
                     <button type="submit"
-                        class="w-1/12 text-white bg-red-800 hover:bg-white hover:text-red-800 hover:border hover:border-red-800">Search</button>
+                        class="w-1/12 text-white bg-red-800 md:w-full hover:bg-white hover:text-red-800 hover:border hover:border-red-800 md:text-base">Search</button>
                 </div>
             </form>
         </dialog>
-        <dialog id="sortDialog" class="w-2/3 p-5 rounded-xl">
+        <dialog id="sortDialog" class="w-2/3 p-5 md:w-full rounded-xl">
             <div class="flex justify-between w-full p-3 md:p-1">
-                <h2 class="flex items-center text-3xl font-medium text-red-800">
+                <h2 class="flex items-center text-3xl font-medium text-red-800 md:text-base">
                     Filter
                 </h2>
-                <p class="h-auto px-4 py-2 text-3xl cursor-pointer hover:scale-105"
+                <p class="h-auto px-4 py-2 text-3xl cursor-pointer md:text-lg hover:scale-105"
                     @click="openDialog('sortDialog', 'close')">✖</p>
             </div>
             <hr class="w-full border">
             <div class="flex flex-col h-[85%]">
                 <form method="dialog" class="flex flex-col">
                     <div class="flex justify-around items-center w-full p-3 [&>*]:w-[48%]">
-                        <label for="date-range" class="text-lg text-center">Date Range:</label>
+                        <label for="date-range" class="text-lg text-center md:text-sm">Date Range:</label>
                         <div class="flex justify-around items-center w-full [&>*]:w-[49%]">
                             <input type="date" id="start-date" name="start-date"
-                                class="p-2 border focus:outline-none focus:border-slate-400">
+                                class="p-2 border focus:outline-none focus:border-slate-400 md:text-sm">
                             <input type="date" id="end-date" name="end-date"
-                                class="p-2 border focus:outline-none focus:border-slate-400">
+                                class="p-2 border focus:outline-none focus:border-slate-400 md:text-sm">
                         </div>
                     </div>
                     <div class="flex justify-around items-center w-full p-3 [&>*]:w-[48%]">
-                        <label for="priority" class="text-lg text-center">Priority:</label>
-                        <select id="priority" name="priority" class="w-full p-2 rounded-sm">
+                        <label for="priority" class="text-lg text-center md:text-sm">Priority:</label>
+                        <select id="priority" name="priority" class="w-full p-2 rounded-sm md:text-sm">
                             <option value="high">High</option>
                             <option value="medium">Medium</option>
                             <option value="low">Low</option>
                         </select>
                     </div>
                     <div class="flex justify-around items-center w-full p-3 [&>*]:w-[48%]">
-                        <label for="customer" class="text-lg text-center">Driver/Company:</label>
+                        <label for="customer" class="text-lg text-center md:text-sm">Driver/Company:</label>
                         <input type="text" id="customer" name="customer"
-                            class="w-full p-2 border rounded-sm focus:outline-none focus:border-slate-400 ">
+                            class="w-full p-2 border rounded-sm focus:outline-none focus:border-slate-400 md:text-sm">
                     </div>
                     <div class="flex justify-around w-full [&>*]:w-[48%] p-3">
                         <button type="submit"
-                            class="p-2 text-white bg-red-800 rounded-lg hover:opacity-80">Apply</button>
+                            class="p-2 text-white bg-red-800 rounded-lg hover:opacity-80 md:text-sm">Apply</button>
                         <button type="button" id="closeDialog"
-                            class="p-2 text-red-800 border-2 border-red-800 rounded-lg hover:opacity-80"
+                            class="p-2 text-red-800 border-2 border-red-800 rounded-lg hover:opacity-80 md:text-sm"
                             @click="openDialog('sortDialog', 'close')">Cancel</button>
                     </div>
                 </form>
@@ -243,7 +243,7 @@
                 </span>
             </div>
             <div>
-                <div class="flex justify-between [&>*]:w-full [&>*]:border [&>*]:p-4">
+                <div class="flex justify-between [&>*]:w-full [&>*]:border [&>*]:p-4 md:overflow-x-auto">
                     <button @click="viewTableContents('all')"
                         :class="taskTable === 'all' ? 'text-red-500 border-8 border-red-500' : 'text-black'">All</button>
                     <button @click="viewTableContents('ongoing')"
