@@ -110,4 +110,7 @@ class Api extends Rest {
     public function getInfo_post(){
         $data = $this->json();
     }
+    public function _get(){
+        $this->responseOutput('Test Connection',[],200,true);
+    }
 }

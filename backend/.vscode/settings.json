@@ -1,0 +1,5 @@
+{
+    "editor.quickSuggestionsDelay": 200,
+    "editor.screenReaderAnnounceInlineSuggestion": false,
+    "editor.inlineSuggest.enabled": false
+}
