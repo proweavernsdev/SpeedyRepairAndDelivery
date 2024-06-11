@@ -9,7 +9,7 @@
                         Speedy
                         Repair
                         and
-                        Delivery This is Test</b>
+                        Delivery This is Test for CI/CD</b>
                 </h1>
                 <form class="flex flex-col justify-center w-full gap-5 md:w-full md:mt-0"
                     @submit.prevent="login(email, pass)">
