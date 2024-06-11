@@ -8,8 +8,8 @@
                     <b>
                         Speedy
                         Repair
-                        andasd
-                        Delivery</b>
+                        and
+                        Delivery Test</b>
                 </h1>
                 <form class="flex flex-col justify-center w-full gap-5 md:w-full md:mt-0"
                     @submit.prevent="login(email, pass)">
