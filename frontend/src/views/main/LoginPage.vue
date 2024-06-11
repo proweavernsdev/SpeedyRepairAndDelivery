@@ -8,7 +8,7 @@
                     <b>
                         Speedy
                         Repair
-                        and
+                        andasd
                         Delivery</b>
                 </h1>
                 <form class="flex flex-col justify-center w-full gap-5 md:w-full md:mt-0"
