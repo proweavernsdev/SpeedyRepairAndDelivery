@@ -32,16 +32,16 @@ class DeliveryDriversModel extends CI_Model{
         }
     }
 
-    public function DeliveryDriverRegister($driverUserOwner, $driverFname, $driverLname, $driverAddress, $driverTownCity, $driverState, $driverZip, $driversLicenseNumber){
+    public function DeliveryDriverRegister($driverUserOwner, $rawData){
         $res = $this->db->insert($this->table, array(
             'driverUserOwner' => $driverUserOwner,
-            'driver_firstName' => $driverFname,
-            'driver_lastName' => $driverLname,
-            'driver_address' => $driverAddress,
-            'driver_towity' => $driverTownCity,
-            'driver_state' => $driverState,
-            'driver_zip' => $driverZip,
-            'driver_driversLicenseNumber' => $driversLicenseNumber,
+            'driver_firstName' => $rawData['FirstName'],
+            'driver_lastName' => $rawData['LastName'],
+            'driver_address' => $rawData['Address'],
+            'driver_towity' => $rawData['TownCity'],
+            'driver_state' => $rawData['State'],
+            'driver_zip' => $rawData['Zip'],
+            'driver_driversLicenseNumber' => $rawData['LicenseNumber'],
             'status' => 'pending'
         ));
         
@@ -62,6 +62,7 @@ class DeliveryDriversModel extends CI_Model{
                         ->update($this->table);
    }
    public function setPfp($id, $path){
-    return $this->db->where('comp_userOwner', $id)->update($this->table, ['comp_businessPhoto' => $path]);
+    $this->db->where('driverUserOwner', $id)->update($this->table, ['driver_userPhoto' => $path]);
+    return $this->db->affected_rows() > 0;
    }
 }

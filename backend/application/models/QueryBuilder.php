@@ -66,6 +66,6 @@ class QueryBuilder extends CI_Model {
         }
     
         // Perform the update operation
-        return $query->update($table, $data);
+        return $query->update($this->prefix.$table, $data);
     }
 }

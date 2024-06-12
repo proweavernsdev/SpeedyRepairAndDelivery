@@ -21,32 +21,52 @@ class Middleware{
     }
 
     public function createToken($data, $parameter = []){
+        // Load Crypto
         $this->ci->load->library('plugins/crypto');
+        // Declare variable token
         $token = [
             'data'=>$data,
             'created_at'=>time()
         ];
-
+        
+        /**
+         *  Check if there is custom expiry inside parameter
+         */
+        // if is not set, set expiry to default
         if(!isset($parameter['expiry']))$token['expires_at'] = time()+900;
+        // if empty, set expiry to default
         elseif(empty($parameter['expiry']))$token['expires_at'] = time()+900;
 
+        /**
+         *  if the access level is set
+         */
+        // check if accessLevel is set and is true inside parameter variable
         if(isset($parameter['accessLevel']) && $parameter['accessLevel'] == true){
+            // check if the accessLevel is set and the parameter variable has the name equal to the access level parameters set
             if(!isset($this->accessLevel[$parameter['levelParams']])) throw new Exception('Access Level Parameters does not exist');
+            /**
+             *  if access level is set and has value equal to parameter variable
+             */
             foreach ($this->accessLevel[$parameter['levelParams']] as $key => $value)
-                if($parameter['basedOn'] == $value){
+            // check if the basedOn value inside parameter variable equals the value of the access level
+            if($parameter['basedOn'] == $value){
                     $token['AccessLevel'] = $key;
                     break;
-                }else continue;
+            }else continue;
             
         }
         
+        // encrypt the token
         $token = $this->ci->crypto->encrypt($token);
 
+        // check if inside parameter variable there is saveToDB
         if(isset($parameter['saveToDB'])){
+            // if saveToDB equals true, save to database
             if($parameter['saveToDB'] == true)
             $this->ci->db->insert($this->table, ['token'=>$token]);
         }
         
+        // return token
         return $token;
     }
     public function checkToken($return = false){

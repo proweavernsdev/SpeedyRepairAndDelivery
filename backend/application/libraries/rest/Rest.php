@@ -17,6 +17,7 @@ class Rest extends CI_Controller{
 
         $access = [
             'AccessLevelData' => [
+                'null' => null,
                 'SuperAdmin'=>0,
                 'Admin'=>1,
                 'Company'=>2,

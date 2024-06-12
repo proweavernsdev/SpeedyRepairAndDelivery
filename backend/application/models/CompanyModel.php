@@ -111,14 +111,10 @@ public function registerEmloyee($id, $rawData){
     $hashed = password_hash($rawData['password'], PASSWORD_DEFAULT);
     $newData = ['userID'=>$rawData['uid'], 'users_email' => $rawData['email'], 'users_password' => $hashed, 'users_access_level_id' => 5];
     $usr = $this->db->insert($this->user, $newData);
-    $inserted_id = $this->db->insert_id();
-    $sbusrsDetail = ['subs_underCompany' => $id, 'subs_userOwner' => $inserted_id, 'subs_firstName' => $rawData['FirstName'], 'subs_lastName' => $rawData['LastName'], 'status' => 'active'];
+    $sbusrsDetail = ['subs_underCompany' => $id, 'subs_userOwner' => $rawData['uid'], 'subs_firstName' => $rawData['FirstName'], 'subs_lastName' => $rawData['LastName'], 'status' => 'active'];
     $sbusrs = $this->db->insert($this->sbusrs, $sbusrsDetail);
-    if($usr && $sbusrs){
-        return $this->db->affected_rows() > 0;
-    }else{
-        return $this->db->error();
-    }
+    if(!$usr || !$sbusrs) throw new Exception('Internal Server Error');
+    return true;
 }
 
 public function employeeRetrieve($id){
