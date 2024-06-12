@@ -17,6 +17,7 @@ class Vehicles extends Rest
         $this->load->library('plugins/crypto');
     }
 
+    // Get all vehicles, user: admin
     protected function _get()
     {
         if (isset($_SERVER['HTTP_PWAUTH'])) {
@@ -72,6 +73,8 @@ class Vehicles extends Rest
             ], 401);
         }
     }
+
+    // Add new vehicle, user: admin
     protected function _post()
     {
         $this->validator->validate('UsersModel', $this->json(), ['userID', 'users_email', 'users_password']);
@@ -108,6 +111,8 @@ class Vehicles extends Rest
         }
     }
 
+
+    // Update vehicle infos, user: admin
     protected function _put()
     {
         if (isset($_SERVER['HTTP_PWAUTH'])) {
@@ -159,7 +164,4 @@ class Vehicles extends Rest
             ], 401);
         }
     }
-
-
-
 }

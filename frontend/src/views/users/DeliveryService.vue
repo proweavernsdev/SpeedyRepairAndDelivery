@@ -379,6 +379,7 @@
   </div>
 </template>
 <script setup>
+import { auth, db } from '@/services/firebaseConfig';
 import icons from "@/assets/icons";
 import SRContents from "@/layouts/SRContents.vue";
 import SRModalSlots from '@/components/SRModalSlots.vue';
@@ -391,8 +392,9 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getDatabase, ref as refer, set } from "firebase/database";
 import { useToast } from 'vue-toast-notification';
-import { createBooking } from '@/services/ApiServices';
+import { createBooking, customerRetrieveData } from '@/services/ApiServices';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -631,7 +633,6 @@ function selectLocation2(location) {
   searchResults.value = [];
   map2.value.flyTo({ center: [location.center[0], location.center[1]], essential: true });
   marker2.value.setLngLat([location.center[0], location.center[1]]);
-
 }
 
 onBeforeUnmount(() => {
@@ -663,14 +664,14 @@ watch(
 const calculateDistanceAndDirections = async () => {
   const origin = [sendercoordinatesLong.value, sendercoordinatesLat.value];
   const destination = [receivercoordinatesLong.value, receivercoordinatesLat.value];
-  const database = getDatabase();
-  set(refer(database, 'coordinates/first'), {
-    originLong: origin[0],
-    originLat: origin[1],
-    destinationLong: destination[0],
-    destinationLat: destination[1]
-  });
-  console.log("Coordinates saved successfully");
+  // const database = getDatabase();
+  // set(refer(database, 'coordinates/first'), {
+  //   originLong: origin[0],
+  //   originLat: origin[1],
+  //   destinationLong: destination[0],
+  //   destinationLat: destination[1]
+  // });
+  // console.log("Coordinates saved successfully");
 
   const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${origin.join(',')};${destination.join(',')}?geometries=geojson&access_token=${accessToken}`;
 
@@ -769,19 +770,53 @@ function openDialog(dialogName, state) {
   }
 }
 
-function bookingConfirm() {
-  try {
-    createBooking().then((response) => {
-      if (response) {
-        console.log("Booking created successfully.");
-      } else {
-        console.log("Booking creation failed.");
-      }
+const user = ref(null);
+const bookingConfirm = async () => {
+  const promise = customerRetrieveData();
+  promise
+    .then((data) => {
+      user.value = data;
+      console.log("data:", user.value);
     })
-  } catch (error) {
-    console.error("Error message: ", error);
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+  if (!user.value) {
+    console.error('User not logged in.');
+    return;
   }
-}
+  const deliveryData = {
+    receiverfullname: receiverfullname.value,
+    receiverphone: receiverphone.value,
+    receivercoordinatesLong: receivercoordinatesLong.value,
+    receivercoordinatesLat: receivercoordinatesLat.value,
+    receiveraddressInfo: receiveraddressInfo.value,
+    senderfullname: senderfullname.value,
+    senderphone: senderphone.value,
+    sendercoordinatesLong: sendercoordinatesLong.value,
+    sendercoordinatesLat: sendercoordinatesLat.value,
+    senderaddressInfo: senderaddressInfo.value,
+    length: length.value,
+    sizeDropdown: sizeDropdown.value,
+    width: width.value,
+    height: height.value,
+    weight: weight.value,
+    weightDropdown: weightDropdown.value,
+    itemName: itemName.value,
+    fragility: fragility.value,
+    vehicleType: vehicleType.value,
+    notes: notes.value,
+  };
+  try {
+    const deliveryRef = rtdbRef(db, `deliveries/${Date.now()}`);
+    await rtdbSet(deliveryRef, deliveryData);
+    console.log('Booking confirmed and data saved successfully.');
+  } catch (error) {
+    console.error('Error confirming booking: ', error);
+  }
+};
+
+
 </script>
 
 <style lang="scss" scoped>

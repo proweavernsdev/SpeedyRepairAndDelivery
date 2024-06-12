@@ -19,6 +19,7 @@ class DeliveryDrivers extends Rest
         $this->load->library('plugins/filehelper');
     }
 
+    //get all data of driver, user: driver
     protected function _get()
     {
         if (isset($_SERVER['HTTP_PWAUTH'])) {
@@ -59,6 +60,8 @@ class DeliveryDrivers extends Rest
         }
     }
 
+
+    //get all documents of driver, user: driver
     protected function docs_get()
     {
         if (isset($_SERVER['HTTP_PWAUTH'])) {
@@ -103,6 +106,8 @@ class DeliveryDrivers extends Rest
         }
     }
 
+
+    //create new driver, user: driver
     protected function _post()
     {
         $this->validator->validate('UsersModel', $this->post(), ['userID', 'users_email', 'users_password', 'users_access_level_id', 'users_company']);
@@ -120,19 +125,19 @@ class DeliveryDrivers extends Rest
 
             if (!empty($postData['FirstName']) && !empty($postData['LastName']) && !empty($postData['Address']) && !empty($postData['TownCity']) && !empty($postData['State']) && !empty($postData['Zip']) && !empty($postData['LicenseNumber'])) {
                 // if (preg_match($pattern, $postData['FirstName']) && preg_match($pattern, $postData['LastName']) && preg_match($pattern, $postData['Address']) && preg_match($pattern, $postData['TownCity']) && preg_match($pattern, $postData['State']) && preg_match($pattern, $postData['Zip']) && preg_match($pattern, $postData['LicenseNumber'])) {
-                    $res = $this->DeliveryDriversModel->DeliveryDriverRegister($validated['UserID'], $postData['FirstName'], $postData['LastName'], $postData['Address'], $postData['TownCity'], $postData['State'], $postData['Zip'], $postData['LicenseNumber']);
-                    $upld = $this->filehelper->uploadMultiple("Users/Driver/{$validated['UserID']}/docs", 'files', true);
-                    if ($res && $upld) {
-                        $this->response([
-                            'success' => true,
-                            'message' => 'Driver has been created'
-                        ], 200);
-                    } else {
-                        $this->response([
-                            success => false,
-                            message => 'Internal Server Error'
-                        ], 500);
-                    }
+                $res = $this->DeliveryDriversModel->DeliveryDriverRegister($validated['UserID'], $postData['FirstName'], $postData['LastName'], $postData['Address'], $postData['TownCity'], $postData['State'], $postData['Zip'], $postData['LicenseNumber']);
+                $upld = $this->filehelper->uploadMultiple("Users/Driver/{$validated['UserID']}/docs", 'files', true);
+                if ($res && $upld) {
+                    $this->response([
+                        'success' => true,
+                        'message' => 'Driver has been created'
+                    ], 200);
+                } else {
+                    $this->response([
+                        success => false,
+                        message => 'Internal Server Error'
+                    ], 500);
+                }
                 // } else {
                 //     $this->response([
                 //         'success' => false,
@@ -155,6 +160,8 @@ class DeliveryDrivers extends Rest
         }
     }
 
+
+    //update the picture of driver, user: driver
     protected function upload_post()
     {
         $this->validator->validate('UsersModel', $this->post(), ['userID', 'users_email', 'users_password', 'users_access_level_id', 'users_company']);
@@ -201,6 +208,7 @@ class DeliveryDrivers extends Rest
         }
     }
 
+    // update the status of driver, user: admin
     protected function _put()
     {
         $this->validator->validate('UsersModel', $this->json(), [], true);

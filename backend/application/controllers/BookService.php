@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 header('Accept: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -8,11 +8,13 @@ header('Access-Control-Allow-Headers: LOGINAUTH, Content-Type, PWAUTH');
 
 require_once APPPATH . '/libraries/rest/Rest.php';
 
-class BookService extends Rest{
+class BookService extends Rest
+{
     private $bsm;
     private $fb;
     private $cp;
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
         // Load libraries and models
         $this->load->library('middlewares/firebase-php/Firebase_lib');
@@ -24,23 +26,25 @@ class BookService extends Rest{
         $this->cp = $this->crypto;
     }
 
-    protected function _get(){
-        if(isset($_SERVER['HTTP_PWAUTH'])){
+    //view booking services, user: company, employee, customer
+    protected function _get()
+    {
+        if (isset($_SERVER['HTTP_PWAUTH'])) {
             $token = $_SERVER['HTTP_PWAUTH'];
             $decrypted = $this->crypto->decrypt($token);
-            if(!$decrypted){
+            if (!$decrypted) {
                 $this->response([
                     'success' => false,
                     'message' => 'Unauthorize access'
-                ],401);
-            }else{
-                if(!array_key_exists('expires_at', $decrypted)){
+                ], 401);
+            } else {
+                if (!array_key_exists('expires_at', $decrypted)) {
                     // Place code here where token is not admin
-                    
+
                     /**
                      *  Check if the User is Company, Sub-user or Customer
                      */
-                    switch ($decrypted['UserAccess']){
+                    switch ($decrypted['UserAccess']) {
                         case 2:
                             /**
                              *  Retrieve company data
@@ -51,47 +55,49 @@ class BookService extends Rest{
                              */
                             $bh = $this->qb->setColumnPrefix('bh_')->select('bookingHistory', true, ['company_order' => $company[0]->companyID]);
                             $bh ? $this->responseOutput('Retrieval success', $bh, 200, true, true) : $this->responseOutput('Retrieval unsuccessful');
-                        break;
+                            break;
                         case 3:
                             $bh = $this->qb->setColumnPrefix('bh_')->select('bookingHistory', true, ['user_initiator' => $decrypted['UserID']]);
                             $bh ? $this->responseOutput('Retrieval success', $bh, 200, true, true) : $this->responseOutput('Retrieval unsuccessful');
-                        break;
+                            break;
                         case 5:
                             $bh = $this->qb->setColumnPrefix('bh_')->select('bookingHistory', true, ['user_initiator' => $decrypted['UserID']]);
                             $bh ? $this->responseOutput('Retrieval success', $bh, 200, true, true) : $this->responseOutput('Retrieval unsuccessful');
-                        break;
+                            break;
                     }
-                }else{
-                    if(time() >= $decrypted['expires_at']){
+                } else {
+                    if (time() >= $decrypted['expires_at']) {
                         $this->response([
                             'success' => false,
                             'message' => 'Token is expired'
-                        ],401);
-                    }else{
+                        ], 401);
+                    } else {
                         // place code where token is admin
                         $bh = $this->qb->setColumnPrefix('bh_')->select('bookingHistory');
                         $bh ? $this->responseOutput('Retrieval success', $bh, 200, true, true) : $this->responseOutput('Retrieval unsuccessful');
                     }
                 }
             }
-        }else{
+        } else {
             $this->response([
                 'success' => false,
                 'message' => 'Unauthorized access'
-            ],401);
+            ], 401);
         }
     }
 
-    protected function _post(){
-        if(isset($_SERVER['HTTP_PWAUTH'])){
+    //create booking services, user: customer, company, employee
+    protected function _post()
+    {
+        if (isset($_SERVER['HTTP_PWAUTH'])) {
             $token = $_SERVER['HTTP_PWAUTH'];
             $decrypted = $this->cp->decrypt($token);
-            if(!$decrypted){
+            if (!$decrypted) {
                 $this->response([
                     'success' => false,
                     'message' => 'Invalid Token'
-                ],401);
-            }else{
+                ], 401);
+            } else {
                 /**
                  *  Retrieve the data from the HTTP request body
                  */
@@ -100,23 +106,23 @@ class BookService extends Rest{
                 /**
                  *  Check if the retrieved data is empty
                  */
-                if(!empty($data['SizeCategoryID']) && !empty($data['WeightCategoryID']) && !empty($data['OriginCoordinates']) && !empty($data['DestinationCoordinates']) &&!empty($data['Distance']) && !empty($data['Notes']) && !empty($data['VehicleTypeID']) && !empty($data['Priority'])){
+                if (!empty($data['SizeCategoryID']) && !empty($data['WeightCategoryID']) && !empty($data['OriginCoordinates']) && !empty($data['DestinationCoordinates']) && !empty($data['Distance']) && !empty($data['Notes']) && !empty($data['VehicleTypeID']) && !empty($data['Priority'])) {
                     /**
                      *  Load all the data from the database using QueryBuilder based on the inputed data taken from the HTTP request body
                      */
                     $appFees = $this->qb->select('appFees');
-                    $vehicleTypes = $this->qb->select('deliveryVehicleType', true, ['vehicleTypeID'=>$data['VehicleTypeID']]);
+                    $vehicleTypes = $this->qb->select('deliveryVehicleType', true, ['vehicleTypeID' => $data['VehicleTypeID']]);
                     $sizeCategory = $this->qb->select('sizeCategory', true, ['SizeCategoryID' => $data['SizeCategoryID']]);
                     $weightCategory = $this->qb->select('weightCategory', true, ['WeightCategoryID' => $data['WeightCategoryID']]);
 
                     /**
                      *  Check if the Distance is greater than the selected vehicle 
                      */
-                    if($data['Distance'] >= $vehicleTypes[0]->vehicle_baseDistance){
+                    if ($data['Distance'] >= $vehicleTypes[0]->vehicle_baseDistance) {
                         $excess = $data['Distance'] - $vehicleTypes[0]->vehicle_baseDistance;
                         $calculated = round($excess * $vehicleTypes[0]->vehicle_distanceFee, 2);
                         $totalDistanceFee = number_format($calculated + $vehicleTypes[0]->vehicle_baseFee, 2, '.', '');
-                    }else{
+                    } else {
                         $totalDistanceFee = $vehicleTypes[0]->vehicle_baseFee;
                         $excess = 0;
                     }
@@ -126,14 +132,14 @@ class BookService extends Rest{
                      *  Since the coordinates are bundled together, we need a way to separate them, the format for the bundled coordinates are long:lat, in order to extract
                      *  both Longitude and Latitude, we use the function explode() and then our separator would be a colon symbol (':')
                      */
-                    $originCoordinates = explode(':',$data['OriginCoordinates']);
-                    $destinationCoordinates = explode(':',$data['DestinationCoordinates']);
+                    $originCoordinates = explode(':', $data['OriginCoordinates']);
+                    $destinationCoordinates = explode(':', $data['DestinationCoordinates']);
 
                     /**
                      *  Calculate the raw total by adding all the applicable fees
                      */
                     $calculatedTotal = $totalDistanceFee + $appFees[0]->af_appFees + $appFees[0]->af_vat + $sizeCategory[0]->sc_setFee + $weightCategory[0]->wc_setFee;
-                    
+
                     /**
                      *  Since the calculated data would be too long as it is not rounded to the nearest 100ths by default, it is rounded through the php function
                      *  round(calculation, 2), another problem is that when it is outputed as JSON format, the round function won't take effect, therefor we change the format
@@ -160,13 +166,13 @@ class BookService extends Rest{
                         'bh_vat' => $appFees[0]->af_vat,
                         'bh_total' => $total
                     ];
-                    
+
                     /**
                      *  Check if the User is Company or Employee
                      *  2 => Company
                      *  5 => Employee
                      */
-                    switch ($decrypted['UserAccess']){
+                    switch ($decrypted['UserAccess']) {
                         case 2:
                             /**
                              *  Retrieve company data
@@ -176,7 +182,7 @@ class BookService extends Rest{
                              *  From the company data, retrieve company ID
                              */
                             $toArray['bh_company_order'] = $company[0]->companyID;
-                        break;
+                            break;
                         case 5:
                             /**
                              *  Retrieve the employee data
@@ -186,13 +192,13 @@ class BookService extends Rest{
                              *  From the employee data, retrieve the company the employee is under and add to the variable to be inserted into the database
                              */
                             $toArray['bh_company_order'] = $employee[0]->subs_underCompany;
-                        break;
+                            break;
                     }
 
                     /**
                      *  Check if the variable to insert is set and is not empty
                      */
-                    if(isset($toArray) && !empty($toArray)){
+                    if (isset($toArray) && !empty($toArray)) {
                         /**
                          *  Insert to database through Query Builder
                          */
@@ -200,11 +206,11 @@ class BookService extends Rest{
                         /**
                          *  Check if insert query is successful 
                          */
-                        if($res){
+                        if ($res) {
                             /**
                              *  Set Reference for Firebase to access
                              */
-                            $prio = $this->fb->setReference('SpeedyDelivery/PriorityList/'.$data['Priority']);
+                            $prio = $this->fb->setReference('SpeedyDelivery/PriorityList/' . $data['Priority']);
                             /**
                              *  Get the value
                              */
@@ -213,18 +219,18 @@ class BookService extends Rest{
                              *  Set data to be inserted into Firebase
                              */
                             $toFirebase = [
-                                $res=>[
-                                    'Points'=>$prio,
-                                    'User'=>$decrypted['UserID'],
-                                    'OriginCoordinates'=>[
-                                        'long'=>$originCoordinates[0],
-                                        'lat'=>$originCoordinates[1]
+                                $res => [
+                                    'Points' => $prio,
+                                    'User' => $decrypted['UserID'],
+                                    'OriginCoordinates' => [
+                                        'long' => $originCoordinates[0],
+                                        'lat' => $originCoordinates[1]
                                     ],
-                                    'DestinationCoordinates'=>[
-                                        'long'=>$destinationCoordinates[0],
-                                        'lat'=>$destinationCoordinates[1]
+                                    'DestinationCoordinates' => [
+                                        'long' => $destinationCoordinates[0],
+                                        'lat' => $destinationCoordinates[1]
                                     ],
-                                    'Status'=>'In-Pool'
+                                    'Status' => 'In-Pool'
                                 ]
                             ];
                             /**
@@ -237,38 +243,40 @@ class BookService extends Rest{
                             return $submit ? $this->responseOutput('Succesfully inserted data', [], 200, true) : $this->responseOutput('Data insertion unsuccessful');
                         }
                     }
-                }else{
+                } else {
                     /**
                      *  Return an error once any of the fields are empty
                      */
                     $this->responseOutput('Empty Fields');
                 }
             }
-        }else{
+        } else {
             $this->response([
                 'success' => false,
                 'message' => 'Unauthorized access'
-            ],401);
+            ], 401);
         }
     }
 
-    protected function _put(){
-        if(isset($_SERVER['HTTP_PWAUTH'])){
+    // update the status of delivery, user: driver
+    protected function _put()
+    {
+        if (isset($_SERVER['HTTP_PWAUTH'])) {
             $token = $_SERVER['HTTP_PWAUTH'];
             $decrypted = $this->cp->decrypt($token);
-            if(!$decrypted){
+            if (!$decrypted) {
                 $this->response([
                     'success' => false,
                     'message' => 'Invalid Token'
-                ],401);
-            }else{
+                ], 401);
+            } else {
                 /**
                  *  Check user access if it is not 4
                  */
-                if($decrypted['UserAccess'] != 4){ 
+                if ($decrypted['UserAccess'] != 4) {
                     $this->responseOutput('Unauthorized access');
-                }else{
-                    try{
+                } else {
+                    try {
                         /**
                          *  Retrieve the HTTP request body as JSON format
                          */
@@ -276,31 +284,34 @@ class BookService extends Rest{
                         /**
                          *  Check if driver is active in a task
                          */
-                        $taskChecker = $this->qb->setColumnPrefix('bh_')->select('bookingHistory', true, ['driver'=>$decrypted['UserID']]);
-                        if(!empty($taskChecker[0])){
-                            if($taskChecker[0]->bh_booking_status = 'On-Going')throw new Exception('Action not allowed');
+                        $taskChecker = $this->qb->setColumnPrefix('bh_')->select('bookingHistory', true, ['driver' => $decrypted['UserID']]);
+                        if (!empty($taskChecker[0])) {
+                            if ($taskChecker[0]->bh_booking_status = 'On-Going')
+                                throw new Exception('Action not allowed');
                         }
                         /**
                          *  Query to database if data provided is correct
                          */
-                        $bhData = $this->qb->select('bookingHistory', true, ['bookingID'=>$data['BookingID']]);
+                        $bhData = $this->qb->select('bookingHistory', true, ['bookingID' => $data['BookingID']]);
                         /**
                          *  Check if query is successful
                          */
-                        if(!$bhData)throw new Exception('Database Error');
+                        if (!$bhData)
+                            throw new Exception('Database Error');
                         /**
                          *  Update database table
                          *  format: update($tbl, $data, $condition=false, parameters=[])
                          */
-                        $query = $this->qb->update('bookingHistory', ['bh_driver'=>$decrypted['UserID'], 'bh_booking_status'=>'On-going'], true, ['bookingID'=>$bhData[0]->bookingID]);
+                        $query = $this->qb->update('bookingHistory', ['bh_driver' => $decrypted['UserID'], 'bh_booking_status' => 'On-going'], true, ['bookingID' => $bhData[0]->bookingID]);
                         /**
                          *  Check if query is successful
                          */
-                        if(!$query)throw new Exception('Database query error');
+                        if (!$query)
+                            throw new Exception('Database query error');
                         /**
                          *  Retrieve the firebase realtime database data
                          */
-                        $fbData = $this->fb->setReference('SpeedyDelivery/Task/'.$bhData[0]->bookingID)->getSnapshot()->getValue();
+                        $fbData = $this->fb->setReference('SpeedyDelivery/Task/' . $bhData[0]->bookingID)->getSnapshot()->getValue();
                         /**
                          *  Set the variables for ease of access to the retrieved data from firebase realtime database
                          */
@@ -311,13 +322,13 @@ class BookService extends Rest{
                          *  Set data to be inserted into Firebase
                          */
                         $toFirebase = [
-                            $bhData[0]->bookingID=>[
-                                'DestinationCoordinates'=>$destination,
-                                'OriginCoordinates'=>$origin,
-                                'User'=>$user,
-                                'Driver'=>$decrypted['UserID'],
-                                'TransactionStatus'=>$bhData[0]->bh_transaction_status,
-                                'Status'=>'On-going'
+                            $bhData[0]->bookingID => [
+                                'DestinationCoordinates' => $destination,
+                                'OriginCoordinates' => $origin,
+                                'User' => $user,
+                                'Driver' => $decrypted['UserID'],
+                                'TransactionStatus' => $bhData[0]->bh_transaction_status,
+                                'Status' => 'On-going'
                             ]
                         ];
                         /**
@@ -325,19 +336,20 @@ class BookService extends Rest{
                          */
                         $submit = $this->fb->setReference('SpeedyDelivery/Task')->update($toFirebase);
                         $submit ? $this->responseOutput('Task successfuly taken', [], 200, true) : $this->responseOutput('Task unsuccessfuly taken');
-                    } catch (Exception $e){
+                    } catch (Exception $e) {
                         $this->responseOutput($e->getMessage());
                     }
                 }
             }
-        }else{
+        } else {
             $this->response([
                 'success' => false,
                 'message' => 'Unauthorized access'
-            ],401);
+            ], 401);
         }
     }
-    protected function complete_put(){
+    protected function complete_put()
+    {
 
     }
 }
