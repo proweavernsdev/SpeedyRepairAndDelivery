@@ -3,17 +3,17 @@
 ## Credentials:
 
 ### Rider:
-- **Email:** 21103870@usc.edu.ph
-- **Password:** 123456
+- **Email:** pdqapw25@gmail.com
+- **Password:** y93>(e,0LW@nwI1
 
 ### Customer:
-- **Email:** john_rey.calesa@student.passerellesnumeriques.org
-- **Password:** 123456
+- **Email:** prodevns@gmail.com
+- **Password:** proweaveradmin
 
 ### Company:
 - **Email:** john_rey.calesa@outlook.com
 - **Password:** 123456
 
 ### Admin:
-- **Email:** pw.ltome@outlook.com
-- **Password:** lyrontome123
+- **Email:** speedyrepair.speedy@gmail.com
+- **Password:** proweaveradmin
