@@ -149,6 +149,7 @@ function load() {
   try {
     const currentAdminData = retrieveData();
     currentAdminData.then((adminData) => {
+      console.log('Data:', adminData);
       pfp.value = adminData.result;
       adminInformation.value = adminData.result;
       console.log('Users from company:', adminInformation.value);

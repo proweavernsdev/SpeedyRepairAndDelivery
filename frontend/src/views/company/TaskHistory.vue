@@ -1,67 +1,59 @@
 <template>
     <div class="flex flex-col w-full gap-10 pt-5 md:flex-col md:justify-start">
-        <dialog id="searchDialog" class="w-2/3 p-5 rounded-xl">
+        <dialog id="searchDialog" class="w-2/3 p-5 md:w-full rounded-xl">
             <form id="searchTask" class="flex flex-col gap-3" @submit.prevent>
                 <div class="flex items-center justify-between">
-                    <h2 class="text-3xl font-medium text-red-800">Search</h2>
-                    <button type="button" class="text-3xl size-12"
+                    <h2 class="text-3xl font-medium text-red-800 md:text-lg">Search</h2>
+                    <button type="button" class="text-3xl size-12 md:text-lg"
                         @click="openDialog('searchDialog', 'close')">✖</button>
                 </div>
                 <hr class="w-full border">
-                <div class="flex [&>*]:p-2 [&>*]:border-2">
+                <div class="flex [&>*]:p-2 [&>*]:border-2 md:flex-col">
                     <input type="text" name="search" id="searchInput" placeholder="Search tasks"
-                        class="w-11/12 focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border">
+                        class="md:text-base w-11/12 md:w-full focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border">
                     <button type="submit"
-                        class="w-1/12 text-white bg-red-800 hover:bg-white hover:text-red-800 hover:border hover:border-red-800">Search</button>
+                        class="w-1/12 text-white bg-red-800 md:w-full hover:bg-white hover:text-red-800 hover:border hover:border-red-800 md:text-base">Search</button>
                 </div>
             </form>
         </dialog>
-        <dialog id="sortDialog" class="w-2/3 p-5 rounded-xl">
+        <dialog id="sortDialog" class="w-2/3 p-5 md:w-full rounded-xl">
             <div class="flex justify-between w-full p-3 md:p-1">
-                <h2 class="flex items-center text-3xl font-medium text-red-800">
+                <h2 class="flex items-center text-3xl font-medium text-red-800 md:text-base">
                     Filter
                 </h2>
-                <p class="h-auto px-4 py-2 text-3xl cursor-pointer hover:scale-105"
+                <p class="h-auto px-4 py-2 text-3xl cursor-pointer md:text-lg hover:scale-105"
                     @click="openDialog('sortDialog', 'close')">✖</p>
             </div>
             <hr class="w-full border">
             <div class="flex flex-col h-[85%]">
                 <form method="dialog" class="flex flex-col">
                     <div class="flex justify-around items-center w-full p-3 [&>*]:w-[48%]">
-                        <label for="status" class="text-lg text-center">Status:</label>
-                        <select id="status" name="status" class="w-full p-2 rounded-sm">
-                            <option value="ongoing">Ongoing</option>
-                            <option value="completed">Completed</option>
-                            <option value="canceled">Canceled</option>
-                        </select>
-                    </div>
-                    <div class="flex justify-around items-center w-full p-3 [&>*]:w-[48%]">
-                        <label for="date-range" class="text-lg text-center">Date Range:</label>
+                        <label for="date-range" class="text-lg text-center md:text-sm">Date Range:</label>
                         <div class="flex justify-around items-center w-full [&>*]:w-[49%]">
                             <input type="date" id="start-date" name="start-date"
-                                class="p-2 border focus:outline-none focus:border-slate-400">
+                                class="p-2 border focus:outline-none focus:border-slate-400 md:text-sm">
                             <input type="date" id="end-date" name="end-date"
-                                class="p-2 border focus:outline-none focus:border-slate-400">
+                                class="p-2 border focus:outline-none focus:border-slate-400 md:text-sm">
                         </div>
                     </div>
                     <div class="flex justify-around items-center w-full p-3 [&>*]:w-[48%]">
-                        <label for="priority" class="text-lg text-center">Priority:</label>
-                        <select id="priority" name="priority" class="w-full p-2 rounded-sm">
+                        <label for="priority" class="text-lg text-center md:text-sm">Priority:</label>
+                        <select id="priority" name="priority" class="w-full p-2 rounded-sm md:text-sm">
                             <option value="high">High</option>
                             <option value="medium">Medium</option>
                             <option value="low">Low</option>
                         </select>
                     </div>
                     <div class="flex justify-around items-center w-full p-3 [&>*]:w-[48%]">
-                        <label for="customer" class="text-lg text-center">Customer/Company:</label>
+                        <label for="customer" class="text-lg text-center md:text-sm">Driver/Company:</label>
                         <input type="text" id="customer" name="customer"
-                            class="w-full p-2 border rounded-sm focus:outline-none focus:border-slate-400 ">
+                            class="w-full p-2 border rounded-sm focus:outline-none focus:border-slate-400 md:text-sm">
                     </div>
                     <div class="flex justify-around w-full [&>*]:w-[48%] p-3">
                         <button type="submit"
-                            class="p-2 text-white bg-red-800 rounded-lg hover:opacity-80">Apply</button>
+                            class="p-2 text-white bg-red-800 rounded-lg hover:opacity-80 md:text-sm">Apply</button>
                         <button type="button" id="closeDialog"
-                            class="p-2 text-red-800 border-2 border-red-800 rounded-lg hover:opacity-80"
+                            class="p-2 text-red-800 border-2 border-red-800 rounded-lg hover:opacity-80 md:text-sm"
                             @click="openDialog('sortDialog', 'close')">Cancel</button>
                     </div>
                 </form>
@@ -73,43 +65,165 @@
                 <button class="text-3xl size-12" @click="openDialog('taskDetails', 'close')">✖</button>
             </div>
             <hr class="w-full border">
-            <div
-                class="flex flex-wrap gap-3 p-3 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9] [&>*:nth-child(4)]:p-0 [&>*:nth-child(4)]:border-0">
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
-                    <p class="sm:text-sm">Package Size: Small</p>
-                    <p class="sm:text-sm">Package Weight: 1kg</p>
-                    <p class="sm:text-sm">Special Handling Instructions: None</p>
+            <div v-if="itemName === 'ongoingItem'"
+                class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 ">
+                <div class="w-full p-2 border-2 border-[#D9D9D9] rounded-sm">
+                    <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
+                    <p class="sm:text-sm">12345</p>
                 </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Delivery Vehicle Type</h2>
-                    <p class="sm:text-sm">Vehicle Type: Bike</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Customer Details</h2>
-                    <p class="sm:text-sm">Customer Name: John Doe</p>
-                    <p class="sm:text-sm">Customer Phone: 123-456-7890</p>
-                </div>
-                <div class="flex flex-row justify-between gap-1 [&>*]:p-2">
-                    <div class="w-1/2 border">
+                <div class="flex flex-wrap gap-3 w-full [&>*]:w-[49%]">
+                    <div class="w-full p-2 border-2 border-[#D9D9D9] rounded-sm">
                         <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
                         <p class="sm:text-sm">123 Main St, Anytown, USA</p>
                     </div>
-                    <div class="w-1/2 border">
-                        <h2 class="text-lg font-medium sm:text-lg">Drop-off Location</h2>
+                    <div class="w-full p-2 border-2 border-[#D9D9D9] rounded-sm">
+                        <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
                         <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
                     </div>
+                    <div class="w-full p-2 border-2 border-[#D9D9D9] rounded-sm">
+                        <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
+                        <p class="sm:text-sm">Size: Small</p>
+                        <p class="sm:text-sm">Weight: 1kg</p>
+                        <p class="sm:text-sm">Special Instructions: None</p>
+                    </div>
+                    <div class="w-full p-2 border-2 border-[#D9D9D9] rounded-sm">
+                        <h2 class="text-lg font-medium sm:text-lg">Status</h2>
+                        <p class="sm:text-sm">Ongoing</p>
+                    </div>
+                </div>
+                <div class="flex w-full border [&>*]:p-2">
+                    <div class="w-1/2">
+                        <h2 class="text-lg font-medium sm:text-lg">Navigation Link</h2>
+                    </div>
+                    <div class="flex justify-around w-1/2 text-red-700">
+                        <a href="#" class="underline underline-offset-4">Navigate to Pickup</a>
+                        <a href="#" class="underline underline-offset-4">Navigate to Dropoff</a>
+                    </div>
+                </div>
+                <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                    <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
+                        @click="openDialog('reportBooking', 'open')">Report</button>
+                </div>
+            </div>
+            <div v-if="itemName === 'completedItem'"
+                class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
+                    <p class="sm:text-sm">12345</p>
                 </div>
                 <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Delivery Status</h2>
+                    <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
+                    <p class="sm:text-sm">123 Main St, Anytown, USA</p>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
+                    <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
+                    <p class="sm:text-sm">Size: Small</p>
+                    <p class="sm:text-sm">Weight: 1kg</p>
+                    <p class="sm:text-sm">Special Instructions: None</p>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Status</h2>
                     <p class="sm:text-sm">Completed</p>
                 </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Time and Date</h2>
-                    <p class="sm:text-sm">Request Time: 10:00 AM</p>
-                    <p class="sm:text-sm">Request Date: 01/01/2023</p>
-                    <p class="sm:text-sm">Completion Time: 11:00 AM</p>
+
+                <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                    <button class="w-full p-2 text-xl text-red-700 border border-red-700 rounded-md hover:opacity-80"
+                        @click="openDialog('leaveFeedback', 'open')">Leave
+                        Feedback</button>
+                    <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
+                        @click="openDialog('reportBooking', 'open')">Report</button>
                 </div>
+            </div>
+            <div v-if="itemName === 'cancelledItem'"
+                class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full  [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
+                    <p class="sm:text-sm">12345</p>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
+                    <p class="sm:text-sm">123 Main St, Anytown, USA</p>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
+                    <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
+                    <p class="sm:text-sm">Size: Small</p>
+                    <p class="sm:text-sm">Weight: 1kg</p>
+                    <p class="sm:text-sm">Special Instructions: None</p>
+                </div>
+                <div>
+                    <h2 class="text-lg font-medium sm:text-lg">Status</h2>
+                    <p class="sm:text-sm">Canceled</p>
+                </div>
+
+            </div>
+        </dialog>
+        <dialog id="leaveFeedback" class="w-2/3 p-5 rounded-xl ">
+            <div class="flex items-center justify-between w-full p-3 md:p-1">
+                <h2 class="flex items-center text-3xl font-medium text-red-800">Leave Feedback</h2>
+                <button class="text-3xl size-12" @click="openDialog('leaveFeedback', 'close')">✖</button>
+            </div>
+            <hr class="w-full border">
+            <div class="flex flex-col gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                <h2 class="text-lg font-medium sm:text-lg">Feedback</h2>
+                <textarea
+                    class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border"
+                    name="feedback" id="feedback" cols="30" rows="10"></textarea>
+            </div>
+            <div class="flex gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-[#D9D9D9]">
+                <h2 class="text-lg font-medium text-center sm:text-lg">Rating</h2>
+                <select name="rating" id="rating"
+                    class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                <button class="w-full p-2 text-red-700 border border-red-700 rounded-md hover:opacity-80">Submit
+                    Feedback</button>
+            </div>
+        </dialog>
+        <dialog id="reportBooking" class="w-2/3 p-5 rounded-xl ">
+            <div class="flex items-center justify-between w-full p-3 md:p-1">
+                <h2 class="flex items-center text-3xl font-medium text-red-800">Report Booking</h2>
+                <button class="text-3xl size-12" @click="openDialog('reportBooking', 'close')">✖</button>
+            </div>
+            <hr class="w-full border">
+            <div class="flex flex-col gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                <select name="report" id="report_type" class="text-lg font-medium rounded-md sm:text-lg bg-slate-50"
+                    @change="reportBooking">
+                    <option disabled selected>Issue Type</option>
+                    <option value="logisticalIssues">Logistical Issues</option>
+                    <option value="packageHandlingIssues">Package Handling Issues</option>
+                    <option value="deliveryPersonnelIssues">Delivery Personnel Issues</option>
+                    <option value="technicalIssues">Technical Issues</option>
+                    <option value="customerServiceIssues">Customer Service Issues</option>
+                    <option value="complianceIssues">Compliance Issues</option>
+                    <option value="costAndBillingIssues">Cost and Billing Issues</option>
+                    <option value="performanceIssues">Performance Issues</option>
+                    <option value="feedbackAndImprovement">Feedback and Improvement</option>
+                    <option value="other">Other</option>
+                </select>
+                <textarea
+                    class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border"
+                    name="report" id="report" cols="30" rows="10" placeholder="Describe the issue"></textarea>
+                <input type="file" accept="image/png, image/gif, image/jpeg" id="report_file" name="report_file"
+                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-[#630617] dark:border-none dark:placeholder-gray-400"
+                    multiple>
+            </div>
+            <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                <button class="w-full p-2 text-red-700 border border-red-700 rounded-md hover:opacity-80">Submit
+                    Report</button>
             </div>
         </dialog>
         <div class="flex flex-col gap-10 py-3 sm:py-1">
@@ -129,7 +243,7 @@
                 </span>
             </div>
             <div>
-                <div class="flex justify-between [&>*]:w-full [&>*]:border [&>*]:p-4">
+                <div class="flex justify-between [&>*]:w-full [&>*]:border [&>*]:p-4 md:overflow-x-auto">
                     <button @click="viewTableContents('all')"
                         :class="taskTable === 'all' ? 'text-red-500 border-8 border-red-500' : 'text-black'">All</button>
                     <button @click="viewTableContents('ongoing')"
@@ -143,45 +257,56 @@
                     <div id="Content-Body-Main" class="rounded-lg hover:shadow-md">
                         <SRTable>
                             <template #Table-Header>
-                                <th>Status</th>
+                                <th>Item Name</th>
                                 <th>Pickup Location</th>
                                 <th>Dropoff Location</th>
                                 <th>Package Details</th>
-                                <th>Assigned Rider</th>
+                                <th>Status</th>
+                                <th>Estimated Delivery Time</th>
                                 <th>Actions</th>
                             </template>
                             <template #Table-Body>
                                 <tr id="ongoing" class="[&>*]:p-4"
                                     v-if="taskTable === 'ongoing' || taskTable === 'all'">
-                                    <td>Ongoing</td>
+                                    <td>Item Name</td>
                                     <td>Location A</td>
                                     <td>Location B</td>
                                     <td>Small package</td>
-                                    <td>Rider 1</td>
+                                    <td>Ongoing</td>
+                                    <td>5 days</td>
                                     <td>
-                                        <button
-                                            class="text-sm p-1 rounded-sm bg-white text-[#AA0927]  underline underline-offset-2"
-                                            @click="openDialog('taskDetails', 'open')">See
+                                        <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
+                                            @click="openBooking('taskDetails', 'ongoingItem', 'open')">See
                                             More</button>
                                     </td>
                                 </tr>
                                 <tr id="completed" class="[&>*]:p-4"
                                     v-if="taskTable === 'completed' || taskTable === 'all'">
-                                    <td>Completed</td>
+                                    <td>Item Name</td>
                                     <td>Location C</td>
                                     <td>Location D</td>
                                     <td>Medium package</td>
-                                    <td>Rider 2</td>
-                                    <td>—</td>
+                                    <td>Completed</td>
+                                    <td>5 days</td>
+                                    <td>
+                                        <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
+                                            @click="openBooking('taskDetails', 'completedItem', 'open')">See
+                                            More</button>
+                                    </td>
                                 </tr>
                                 <tr id="canceled" class="[&>*]:p-4"
                                     v-if="taskTable === 'cancelled' || taskTable === 'all'">
-                                    <td>Canceled</td>
+                                    <td>Item Name</td>
                                     <td>Location E</td>
                                     <td>Location F</td>
                                     <td>Large package</td>
-                                    <td>Rider 3</td>
-                                    <td>—</td>
+                                    <td>Cancelled</td>
+                                    <td>5 days</td>
+                                    <td>
+                                        <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
+                                            @click="openBooking('taskDetails', 'cancelledItem', 'open')">See
+                                            More</button>
+                                    </td>
                                 </tr>
                             </template>
                         </SRTable>
@@ -227,12 +352,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
+import { getBookingHistory } from "@/services/ApiServices.js";
 
 const taskTable = ref('all');
+const itemName = ref('');
+const reportType = ref('');
 
 function openDialog(dialogName, action) {
     const dialog = document.getElementById(dialogName);
@@ -243,9 +371,39 @@ function openDialog(dialogName, action) {
     }
 }
 
+function openBooking(dialogName, table, state) {
+    itemName.value = table;
+    const dialog = document.getElementById(dialogName);
+    if (dialog && state === "open") {
+        dialog.showModal();
+    } else {
+        dialog.close();
+    }
+}
+
 function viewTableContents(table) {
     taskTable.value = table;
 }
+
+function load() {
+    try {
+        const getBookings = getBookingHistory();
+        getBookings.then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error);
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+function reportBooking(event) {
+    reportType.value = event.target.value;
+    console.log(reportType.value);
+}
+
+onMounted(load);
 
 </script>
 

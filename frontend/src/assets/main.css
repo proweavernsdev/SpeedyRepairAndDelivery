@@ -61,4 +61,13 @@
   input[type=number] {
     -moz-appearance: textfield;
   }
+
+  input[type=file]::file-selector-button {
+    font-family: 'Inter';
+    border: 1px solid #1C0207;
+    padding: .4em .8em;
+    background-color: #AA0927;
+    transition: 1s;
+    color: white;
+  }
 }

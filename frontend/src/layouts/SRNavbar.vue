@@ -122,7 +122,7 @@
               <span class="flex justify-center mr-2">
                 <i v-html="icons.Report" class="text-slate-500 hover:text-[#AA0927]"></i>
               </span>
-              <span>Requests</span>
+              <span>Reports</span>
             </li>
           </RouterLink>
         </ul>
@@ -263,7 +263,7 @@
         </p>
         <ul
           class="flex flex-col w-full gap-1 text-base font-bold text-white lg:flex-wrap lg:justify-center lg md:block md:overflow-hidden">
-          <RouterLink class-active="active" :to="`/company/dashboard/${userId}`">
+          <RouterLink class-active="active" :to="`/company/dashboard`">
             <li
               class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
               <span class="flex items-center mr-2">
@@ -272,7 +272,7 @@
               <span>Dashboard</span>
             </li>
           </RouterLink>
-          <RouterLink class-active="active" :to="`/company/account/${userId}`">
+          <RouterLink class-active="active" :to="`/company/account`">
             <li
               class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
               <span class="flex items-center mr-2">
@@ -281,7 +281,7 @@
               <span>Account Management</span>
             </li>
           </RouterLink>
-          <RouterLink class-active="active" :to="`/company/manage/employees/${userId}`">
+          <RouterLink class-active="active" :to="`/company/manage/employees`">
             <li
               class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
               <span class="flex items-center mr-2">
@@ -290,7 +290,7 @@
               <span>Employees Management</span>
             </li>
           </RouterLink>
-          <RouterLink class-active="active" :to="`/company/delivery/${userId}`">
+          <RouterLink class-active="active" :to="`/company/bookings`">
             <li
               class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
               <span class="flex items-center mr-2">
@@ -299,7 +299,7 @@
               <span>Book Delivery Service</span>
             </li>
           </RouterLink>
-          <RouterLink class-active="active" :to="`/company/reports/request/${userId}`">
+          <RouterLink class-active="active" :to="`/company/reports/request`">
             <li
               class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
               <span class="flex items-center mr-2">

@@ -38,7 +38,7 @@
             </div>
         </template>
         <template #Content-Body>
-            <div class="flex flex-row justify-center h-full md:flex-col">
+            <div class="flex flex-row justify-center h-full md:h-auto md:flex-col">
                 <div class="w-1/3 m-2 rounded-md md:w-full">
                     <div id="viewAccount" class="flex flex-col w-full p-2 rounded-md shadow-sm" v-if="!isEditModeOn">
                         <div class="flex flex-col items-center my-2 text-center">
@@ -54,7 +54,7 @@
                                     <span class="w-1/3 p-2 text-sm border">ID</span>
                                     <span class="flex items-center justify-center w-2/3 text-sm font-bold border">{{
                                         companyInformation.comp_zip
-                                    }}</span>
+                                        }}</span>
                                 </p>
                             </div>
                             <div class="flex flex-row text-center">
@@ -76,7 +76,7 @@
                                     <span class="w-1/3 p-2 text-sm border">ZIP</span>
                                     <span class="flex items-center justify-center w-2/3 text-sm font-bold border ">{{
                                         companyInformation.comp_zip
-                                    }}</span>
+                                        }}</span>
                                 </p>
                             </div>
                         </div>

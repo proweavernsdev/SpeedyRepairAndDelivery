@@ -35,6 +35,9 @@ const handleFileChange = (event) => {
     } else {
         console.error("Event object is undefined or missing necessary properties.");
     }
+
+    console.log("Photos: ", photos.value);
+    // Set profile picture
     setProfilePictures(photos.value);
 
 };
@@ -43,7 +46,7 @@ const handleFileChange = (event) => {
 function setProfilePictures(photos) {
     uploadProfilePicture(photos).then(() => {
         console.log("Image changed");
-        location.reload();
+        window.location.reload();
     });
 }
 </script>
