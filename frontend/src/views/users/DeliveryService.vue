@@ -520,11 +520,27 @@ const initializeMap = (mapRef, markerRef, containerId, updateMarkerFn) => {
 }
 
 onMounted(() => {
-  navigator.geolocation.getCurrentPosition(position => {
-    selectedLocation.value = { lng: position.coords.longitude, lat: position.coords.latitude };
-    initializeMap(map, marker, 'map', updateMarkerAndStoreCoordinates);
-    initializeMap(map2, marker2, 'map2', updateMarkerAndStoreCoordinates2);
-  });
+  if (navigator.geolocation) {
+    const getLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          selectedLocation.value = { lng: position.coords.longitude, lat: position.coords.latitude };
+          initializeMap(map, marker, 'map', updateMarkerAndStoreCoordinates);
+          initializeMap(map2, marker2, 'map2', updateMarkerAndStoreCoordinates2);
+        },
+        error => {
+          if (error.code === error.PERMISSION_DENIED) {
+            console.error("Location access was denied.");
+            // Optionally, prompt the user to enable location access again.
+          }
+        }
+      );
+    };
+
+    getLocation();
+  } else {
+    console.error("Geolocation is not supported by this browser.");
+  }
 });
 
 const fetchGeocodingData = (lng, lat, locationRef) => {
