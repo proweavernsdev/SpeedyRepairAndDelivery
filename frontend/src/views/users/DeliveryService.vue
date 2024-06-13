@@ -12,7 +12,7 @@
           <h2 v-show="UpdateSize == true" class="md:text-xl">Size Category</h2>
           <h2 v-show="UpdateWeight == true" class="md:text-xl">Weight Category</h2>
           <span v-show="ChangeDeliveryAddress == true || ChangePickupAddress == true || ConfirmBooking == false">
-            <button @click="closeModal()" class="w-6">
+            <button @click="closeModal(modalName)" class="w-6">
               <svg class="hover:scale-105" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <line x1="10" y1="10" x2="90" y2="90" stroke="currentColor" stroke-width="5" />
                 <line x1="90" y1="10" x2="10" y2="90" stroke="currentColor" stroke-width="5" />
@@ -128,55 +128,42 @@
               </div>
             </div>
           </div>
-          <form v-show="UpdateSize == true" id="updateSize" @submit.prevent="updateSizeForm"
-            class="flex flex-col max-w-lg gap-6 mx-auto text-center">
-            <div class="flex flex-col gap-4 p-6 bg-white rounded-lg shadow-md">
-              <div class="flex flex-col gap-2 text-left">
-                <label for="sizeDropdown" class="text-lg font-medium">Select Unit:</label>
-                <select name="sizeDropdown" id="sizeDropdown" v-model="sizeDropdown"
-                  class="p-3 text-lg bg-white border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option disabled value="">Please select one</option>
-                  <option>Feet</option>
-                  <option>Inches</option>
-                  <option>Meters</option>
-                  <option>Centimeters</option>
-                </select>
-              </div>
-              <div class="flex items-center gap-4">
-                <label for="length" class="w-1/4 text-lg font-medium text-left">Length:</label>
-                <input type="number" pattern="[0-9]*" min="1" max="999" name="length" id="length" v-model="length"
-                  class="w-3/4 p-3 text-lg bg-white border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-              </div>
-              <div class="flex items-center gap-4">
-                <label for="width" class="w-1/4 text-lg font-medium text-left">Width:</label>
-                <input type="number" pattern="[0-9]*" min="1" max="999" name="width" id="width" v-model="width"
-                  class="w-3/4 p-3 text-lg bg-white border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-              </div>
-              <div class="flex items-center gap-4">
-                <label for="height" class="w-1/4 text-lg font-medium text-left">Height:</label>
-                <input type="number" pattern="[0-9]*" min="1" max="999" name="height" id="height" v-model="height"
-                  class="w-3/4 p-3 text-lg bg-white border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-              </div>
+          <form v-show="UpdateSize == true" id="updateSize" @submit.prevent="updateSizeForm" class="flex gap-2 ">
+            <div class="flex flex-col w-1/2 gap-2 text-left">
+              <input type="number" pattern="[0-9]*" min="1" max="999" placeholder="Length:" name="length" id="length"
+                v-model="length"
+                class="w-full p-2 border text-center rounded focus:border-red-400 focus:outline-none bg-[#fcfcfc] text-lg font-medium md:text-base ">
+              <input type="number" pattern="[0-9]*" min="1" max="999" placeholder="Width:" name="width" id="width"
+                v-model="width"
+                class="w-full p-2 border text-center rounded focus:border-red-400 focus:outline-none bg-[#fcfcfc] text-lg font-medium md:text-base ">
+              <input type="number" pattern="[0-9]*" min="1" max="999" placeholder="Height:" name="height" id="height"
+                v-model="height"
+                class="w-full p-2 border text-center rounded focus:border-red-400 focus:outline-none bg-[#fcfcfc] text-lg font-medium md:text-base ">
+            </div>
+            <div class="flex flex-col justify-center w-1/2 gap-2 text-left">
+              <select name="sizeDropdown" id="sizeDropdown" v-model="sizeDropdown"
+                class="p-2 rounded bg-[#fbf8f8] border text-xl font-medium md:w-1/2 md:text-base">
+                <option disabled value="">Select Unit:</option>
+                <option>Feet</option>
+                <option>Inches</option>
+                <option>Meters</option>
+                <option>Centimeters</option>
+              </select>
             </div>
           </form>
           <form v-show="UpdateWeight == true" id="updateWeight" @submit.prevent="updateWeightForm">
-            <div class="flex flex-col w-full gap-5 p-3 md:p-px lg:flex-col lg:[&>*]:w-full">
-              <div class="flex items-center justify-between w-full gap-3">
-                <p class="w-1/3 text-xl font-medium text-center md:text-base">Weight:</p>
-                <span class="flex w-full gap-2">
-                  <input type="number" min="1" max="999" name="weight" id="weight" v-model="weight"
-                    class="w-full p-2 border-b-2 rounded focus:border-red-400 focus:outline-none bg-[#fcfcfc] text-xl font-medium md:text-base ">
-                  <select name="weightdropdown" id="weightdropdown" v-model="weightDropdown"
-                    class="p-2 rounded bg-[#fbf8f8] text-xl font-medium md:w-1/2 md:text-base">
-                    <option disabled value="">Please select one</option>
-                    <option>Pounds</option>
-                    <option>Kilograms</option>
-                    <option>Ounces</option>
-                    <option>Grams</option>
-                    <option>Tonnes</option>
-                  </select>
-                </span>
-              </div>
+            <div class="flex items-center justify-between w-full gap-3">
+              <input type="number" min="1" max="999" name="weight" id="weight" placeholder="Weight: " v-model="weight"
+                class="w-full p-2 border text-center rounded focus:border-red-400 focus:outline-none bg-[#fcfcfc] text-lg font-medium md:text-base ">
+              <select name="weightdropdown" id="weightdropdown" v-model="weightDropdown"
+                class="w-1/2 p-2 rounded border bg-[#fbf8f8] text-xl font-medium md:w-1/2 md:text-base">
+                <option disabled value="">Please select one</option>
+                <option>Pounds</option>
+                <option>Kilograms</option>
+                <option>Ounces</option>
+                <option>Grams</option>
+                <option>Tonnes</option>
+              </select>
             </div>
           </form>
         </div>
@@ -384,7 +371,6 @@
 <script setup>
 import { auth, db } from '@/services/firebaseConfig';
 import icons from "@/assets/icons";
-import SRScroll from "@/components/SRScroll.vue";
 import SRContents from "@/layouts/SRContents.vue";
 import SRModalSlots from '@/components/SRModalSlots.vue';
 import { useRouter } from 'vue-router';
@@ -394,9 +380,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import axios from 'axios';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getDatabase, ref as refer, set } from "firebase/database";
 import { useToast } from 'vue-toast-notification';
-import { createBooking, customerRetrieveData } from '@/services/ApiServices';
+import { uidInfo, customerRetrieveData } from '@/services/ApiServices';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 
@@ -414,9 +399,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-
 const toast = useToast();
-
 const router = useRouter();
 
 // Mapbox access token
@@ -474,30 +457,7 @@ const searchQuery = ref('');
 const searchResults = ref([]);
 
 // Computed property to check if delivery info is complete
-const isDeliveryInfoComplete = computed(() => {
-  const result = receiverfullname.value &&
-    receiverphone.value &&
-    receivercoordinatesLong.value &&
-    receivercoordinatesLat.value &&
-    receiveraddressInfo.value &&
-    senderfullname.value &&
-    senderphone.value &&
-    sendercoordinatesLong.value &&
-    sendercoordinatesLat.value &&
-    senderaddressInfo.value &&
-    length.value &&
-    sizeDropdown.value &&
-    width.value &&
-    height.value &&
-    weight.value &&
-    weightDropdown.value &&
-    itemName.value &&
-    fragility.value &&
-    vehicleType.value &&
-    notes.value;
-  console.log("isDeliveryInfoComplete: " + (result ? true : false));
-  return result ? true : false;
-});
+const isDeliveryInfoComplete = computed(() => { const result = receiverfullname.value && receiverphone.value && receivercoordinatesLong.value && receivercoordinatesLat.value && receiveraddressInfo.value && senderfullname.value && senderphone.value && sendercoordinatesLong.value && sendercoordinatesLat.value && senderaddressInfo.value && length.value && sizeDropdown.value && width.value && height.value && weight.value && weightDropdown.value && itemName.value && fragility.value && vehicleType.value && notes.value; console.log("isDeliveryInfoComplete: " + (result ? true : false)); return result ? true : false; });
 
 
 // Map initialization
@@ -514,29 +474,7 @@ const initializeMap = (mapRef, markerRef, containerId, updateMarkerFn) => {
   mapRef.value.dragRotate.disable();
 }
 
-onMounted(() => {
-  if (navigator.geolocation) {
-    const getLocation = () => {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          selectedLocation.value = { lng: position.coords.longitude, lat: position.coords.latitude };
-          initializeMap(map, marker, 'map', updateMarkerAndStoreCoordinates);
-          initializeMap(map2, marker2, 'map2', updateMarkerAndStoreCoordinates2);
-        },
-        error => {
-          if (error.code === error.PERMISSION_DENIED) {
-            console.error("Location access was denied.");
-            // Optionally, prompt the user to enable location access again.
-          }
-        }
-      );
-    };
-
-    getLocation();
-  } else {
-    console.error("Geolocation is not supported by this browser.");
-  }
-});
+onMounted(() => { if (navigator.geolocation) { const getLocation = () => { navigator.geolocation.getCurrentPosition(position => { selectedLocation.value = { lng: position.coords.longitude, lat: position.coords.latitude }; initializeMap(map, marker, 'map', updateMarkerAndStoreCoordinates); initializeMap(map2, marker2, 'map2', updateMarkerAndStoreCoordinates2); }, error => { if (error.code === error.PERMISSION_DENIED) { console.error("Location access was denied."); } }); }; getLocation(); } else { console.error("Geolocation is not supported by this browser."); } });
 
 const fetchGeocodingData = (lng, lat, locationRef) => {
   return fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${accessToken}`)
@@ -552,73 +490,11 @@ const fetchGeocodingData = (lng, lat, locationRef) => {
     .catch(error => console.error('Error with geocoding API: ', error));
 };
 
-const updateMarkerAndStoreCoordinates = () => {
-  const center = map.value.getCenter();
-  marker.value.setLngLat(center);
-  receivercoordinatesLong.value = center.lng;
-  receivercoordinatesLat.value = center.lat;
-  console.info("receivercoordinatesLong:" + receivercoordinatesLong.value, "receivercoordinatesLat: " + receivercoordinatesLat.value);
-  fetchGeocodingData(center.lng, center.lat, receiverfullAddress);
-};
+const updateMarkerAndStoreCoordinates = () => { const center = map.value.getCenter(); marker.value.setLngLat(center); receivercoordinatesLong.value = center.lng; receivercoordinatesLat.value = center.lat; console.info("receivercoordinatesLong:" + receivercoordinatesLong.value, "receivercoordinatesLat: " + receivercoordinatesLat.value); fetchGeocodingData(center.lng, center.lat, receiverfullAddress); };
 
-const updateMarkerAndStoreCoordinates2 = () => {
-  const center = map2.value.getCenter();
-  marker2.value.setLngLat(center);
-  sendercoordinatesLong.value = center.lng;
-  sendercoordinatesLat.value = center.lat;
-  console.info("sendercoordinatesLong:" + sendercoordinatesLong.value, "sendercoordinatesLat: " + sendercoordinatesLat.value);
-  fetchGeocodingData(center.lng, center.lat, senderfullAddress);
-};
+const updateMarkerAndStoreCoordinates2 = () => { const center = map2.value.getCenter(); marker2.value.setLngLat(center); sendercoordinatesLong.value = center.lng; sendercoordinatesLat.value = center.lat; console.info("sendercoordinatesLong:" + sendercoordinatesLong.value, "sendercoordinatesLat: " + sendercoordinatesLat.value); fetchGeocodingData(center.lng, center.lat, senderfullAddress); };
 
-const validateAddress = (form) => {
-  if (form == "changeDeliveryAddress") {
-    if (!receiverfullAddress.value) {
-      toast.error("Please select a pickup location");
-      return true;
-    }
-    const nameRegex = /^[a-zA-Z\s]+$/;
-    const phoneRegex = /^[\d-]+$/;
-
-    if (!receiverfullname.value || !receiverphone.value || !receiveraddressInfo.value) {
-      toast.error("Please fill in all the fields");
-      return true;
-    }
-
-    if (!nameRegex.test(receiverfullname.value)) {
-      toast.error("Invalid name format");
-      return true;
-    }
-
-    if (!phoneRegex.test(receiverphone.value)) {
-      toast.error("Invalid phone number format");
-      return true;
-    }
-    return false;
-  }
-  if (form == "changePickupAddress") {
-    if (!senderfullAddress.value) {
-      toast.error("Please select a pickup location");
-      return true;
-    }
-    const nameRegex = /^[a-zA-Z\s]+$/;
-    const phoneRegex = /^[\d-]+$/;
-
-    if (!senderfullname.value || !senderphone.value || !senderaddressInfo.value) {
-      toast.error("Please fill in all the fields");
-      return true;
-    }
-
-    if (!nameRegex.test(senderfullname.value)) {
-      toast.error("Invalid name format");
-      return true;
-    }
-    if (!phoneRegex.test(senderphone.value)) {
-      toast.error("Invalid phone number format");
-      return true;
-    }
-    return false;
-  }
-}
+const validateAddress = (form) => { if (form == "changeDeliveryAddress") { if (!receiverfullAddress.value) { toast.error("Please select a pickup location"); return true; } const nameRegex = /^[a-zA-Z\s]+$/; const phoneRegex = /^[\d-]+$/; if (!receiverfullname.value || !receiverphone.value || !receiveraddressInfo.value) { toast.error("Please fill in all the fields"); return true; } if (!nameRegex.test(receiverfullname.value)) { toast.error("Invalid name format"); return true; } if (!phoneRegex.test(receiverphone.value)) { toast.error("Invalid phone number format"); return true; } return false; } if (form == "changePickupAddress") { if (!senderfullAddress.value) { toast.error("Please select a pickup location"); return true; } const nameRegex = /^[a-zA-Z\s]+$/; const phoneRegex = /^[\d-]+$/; if (!senderfullname.value || !senderphone.value || !senderaddressInfo.value) { toast.error("Please fill in all the fields"); return true; } if (!nameRegex.test(senderfullname.value)) { toast.error("Invalid name format"); return true; } if (!phoneRegex.test(senderphone.value)) { toast.error("Invalid phone number format"); return true; } return false; } }
 async function searchLocation() {
   if (!searchQuery.value) {
     searchResults.value = [];
@@ -662,13 +538,12 @@ onBeforeUnmount(() => {
   if (map2.value) map2.value.remove();
 });
 
-// Modal functions
-const closeModal = () => {
-  isOpen.value = !isOpen.value;
-};
+let modalName = ref('');
 
-// const changeDeliveryAddressForm = async () => console.log("changeDeliveryAddressForm");
-// const changePickupAddressForm = async () => console.log("changePickupAddressForm");
+watch(() => { console.info("modalName: " + modalName.value); if (ChangeDeliveryAddress.value == true) { modalName.value = 'changeDeliveryAddress'; console.info("modalName: " + modalName.value); } else if (ChangePickupAddress.value) { modalName.value = 'changePickupAddress'; console.info("modalName: " + modalName.value); } else if (!ConfirmBooking.value) { modalName.value = 'confirmBooking'; console.info("modalName: " + modalName.value); } else { modalName.value = 'defaultModal'; console.info("modalName: " + modalName.value); } });
+
+// Modal functions
+function closeModal(modalName) { console.log(`Closing modal: ${modalName}`); if (modalName == 'changeDeliveryAddress') { receiverfullname.value = ''; receiverphone.value = ''; receiverfullAddress.value = ''; receiveraddressInfo.value = ''; isOpen.value = !isOpen.value; } else if (modalName == 'changePickupAddress') { senderfullname.value = ''; senderphone.value = ''; senderfullAddress.value = ''; senderaddressInfo.value = ''; isOpen.value = !isOpen.value; } else { console.log("Closing modal: " + modalName); isOpen.value = !isOpen.value; } };
 
 const confirmBooking = () => {
   router.push('delivery/confirmation');
@@ -686,15 +561,6 @@ watch(
 const calculateDistanceAndDirections = async () => {
   const origin = [sendercoordinatesLong.value, sendercoordinatesLat.value];
   const destination = [receivercoordinatesLong.value, receivercoordinatesLat.value];
-  // const database = getDatabase();
-  // set(refer(database, 'coordinates/first'), {
-  //   originLong: origin[0],
-  //   originLat: origin[1],
-  //   destinationLong: destination[0],
-  //   destinationLat: destination[1]
-  // });
-  // console.log("Coordinates saved successfully");
-
   const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${origin.join(',')};${destination.join(',')}?geometries=geojson&access_token=${accessToken}`;
 
   try {
@@ -737,30 +603,11 @@ const convertToCubicFeet = (value, unit) => {
 const weightCategory = ref("");
 const weightMeasurements = ref("");
 
-const updateWeightForm = () => {
-  const weightKg = convertToKilograms(weight, weightDropdown);
-  weightMeasurements.value = `(${weight.value} ${weightDropdown.value.toLowerCase()})`;
-  weightCategory.value = weightKg <= 1 ? "Light" : weightKg <= 5 ? "Moderate" : "Heavy";
-};
+const updateWeightForm = () => { const weightKg = convertToKilograms(weight, weightDropdown); weightMeasurements.value = `(${weight.value} ${weightDropdown.value.toLowerCase()})`; weightCategory.value = weightKg <= 1 ? "Light" : weightKg <= 5 ? "Moderate" : "Heavy"; };
 
-const convertToKilograms = (value, unit) => {
-  const num = parseFloat(value.value);
-  switch (unit.value) {
-    case "Kg": return num;
-    case "Grams": return num / 1000;
-    case "Pounds": return num / 2.20462;
-    case "Ounces": return num / 35.274;
-    default: return 0;
-  }
-};
+const convertToKilograms = (value, unit) => { const num = parseFloat(value.value); switch (unit.value) { case "Kg": return num; case "Grams": return num / 1000; case "Pounds": return num / 2.20462; case "Ounces": return num / 35.274; default: return 0; } };
 
-watch(
-  [sizeCategory, weightCategory],
-  () => {
-    if (sizeCategory && weightCategory) {
-      suggestVehicle();
-    }
-  });
+watch([sizeCategory, weightCategory], () => { if (sizeCategory && weightCategory) { suggestVehicle(); } });
 
 const suggestVehicle = () => {
   const size = sizeCategory.value;
@@ -780,7 +627,6 @@ const suggestVehicle = () => {
 };
 
 const dialogItem = ref(false);
-
 function openDialog(dialogName, state) {
   const dialog = document.querySelector(`#${dialogName}`);
   if (state === "open") {
@@ -794,57 +640,53 @@ function openDialog(dialogName, state) {
 
 const user = ref(null);
 const bookingConfirm = async () => {
-  const promise = customerRetrieveData();
-  promise
-    .then((data) => {
-      user.value = data;
-      console.log("data:", user.value);
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-    });
-  if (!user.value) {
-    console.error('User not logged in.');
-    return;
-  }
-  const deliveryData = {
-    receiverfullname: receiverfullname.value,
-    receiverphone: receiverphone.value,
-    receivercoordinatesLong: receivercoordinatesLong.value,
-    receivercoordinatesLat: receivercoordinatesLat.value,
-    receiveraddressInfo: receiveraddressInfo.value,
-    senderfullname: senderfullname.value,
-    senderphone: senderphone.value,
-    sendercoordinatesLong: sendercoordinatesLong.value,
-    sendercoordinatesLat: sendercoordinatesLat.value,
-    senderaddressInfo: senderaddressInfo.value,
-    length: length.value,
-    sizeDropdown: sizeDropdown.value,
-    width: width.value,
-    height: height.value,
-    weight: weight.value,
-    weightDropdown: weightDropdown.value,
-    itemName: itemName.value,
-    fragility: fragility.value,
-    vehicleType: vehicleType.value,
-    notes: notes.value,
-  };
   try {
+    const data = await customerRetrieveData();
+    user.value = data;
+    console.log("data:", user.value);
+
+    if (!user.value) {
+      console.error('User not logged in.');
+      return;
+    }
+
+    const deliveryData = {
+      receiverfullname: receiverfullname.value,
+      receiverphone: receiverphone.value,
+      receivercoordinatesLong: receivercoordinatesLong.value,
+      receivercoordinatesLat: receivercoordinatesLat.value,
+      receiveraddressInfo: receiveraddressInfo.value,
+      senderfullname: senderfullname.value,
+      senderphone: senderphone.value,
+      sendercoordinatesLong: sendercoordinatesLong.value,
+      sendercoordinatesLat: sendercoordinatesLat.value,
+      senderaddressInfo: senderaddressInfo.value,
+      length: length.value,
+      sizeDropdown: sizeDropdown.value,
+      width: width.value,
+      height: height.value,
+      weight: weight.value,
+      weightDropdown: weightDropdown.value,
+      itemName: itemName.value,
+      fragility: fragility.value,
+      vehicleType: vehicleType.value,
+      notes: notes.value,
+    };
+
     const deliveryRef = rtdbRef(db, `deliveries/${Date.now()}`);
     await rtdbSet(deliveryRef, deliveryData);
     console.log('Booking confirmed and data saved successfully.');
   } catch (error) {
-    console.error('Error confirming booking: ', error);
+    console.error('Error:', error);
   }
 };
-
 
 </script>
 
 <style lang="scss" scoped>
-// * {
-//   border: 1px solid red;
-// }
+* {
+  border: 1px solid red;
+}
 
 .map-disabled {
   pointer-events: none;
