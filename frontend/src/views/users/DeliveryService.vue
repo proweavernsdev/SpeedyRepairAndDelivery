@@ -27,7 +27,7 @@
             @submit.prevent="changeDeliveryAddressForm"
             class="flex flex-col w-full gap-5 pt-5 text-3xl font-bold text-center md:pt-3">
             <div class="relative flex items-center justify-center w-full">
-              <div id="map" class="w-full h-[300px] rounded md:h-[200px] relative">
+              <div id="map" class="w-full h-[300px] rounded md:h-[200px] absolute">
                 <input type="text" v-model="searchQuery" @input="searchLocation"
                   class="absolute top-2 left-2 w-[80%] bg-white border rounded py-1 px-2 text-xs z-10"
                   placeholder="Search Location" />
