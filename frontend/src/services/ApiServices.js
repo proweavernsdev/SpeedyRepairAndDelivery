@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const baseUrl = "https://speedyrepairanddelivery.com/api-delivery/";
-//const baseUrl = 'http://localhost/speedy/';
+
 
 let pwauth = localStorage.getItem("token");
 let updateToken = () => {
