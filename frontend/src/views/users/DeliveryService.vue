@@ -835,7 +835,8 @@ const bookingConfirm = async () => {
   opacity: 0.5;
 }
 
-#map>input {
+#map>input,
+#map2>input {
   display: none;
 }
 
