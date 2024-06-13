@@ -130,13 +130,9 @@ Speedy Repair Delivery is a comprehensive web and mobile application designed to
 4. **Push to the branch** (`git push origin feature/your-feature-name`)
 5. **Create a new Pull Request**
 
-## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
 ## Contact
 For any questions or suggestions, please contact the project maintainer at [prodevns@gmail.com].
 =======
-# Speedy Repair And Delivery
 
 ## Credentials:
 
@@ -155,3 +151,7 @@ For any questions or suggestions, please contact the project maintainer at [prod
 ### Admin:
 - **Email:** pw.ltome@outlook.com
 - **Password:** lyrontome123
+
+# CI/CD
+Create a pull request and merge into main branch for both frontend and backend
+- 🔑 FTP Server Credentials is securely stored in Github Secrets
