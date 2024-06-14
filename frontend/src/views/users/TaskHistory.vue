@@ -65,43 +65,45 @@
                 <button class="text-3xl size-12" @click="openDialog('taskDetails', 'close')">✖</button>
             </div>
             <hr class="w-full border">
-            <div v-if="itemName === 'ongoingItem'"
-                class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
-                    <p class="sm:text-sm">12345</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
-                    <p class="sm:text-sm">123 Main St, Anytown, USA</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
-                    <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
-                    <p class="sm:text-sm">Size: Small</p>
-                    <p class="sm:text-sm">Weight: 1kg</p>
-                    <p class="sm:text-sm">Special Instructions: None</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Status</h2>
-                    <p class="sm:text-sm">Ongoing</p>
-                </div>
-                <div class="flex flex-col gap-px p-3">
-                    <h2 class="text-lg font-medium sm:text-lg">Tracking Link</h2>
-                    <a href="#"
-                        class="w-full p-1 text-center text-white bg-red-800 rounded-sm sm:text-sm hover:opacity-80">Track
-                        Package</a>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Estimated Delivery Time</h2>
-                    <p class="sm:text-sm">12:00 PM</p>
-                </div>
-                <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
-                    <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
-                        @click="openDialog('reportBooking', 'open')">Report</button>
+            <div v-if="itemName === 'ongoingItem'">
+                <div v-for="item in pendingDeliveries" :key="item.id"
+                    class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
+                        <p class="sm:text-sm">{{ item.userId }}</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
+                        <p class="sm:text-sm">123 Main St, Anytown, USA</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
+                        <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
+                        <p class="sm:text-sm">Size: Small</p>
+                        <p class="sm:text-sm">Weight: 1kg</p>
+                        <p class="sm:text-sm">Special Instructions: None</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Status</h2>
+                        <p class="sm:text-sm">Ongoing</p>
+                    </div>
+                    <div class="flex flex-col gap-px p-3">
+                        <h2 class="text-lg font-medium sm:text-lg">Tracking Link</h2>
+                        <a href="#"
+                            class="w-full p-1 text-center text-white bg-red-800 rounded-sm sm:text-sm hover:opacity-80">Track
+                            Package</a>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Estimated Delivery Time</h2>
+                        <p class="sm:text-sm">12:00 PM</p>
+                    </div>
+                    <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                        <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
+                            @click="openDialog('reportBooking', 'open')">Report</button>
+                    </div>
                 </div>
             </div>
             <div v-if="itemName === 'completedItem'"
@@ -265,20 +267,20 @@
                                 <th>Item Name</th>
                                 <th>Pickup Location</th>
                                 <th>Dropoff Location</th>
-                                <th>Package Details</th>
+                                <th>Size</th>
+                                <th>Weight</th>
                                 <th>Status</th>
-                                <th>Estimated Delivery Time</th>
                                 <th>Actions</th>
                             </template>
-                            <template #Table-Body>
-                                <tr id="ongoing" class="[&>*]:p-4"
-                                    v-if="taskTable === 'ongoing' || taskTable === 'all'">
-                                    <td>Item Name</td>
-                                    <td>Location A</td>
-                                    <td>Location B</td>
-                                    <td>Small package</td>
-                                    <td>Ongoing</td>
-                                    <td>5 days</td>
+                            <template #Table-Body v-if="taskTable === 'ongoing' || taskTable === 'all'">
+                                <tr id="ongoing" :data-status="item.status" class=" [&>*]:p-4" v-for="item in
+                                    pendingDeliveries" :key="item.id">
+                                    <td>{{ item.itemName }}</td>
+                                    <td>{{ item.senderaddressInfo }}</td>
+                                    <td>{{ item.receiveraddressInfo }}</td>
+                                    <td>{{ item.size }}</td>
+                                    <td>{{ item.weight }}</td>
+                                    <td class="capitalize">{{ item.status }}</td>
                                     <td>
                                         <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
                                             @click="openBooking('taskDetails', 'ongoingItem', 'open')">See
@@ -357,10 +359,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
+import { customerRetrieveData } from '@/services/ApiServices';
+import { db } from '@/services/firebaseConfig';
+import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 
 const taskTable = ref('all');
 const itemName = ref('');
@@ -387,6 +392,29 @@ function openBooking(dialogName, table, state) {
 function viewTableContents(table) {
     taskTable.value = table;
 }
+
+const userId = ref('');
+const pendingDeliveries = ref([]);
+async function getData() {
+    try {
+        const data = await customerRetrieveData();
+        userId.value = data.data.cust_userOwner;
+        console.log('User ID:', userId.value);
+        const pendingRef = rtdbRef(db, `deliveries/${userId.value}/pending`);
+        if (pendingRef) {
+            const snapshot = await rtdbGet(pendingRef);
+            if (snapshot.exists()) {
+                const pendingData = snapshot.val();
+                pendingDeliveries.value = Object.values(pendingData);
+                console.log('Pending Deliveries:', pendingDeliveries.value);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+onMounted(getData);
 
 </script>
 

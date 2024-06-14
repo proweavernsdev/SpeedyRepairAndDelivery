@@ -135,7 +135,7 @@ onMounted(() => {
         data.data = "null";
       }
       const isDataContained = data.data;
-      console.log("data:", isDataContained);
+      console.log("User data:", isDataContained);
     })
     .catch((error) => {
       console.error("Error fetching data:", error);
