@@ -201,6 +201,8 @@ export async function uploadData(fileInputs) {
     }
 }
 
+
+// Asynchronous function for viewing files
 export async function viewFiles() {
     updateToken();
     try {
@@ -416,6 +418,7 @@ export async function updateWeight(id, categoryName, min, max, setFee) {
     }
 }
 
+//Deletes the weight data on the Taxonomies Weight Page.
 export async function deleteWeight(id) {
     updateToken();
     await axios
@@ -490,6 +493,7 @@ export async function getVehicles() {
 //       console.error("Error: " + err);
 //     });
 // }
+
 //Get all data for Request Priority Page
 // export async function getDriverDocs() {
 //   updateToken();
@@ -910,7 +914,6 @@ export async function vehicleUpdate(
 }
 
 // ========EMPLOYEE MANAGEMENT FUNCTIONS========
-
 // Create sub-users for company accounts
 export async function employeeRegistration(
     email,

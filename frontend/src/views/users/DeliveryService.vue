@@ -255,7 +255,8 @@
               <div class="flex [&>*]:w-1/2">
                 <div class="flex flex-col w-full gap-3 p-3">
                   <p>Preferred Delivery Date</p>
-                  <input type="date" v-model="preferredDeliveryDate"
+                  <input type="date" id="preferredDeliveryDate" name="preferredDeliveryDate" min=""
+                    v-model="preferredDeliveryDate"
                     class="w-full p-2 border bg-[#fcfcfc] rounded focus:border-red-400 focus:outline-none">
                 </div>
                 <div class="flex flex-col w-full gap-3 p-3">
@@ -473,7 +474,10 @@ const initializeMap = (mapRef, markerRef, containerId, updateMarkerFn) => {
   mapRef.value.dragRotate.disable();
 }
 
-onMounted(() => { if (navigator.geolocation) { const getLocation = () => { navigator.geolocation.getCurrentPosition(position => { selectedLocation.value = { lng: position.coords.longitude, lat: position.coords.latitude }; initializeMap(map, marker, 'map', updateMarkerAndStoreCoordinates); initializeMap(map2, marker2, 'map2', updateMarkerAndStoreCoordinates2); }, error => { if (error.code === error.PERMISSION_DENIED) { console.error("Location access was denied."); } }); }; getLocation(); } else { console.error("Geolocation is not supported by this browser."); } preferredDeliveryDate.value = formatDate(new Date()); });
+onMounted(() => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('preferredDeliveryDate').setAttribute('min', today); if (navigator.geolocation) { const getLocation = () => { navigator.geolocation.getCurrentPosition(position => { selectedLocation.value = { lng: position.coords.longitude, lat: position.coords.latitude }; initializeMap(map, marker, 'map', updateMarkerAndStoreCoordinates); initializeMap(map2, marker2, 'map2', updateMarkerAndStoreCoordinates2); }, error => { if (error.code === error.PERMISSION_DENIED) { console.error("Location access was denied."); } }); }; getLocation(); } else { console.error("Geolocation is not supported by this browser."); } preferredDeliveryDate.value = formatDate(new Date());
+});
 
 const fetchGeocodingData = (lng, lat, locationRef) => {
   return fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${accessToken}`)
@@ -649,6 +653,7 @@ function openDialog(dialogName, state) {
 
 const userId = ref(null);
 const bookingConfirm = async () => {
+  console.log(receiverfullAddress.value + " " + receiveraddressInfo.value);
   try {
     const data = await customerRetrieveData();
     userId.value = data.data.cust_userOwner;
@@ -664,12 +669,12 @@ const bookingConfirm = async () => {
       receiverphone: receiverphone.value,
       receivercoordinatesLong: receivercoordinatesLong.value,
       receivercoordinatesLat: receivercoordinatesLat.value,
-      receiveraddressInfo: receiveraddressInfo.value,
+      receiveraddressInfo: receiveraddressInfo.value + " " + receiverfullAddress.value,
       senderfullname: senderfullname.value,
       senderphone: senderphone.value,
       sendercoordinatesLong: sendercoordinatesLong.value,
       sendercoordinatesLat: sendercoordinatesLat.value,
-      senderaddressInfo: senderaddressInfo.value,
+      senderaddressInfo: senderaddressInfo.value + " " + senderfullAddress.value,
       length: length.value,
       sizeDropdown: sizeDropdown.value,
       width: width.value,

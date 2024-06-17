@@ -113,13 +113,14 @@
                             </button>
                         </div>
                     </div>
-                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]">
+                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]"
+                        v-for="(delivery, index) in currentPendingDeliveries" :key="index">
                         <div class="size-full md:flex md:justify-center md:items-center md:p-3"
                             v-show="isCardView === true">
                             <div class="bg-red-400 size-full md:size-[90%]"></div>
                         </div>
                         <div class="w-full md:p-3">
-                            <h1 class="text-lg font-semibold sm:text-xs">List Item Heading</h1>
+                            <h1 class="text-lg font-semibold sm:text-xs">{{ delivery.pending[delivery.key].notes }}</h1>
                             <p class="sm:text-xs">List Item Description</p>
                         </div>
                         <div class="flex justify-end w-full md:p-3">
@@ -172,11 +173,16 @@
 import { RouterLink } from "vue-router";
 import icons from "@/assets/icons";
 import SRContents from "@/layouts/SRContents.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { driverRetrieveData } from "@/services/ApiServices.js";
+import { db } from '@/services/firebaseConfig';
+import { getDatabase } from "firebase/database";
+import { set as rtdbSet, ref as rtdbRef, get as rtdbGet, child } from 'firebase/database';
 
 const isCardView = ref(true);
 const isFilterandSortOpen = ref(false);
 const toggleFilterandSort = ref(false);
+const userId = ref('');
 
 function filterDialog() {
     isFilterandSortOpen.value = !isFilterandSortOpen.value;
@@ -211,6 +217,40 @@ function toggleSection(section) {
         filterSection.classList.remove('active');
     }
 }
+
+const currentPendingDeliveries = ref([]);
+async function load() {
+    try {
+        const getData = driverRetrieveData();
+        getData.then(async (response) => {
+            userId.value = response.result.driverID;
+            const dbRef = rtdbRef(db, 'deliveries');
+            const snapshot = await rtdbGet(dbRef);
+
+            if (snapshot.exists()) {
+                const deliveries = snapshot.val();
+                for (const delivery in deliveries) {
+                    if (deliveries.hasOwnProperty(delivery)) {
+                        const deliveryData = deliveries[delivery];
+                        console.log(deliveryData.pending);
+                        if (deliveryData.pending) {
+                            currentPendingDeliveries.value.push(deliveryData);
+                            console.log(currentPendingDeliveries.value);
+                        }
+                    }
+                }
+            }
+            else {
+                console.log('No data available');
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+onMounted(load)
 </script>
 
 <style lang="scss" scoped>

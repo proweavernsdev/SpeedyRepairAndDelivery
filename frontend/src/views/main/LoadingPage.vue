@@ -214,9 +214,20 @@ onMounted(() => {
               break;
 
             default:
-              console.info("default: ", level);
-              router.push(`./ErrorPage.vue`);
-              break;
+              const level = JSON.stringify(data.data.data.UserAccess);
+              console.log(level);
+              if (level === '"0"') {
+                userType.value = "Super Admin";
+                router.push(`/admin/dashboard`);
+                break;
+              } else if (level === '"1"') {
+                userType.value = "Admin";
+                router.push(`/admin/dashboard`);
+                break;
+              } else {
+                router.push(`/ErrorPage.vue`);
+                break;
+              }
           }
         }
       })
