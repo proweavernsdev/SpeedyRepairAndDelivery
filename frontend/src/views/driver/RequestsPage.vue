@@ -114,23 +114,21 @@
                         </div>
                     </div>
                     <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]"
-                        v-for="(item, index) in currentPendingDeliveries" :key="index">
+                        v-for="(delivery, index) in currentPendingDeliveries" :key="index">
                         <div class="size-full md:flex md:justify-center md:items-center md:p-3"
                             v-show="isCardView === true">
                             <div class="bg-red-400 size-full md:size-[90%]"></div>
                         </div>
                         <div class="w-full md:p-3">
                             <h1 class="text-lg font-semibold sm:text-xs truncate">
-                                {{ item.pending[Object.keys(item.pending)[0]].itemName }}
+                                {{ delivery.details.itemName }}
                             </h1>
                             <p class="sm:text-xs truncate">
-                                {{ item.pending[Object.keys(item.pending)[0]].itemDescription }} {{
-                                    item.pending[Object.keys(item.pending)[0]].itemDescription }}
+                                {{ delivery.details.itemDescription }}
                             </p>
                         </div>
                         <div class="flex justify-end w-full md:p-3">
-                            <RouterLink
-                                :to="`/rider/requests/${item.pending[Object.keys(item.pending)[0]].trackingNumber}`">
+                            <RouterLink :to="`/rider/requests/${delivery.trackingNumber}`">
                                 <button
                                     class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
                                     Details</button>
@@ -207,15 +205,23 @@ async function load() {
                 for (const delivery in deliveries) {
                     if (deliveries.hasOwnProperty(delivery)) {
                         const deliveryData = deliveries[delivery];
-                        console.log(deliveryData.pending);
-                        if (deliveryData.pending) {
-                            currentPendingDeliveries.value.push(deliveryData);
-                            console.log(currentPendingDeliveries.value);
+                        if (deliveryData.hasOwnProperty('pending')) {
+                            const pendingItems = deliveryData.pending;
+                            for (const trackingNumber in pendingItems) {
+                                if (pendingItems.hasOwnProperty(trackingNumber)) {
+                                    const itemDetails = pendingItems[trackingNumber];
+                                    const pendingDelivery = {
+                                        trackingNumber: trackingNumber,
+                                        details: itemDetails
+                                    };
+                                    currentPendingDeliveries.value.push(pendingDelivery);
+                                }
+                            }
                         }
                     }
                 }
-            }
-            else {
+                console.log("Deliveries: ", currentPendingDeliveries.value);
+            } else {
                 console.log('No data available');
             }
         });
@@ -223,6 +229,7 @@ async function load() {
         console.log(error);
     }
 }
+
 
 onMounted(load)
 </script>

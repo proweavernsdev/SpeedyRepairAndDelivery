@@ -132,30 +132,19 @@ async function load() {
         const route = useRoute();
         const trackingNumber = route.params.id;
         console.log("REQUEST ID:", trackingNumber);
-
-        // Retrieve data from driverRetrieveData function
         const response = await driverRetrieveData();
         userId.value = response.result.driverID;
-
-        // Reference to 'deliveries' node in Firebase
         const dbRef = rtdbRef(db, 'deliveries');
         const snapshot = await rtdbGet(dbRef);
-
         if (snapshot.exists()) {
             const deliveries = snapshot.val();
             let found = false;
-
-            // Loop through the deliveries to find the matching tracking number
             for (const deliveryKey in deliveries) {
                 if (deliveries.hasOwnProperty(deliveryKey)) {
                     const deliveryData = deliveries[deliveryKey];
-
-                    // Loop through the nested objects in deliveryData.pending
                     for (const pendingKey in deliveryData.pending) {
                         if (deliveryData.pending.hasOwnProperty(pendingKey)) {
                             const pendingDelivery = deliveryData.pending[pendingKey];
-
-                            // Check if the current pending delivery's trackingNumber matches
                             if (pendingDelivery.trackingNumber == trackingNumber) {
                                 currentDeliveryItem.value = pendingDelivery;
                                 console.log(currentDeliveryItem.value);
@@ -165,9 +154,8 @@ async function load() {
                         }
                     }
                 }
-                if (found) break; // Exit outer loop if item is found
+                if (found) break;
             }
-
             if (!found) {
                 console.log('No matching delivery found.');
             }
