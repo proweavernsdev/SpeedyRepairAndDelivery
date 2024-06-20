@@ -358,10 +358,6 @@
               <textarea id="textarea" name="textarea" v-model="notes" rows="4" cols="50"
                 class="w-full p-2 border rounded bg-[#fcfcfc] focus:border-red-400 focus:outline-none"></textarea>
             </div>
-            <div class="flex flex-col w-full gap-3 p-3">
-              <p class="font-bold">Image:</p>
-              <input type="file" name="image" id="image" class="w-full p-2 border rounded bg-[#fcfcfc]">
-            </div>
           </div>
           <div class="flex justify-end w-full">
             <div class="flex flex-col w-1/2 sm:w-full">
