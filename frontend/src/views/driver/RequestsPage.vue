@@ -115,7 +115,7 @@
                     </div>
                     <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]"
                         v-for="(item, index) in currentPendingDeliveries" :key="index">
-                        <div class=" size-full md:flex md:justify-center md:items-center md:p-3"
+                        <div class="size-full md:flex md:justify-center md:items-center md:p-3"
                             v-show="isCardView === true">
                             <div class="bg-red-400 size-full md:size-[90%]">
                                 <img :src="item.pending[Object.keys(item.pending)[0]].imgUrl" alt="item image"
@@ -123,50 +123,23 @@
                             </div>
                         </div>
                         <div class="w-full md:p-3">
-                            <h1 class="text-lg font-semibold sm:text-xs truncate  ">{{
-                                item.pending[Object.keys(item.pending)[0]].itemName }}</h1>
-                            <p class="sm:text-xs truncate">{{
-                                item.pending[Object.keys(item.pending)[0]].itemDescription }}</p>
+                            <h1 class="text-lg font-semibold sm:text-xs truncate">
+                                {{ item.pending[Object.keys(item.pending)[0]].itemName }}
+                            </h1>
+                            <p class="sm:text-xs truncate">
+                                {{ item.pending[Object.keys(item.pending)[0]].itemDescription }} {{
+                                    item.pending[Object.keys(item.pending)[0]].itemDescription }}
+                            </p>
                         </div>
                         <div class="flex justify-end w-full md:p-3">
-                            <RouterLink to="/rider/requests/1">
+                            <RouterLink
+                                :to="`/rider/requests/${item.pending[Object.keys(item.pending)[0]].trackingNumber}`">
                                 <button
                                     class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
                                     Details</button>
                             </RouterLink>
                         </div>
                     </li>
-
-                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]">
-                        <div class="size-full md:flex md:justify-center md:items-center md:p-3"
-                            v-show="isCardView === true">
-                            <div class="bg-red-400 size-full md:size-[90%]"></div>
-                        </div>
-                        <div class="w-full md:p-3">
-                            <h1 class="text-lg font-semibold sm:text-xs">List Item Heading</h1>
-                            <p class="sm:text-xs">List Item Description</p>
-                        </div>
-                        <div class="flex justify-end w-full md:p-3">
-                            <button class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
-                                Details</button>
-                        </div>
-                    </li>
-
-                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]">
-                        <div class="size-full md:flex md:justify-center md:items-center md:p-3"
-                            v-show="isCardView === true">
-                            <div class="bg-red-400 size-full md:size-[90%]"></div>
-                        </div>
-                        <div class="w-full md:p-3">
-                            <h1 class="text-lg font-semibold sm:text-xs">List Item Heading</h1>
-                            <p class="sm:text-xs">List Item Description</p>
-                        </div>
-                        <div class="flex justify-end w-full md:p-3">
-                            <button class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
-                                Details</button>
-                        </div>
-                    </li>
-
                 </div>
             </div>
         </template>
@@ -253,19 +226,6 @@ async function load() {
         console.log(error);
     }
 }
-
-const flatPendingDeliveries = computed(() => {
-    const items = ref([]);
-    currentPendingDeliveries.value.forEach((delivery) => {
-        items.value.push(delivery);
-    });
-    console.log("items: ", items.value);
-    return items.value;
-})
-
-// const flatPendingDeliveries = computed(() => {
-//     return currentPendingDeliveries.value;
-// });
 
 onMounted(load)
 </script>

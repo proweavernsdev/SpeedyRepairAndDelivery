@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/",
+    "format": "prettier --write .",
     "ionic:build": "npm run build",
     "ionic:serve": "npm run dev"
   },
@@ -38,5 +38,8 @@
     "sass": "^1.71.1",
     "tailwindcss": "^3.4.1",
     "vite": "^5.2.11"
+  },
+  "engines": {
+    "node": ">=6.9.0"
   }
 }
