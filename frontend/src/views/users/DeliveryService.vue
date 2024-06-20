@@ -1,5 +1,8 @@
 <template>
   <div>
+    <modal>
+        <ImageUploadModal v-if="uploadIsOpen" @close="uploadIsOpen = false" @fullURL = "getfullURL"/>
+    </modal>
     <SRModalSlots v-show="isOpen == true" @close="isOpen = false">
       <template #Modal-Header>
         <div class="flex justify-between px-5 md:px-3 py-5 md:py-3 bg-[#AA0927] text-white text-3xl font-semibold">
@@ -358,10 +361,21 @@
               <textarea id="textarea" name="textarea" v-model="notes" rows="4" cols="50"
                 class="w-full p-2 border rounded bg-[#fcfcfc] focus:border-red-400 focus:outline-none"></textarea>
             </div>
-            <div class="flex flex-col w-full gap-3 p-3">
-              <p class="font-bold">Image:</p>
-              <input type="file" name="image" id="image" class="w-full p-2 border rounded bg-[#fcfcfc]">
+
+            <div class="w-full gap-3 p-3">
+                <label for="itemImg" class="block text-black font-bold mb-2"> Image <span class = "text-gray-400 text-sm"> - Leave blank if not applicable</span></label>
+                <div class="relative w-4/5 inline-block">
+                    <input v-model="truncURL" id="item_image" type="text" placeholder="-- Empty File --" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-8" disabled>
+                    <button v-if="truncURL" @click="clearImgURL" class="absolute inset-y-0 right-0 flex items-center px-2 text-red-500 hover:text-red-700">
+                        remove
+                    </button>
+                </div>
+                <button @click="handleOpenModal" class="bg-[#aa0909] hover:bg-[#AA0927] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">
+                    {{ itemImg != '' ? 'Change Image' : 'Upload Image' }}
+                </button>
             </div>
+
+
           </div>
           <div class="flex justify-end w-full">
             <div class="flex flex-col w-1/2 sm:w-full">
@@ -400,6 +414,7 @@ import axios from 'axios';
 import { useToast } from 'vue-toast-notification';
 import { customerRetrieveData } from '@/services/ApiServices';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 
 const toast = useToast();
@@ -435,7 +450,31 @@ const preferredDeliveryDate = ref('');
 const preferredDeliveryTimeFrom = ref('');
 const estimatedCost = ref('$0.017 per kilometer');
 const paymentMethod = ref('Cash on Delivery');
+const itemImg = ref('');
+const truncURL = ref('');
+const uploadIsOpen = ref(false);
 
+//Item Image Upload Modal
+const handleOpenModal = () => {
+  uploadIsOpen.value = true;
+}
+
+//get URL of Item Image 
+const getfullURL = (e) => {
+  console.log(e);
+  const ipRegex = /https?:\/\/(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)\.(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)\.(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)\.(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)/;
+  e = e.replace(ipRegex, 'http://speedyrepairanddelivery.com');
+  console.log(e);
+  itemImg.value = e;
+  truncURL.value = e.split('/').pop();
+  console.log(truncURL.value);
+} 
+
+//clear Item Image URL
+const clearImgURL = () => {
+    itemImg.value = '';
+    truncURL.value = '';
+}
 
 // Modal variables
 const isOpen = ref(false);
@@ -698,6 +737,7 @@ const bookingConfirm = async () => {
       orderCreatedTime: currentDate.toLocaleDateString() + " " + currentDate.toLocaleTimeString(),
       status: "pending",
       userId: userId.value,
+      imgUrl: itemImg.value,
       driver: ""
     };
 

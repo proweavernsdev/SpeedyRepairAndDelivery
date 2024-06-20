@@ -117,7 +117,10 @@
                         v-for="(item, index) in currentPendingDeliveries" :key="index">
                         <div class=" size-full md:flex md:justify-center md:items-center md:p-3"
                             v-show="isCardView === true">
-                            <div class="bg-red-400 size-full md:size-[90%]"></div>
+                            <div class="bg-red-400 size-full md:size-[90%]">
+                                <img :src="item.pending[Object.keys(item.pending)[0]].imgUrl" alt="item image"
+                                    class="w-full h-full object-cover">
+                            </div>
                         </div>
                         <div class="w-full md:p-3">
                             <h1 class="text-lg font-semibold sm:text-xs truncate  ">{{
