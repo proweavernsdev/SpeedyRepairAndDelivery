@@ -2,7 +2,12 @@
 
     <SRContents>
         <template #Content-Header>
-            <h1 class="text-3xl font-bold">Delivery Service</h1>
+            <div class="flex justify-between items-center md:flex-col-reverse gap-10">
+                <h1 class="text-3xl font-bold">Delivery Service</h1>
+                <div class="flex gap-2 md:w-full">
+                    <DeliveryMonitor />
+                </div>
+            </div>
         </template>
         <template #Content-Body>
             <div class="flex flex-col gap-2">
@@ -165,8 +170,8 @@ import SRContents from "@/layouts/SRContents.vue";
 import { onMounted, computed, ref, watch } from "vue";
 import { driverRetrieveData } from "@/services/ApiServices.js";
 import { db } from '@/services/firebaseConfig';
-import { getDatabase } from "firebase/database";
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet, child } from 'firebase/database';
+import DeliveryMonitor from '@/views/driver/DeliveryMonitor.vue';
 
 const isCardView = ref(true);
 const isFilterandSortOpen = ref(false);
