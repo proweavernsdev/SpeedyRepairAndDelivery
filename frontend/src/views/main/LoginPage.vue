@@ -1,56 +1,41 @@
 <template>
-    <div
-        class="flex w-screen justify-center h-screen items-center bg-gradient-to-r from-[#550514] to-[#AA0927] md:from-[#550514] md:to-[#550514]">
-        <div class="flex max-w-[500px] w-full md:justify-center md:gap-7 rounded-lg">
-            <div
-                class="flex flex-col justify-center text-center w-full gap-5 bg-white p-10 rounded-lg md:p-0 md:m-5 md:w-full  md:rounded-xl md:bg-[#550514]">
-                <h1 class="py-5 text-3xl leading-snug text-[#1C0207] md:text-white">
-                    <b>
-                        Speedy
-                        Repair
-                        and
-                        Delivery</b>
+    <div class="flex justify-center items-center w-screen h-screen bg-gradient-to-r from-[#550514] to-[#AA0927] md:bg-[#550514]">
+        <div class="flex w-full max-w-[500px] justify-center gap-7 rounded-lg">
+            <div class="flex flex-col items-center w-full gap-5 p-10 text-center bg-white rounded-lg md:m-5 md:p-0 md:rounded-xl md:bg-[#550514]">
+                <h1 class="py-5 text-3xl text-[#1C0207] md:text-white font-bold leading-snug">
+                    Speedy Repair and Delivery
                 </h1>
-                <form class="flex flex-col justify-center w-full gap-5 md:w-full md:mt-0"
-                    @submit.prevent="login(email, pass)">
-                    <input type="email" id="name" v-model="email"
-                        class="relative z-0 w-full h-12 pl-3 rounded-md shadow-sm pr-11 md:h-9 focus:border-gray-400 focus:outline-none"
-                        placeholder="Email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" title="Invalid email address" required>
-                    <div class="flex flex-row items-center justify-end">
-                        <input type="password" id="pass" v-model="pass"
-                            class="relative z-0 w-full h-12 pl-3 rounded-md shadow-sm pr-11 md:h-9 focus:border-gray-400 focus:outline-none"
-                            placeholder="Password" required>
-                        <i id="open" class="absolute z-[1] w-7 h-7 mx-2 float-right" v-html="icons.Eye"
-                            @click="togglePasswordVisibility"></i>
-                        <i id="close" class="hidden absolute z-[1] w-7 h-7 mx-2 float-right" v-html="icons.EyeClosed"
-                            @click="togglePasswordVisibility"></i>
+                <form class="flex flex-col w-full gap-5" @submit.prevent="login(email, pass)">
+                    <input type="email" id="name" v-model="email" class="w-full h-12 pl-3 pr-11 rounded-md shadow-sm focus:border-gray-400 focus:outline-none md:h-9" placeholder="Email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" title="Invalid email address" required>
+                    <div class="flex items-center justify-end">
+                        <input type="password" id="pass" v-model="pass" class="w-full h-12 pl-3 pr-11 rounded-md shadow-sm focus:border-gray-400 focus:outline-none md:h-9" placeholder="Password" required>
+                        <i id="open" class="absolute w-7 h-7 mx-2 float-right cursor-pointer" v-html="icons.Eye" @click="togglePasswordVisibility"></i>
+                        <i id="close" class="hidden absolute w-7 h-7 mx-2 float-right cursor-pointer" v-html="icons.EyeClosed" @click="togglePasswordVisibility"></i>
                     </div>
-                    <div class="flex items-center gap-1 justify-normal ">
-                        <input type="checkbox" v-model="rememberMe" id="remember"
-                            class="accent-[#550514] text-white focus:border-gray-400 focus:outline-none"
-                            @click="remember">
-                        <label for="rememberMe" class="md:text-white md:text-sm">Remember me</label><br>
+                    <div class="flex items-center gap-1">
+                        <input type="checkbox" v-model="rememberMe" id="remember" class="accent-[#550514] focus:border-gray-400 focus:outline-none" @click="remember">
+                        <label for="rememberMe" class="text-sm md:text-white">Remember me</label><br>
                     </div>
-                    <button type="submit"
-                        class="w-full h-10 text-white bg-[#39030D] rounded-md shadow-black max-2xl:w-20 lg:h-10 md:bg-[#AA0927] hover:opacity-75">Sign
-                        In</button>
+                    <button type="submit" class="w-full h-10 bg-[#39030D] text-white rounded-md shadow-black hover:opacity-75 md:bg-[#AA0927]">
+                        Sign In
+                    </button>
                 </form>
                 <div class="flex flex-col">
                     <router-link to="/reset" class="p-2 text-sm text-left w-fit">
-                        <button
-                            class="text-left text-[#39030D] active:underline hover:underline md:underline md:text-white">
+                        <button class="text-[#39030D] md:text-white hover:underline active:underline">
                             Forgot Password?
                         </button>
                     </router-link>
-
                     <p class="p-2 text-sm text-left md:text-white">Need an account? <router-link to="/signup">
-                            <span class="text-[#39030D] active:underline hover:underline md:underline md:text-white">
+                            <span class="text-[#39030D] md:text-white hover:underline active:underline">
                                 Register
                             </span>
                         </router-link></p>
                 </div>
-
             </div>
+        </div>
+        <div v-if="isLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+            <img src="/src/assets/loading.gif" alt="Loading" />
         </div>
     </div>
 </template>
@@ -72,6 +57,7 @@ const info = ref('');
 const router = useRouter();
 const route = useRoute();
 const getToken = ref(localStorage.getItem('token'));
+const isLoading = ref(false);
 
 // Function to update token value
 function updateToken() {
@@ -107,6 +93,7 @@ async function login(email, pass) {
     const password = document.getElementById('pass');
     const rememberMeCheckbox = document.getElementById('remember');
     try {
+        isLoading.value = true;
         const data = await loginAuth(email, pass);
         if (data && data.result) {
             field.classList.remove("show");
@@ -126,6 +113,9 @@ async function login(email, pass) {
         console.error('Login error:', error);
         const $toast = useToast();
         $toast.warning('Invalid login data');
+    }
+    finally {
+        isLoading.value = false;
     }
 }
 
