@@ -23,7 +23,6 @@ const db = getDatabase(app);
 
 
 const baseUrl = "https://speedyrepairanddelivery.com/api-delivery/";
-
 let pwauth = localStorage.getItem("token");
 let updateToken = () => {
     pwauth = localStorage.getItem("token");
