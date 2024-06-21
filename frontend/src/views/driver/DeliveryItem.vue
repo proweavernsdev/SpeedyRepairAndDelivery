@@ -9,7 +9,9 @@
         <div
             class="flex flex-row 2xl:flex-col [&>*]:w-1/2 2xl:[&>*]:w-full [&>*]:p-3 items-center justify-center h-full">
             <div class="flex items-center justify-center">
-                <img src="../../assets/R.png" alt="image"
+                <img v-if="currentDeliveryItem.imgUrl" :src="currentDeliveryItem.imgUrl" alt="image"
+                    class="object-cover size-[600px] rounded-lg md:size-full 2xl:h-[400px]" />
+                <img v-else src="@/assets/image.png" alt="fallback image"
                     class="object-cover size-[600px] rounded-lg md:size-full 2xl:h-[400px]" />
             </div>
             <dialog class="p-5 border-2 rounded-lg" id="rejectDialog">
@@ -99,11 +101,11 @@
                 </div>
                 <div
                     class="flex flex-row gap-1 justify-center [&>*]:w-[48%] sm:[&>*]:w-full [&>*]:p-2 py-2 sm:flex-col">
-                    <RouterLink :to="`/rider/requests/${currentDeliveryItem.trackingNumber}/track`"
+                    <button @click="dialog('openAcceptModal')"
                         class="accept bg-[#AA0927] text-white text-center items-center rounded-lg hover:opacity-80 hover:scale-[99%] text-sm">
                         Accept
                         Task
-                    </RouterLink>
+                    </button>
                     <button
                         class="reject text-[#AA0927] rounded-lg border-2 border-transparent hover:border-[#AA0927] text-sm"
                         @click="dialog('openRejectModal')">Reject
@@ -121,11 +123,13 @@ import icons from "@/assets/icons";
 import { onMounted, ref } from "vue";
 import { driverRetrieveData } from "@/services/ApiServices.js";
 import { db } from '@/services/firebaseConfig';
-import { ref as rtdbRef, get as rtdbGet } from 'firebase/database';
+import { ref as rtdbRef, get as rtdbGet, update, set as rtdbSet } from 'firebase/database';
 import { useRouter, useRoute } from "vue-router";
+import { remove } from "firebase/database";
 
 const userId = ref('');
 const router = useRouter();
+const driver = ref([]);
 const currentDeliveryItem = ref([]);
 async function load() {
     try {
@@ -134,6 +138,9 @@ async function load() {
         console.log("REQUEST ID:", trackingNumber);
         const response = await driverRetrieveData();
         userId.value = response.result.driverID;
+        driver.value = response.result;
+        console.log("DRIVER:", driver.value);
+        console.log("USER ID:", userId.value);
         const dbRef = rtdbRef(db, 'deliveries');
         const snapshot = await rtdbGet(dbRef);
         if (snapshot.exists()) {
@@ -167,14 +174,74 @@ async function load() {
     }
 }
 
-function dialog(type) {
+async function dialog(type) {
     const rejectModal = document.getElementById("rejectDialog");
-    if (type == "closeRejectModal") {
+
+    if (type === "closeRejectModal") {
         rejectModal.close();
-    } else if (type == "openRejectModal") {
+    } else if (type === "openRejectModal") {
         rejectModal.showModal();
-    } else if (type == "confirmReject") {
+    } else if (type === "confirmReject") {
         console.log("reject");
+        const deliveryRef = rtdbRef(db, 'deliveries/' + currentDeliveryItem.value.userId + '/pending/' + currentDeliveryItem.value.trackingNumber);
+        try {
+            // Fetch the current delivery data
+            const deliverySnapshot = await rtdbGet(deliveryRef);
+            if (deliverySnapshot.exists()) {
+                let deliveryData = deliverySnapshot.val();
+                if (!deliveryData.ridersCancelled) {
+                    deliveryData.ridersCancelled = [];
+                }
+                if (!deliveryData.ridersCancelled.includes(userId.value)) {
+                    deliveryData.ridersCancelled.push(userId.value);
+                }
+                await update(deliveryRef, { ridersCancelled: deliveryData.ridersCancelled });
+            } else {
+                console.log('No data available');
+            }
+            rejectModal.close();
+            goBack();
+        } catch (error) {
+            console.error('Error updating delivery data:', error);
+        }
+    } else if (type === "openAcceptModal") {
+        console.log("accept");
+        const deliveryRef = rtdbRef(db, `deliveries/${currentDeliveryItem.value.userId}/pending/${currentDeliveryItem.value.trackingNumber}`);
+        try {
+            const updates = {
+                driverName: `${driver.value.driver_firstName} ${driver.value.driver_lastName}`,
+                driver: driver.value.driverID,
+                driverContact: driver.value.driver_driversLicenseNumber,
+                status: 'accepted',
+            };
+            update(deliveryRef, updates);
+            rtdbGet(deliveryRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const acceptedRef = rtdbRef(db, `deliveries/${currentDeliveryItem.value.userId}/accepted/${currentDeliveryItem.value.trackingNumber}`);
+                    rtdbSet(acceptedRef, snapshot.val())
+                        .then(() => {
+                            console.log('Data moved to "accepted" folder.');
+                            remove(deliveryRef)
+                                .then(() => {
+                                    console.log('Data removed from "pending".');
+                                    router.push({ path: `/rider/requests/${currentDeliveryItem.value.trackingNumber}/track` });
+                                })
+                                .catch((error) => {
+                                    console.error('Error removing data from "pending":', error);
+                                });
+                        })
+                        .catch((error) => {
+                            console.error('Error moving data to "accepted" folder:', error);
+                        });
+                } else {
+                    console.error('Data does not exist at "pending" location.');
+                }
+            }).catch((error) => {
+                console.error('Error retrieving data from "pending":', error);
+            });
+        } catch (error) {
+            console.error('Error updating delivery data:', error);
+        }
     }
 }
 

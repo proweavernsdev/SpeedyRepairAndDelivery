@@ -138,9 +138,9 @@ async function load() {
             for (const deliveryKey in deliveries) {
                 if (deliveries.hasOwnProperty(deliveryKey)) {
                     const deliveryData = deliveries[deliveryKey];
-                    for (const pendingKey in deliveryData.pending) {
-                        if (deliveryData.pending.hasOwnProperty(pendingKey)) {
-                            const pendingDelivery = deliveryData.pending[pendingKey];
+                    for (const pendingKey in deliveryData.accepted) {
+                        if (deliveryData.accepted.hasOwnProperty(pendingKey)) {
+                            const pendingDelivery = deliveryData.accepted[pendingKey];
                             if (pendingDelivery.trackingNumber == trackingNumber) {
                                 currentDeliveryItem.value = pendingDelivery;
                                 found = true;
@@ -182,7 +182,7 @@ async function load() {
 
 
 function goBack() {
-    router.go(-1);
+    router.go(-2);
 }
 
 onMounted(load);

@@ -113,31 +113,44 @@
                             </button>
                         </div>
                     </div>
-                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]"
-                        v-for="(delivery, index) in currentPendingDeliveries" :key="index">
-                        <div class="size-full md:flex md:justify-center md:items-center md:p-3"
-                            v-show="isCardView === true">
-                            <div class="bg-red-400 size-full md:size-[90%]">
-                                <img :src="item.pending[Object.keys(item.pending)[0]].imgUrl" alt="item image"
-                                    class="w-full h-full object-cover">
-                            </div>
+                    <div class="w-full">
+                        <div v-if="currentPendingDeliveries.length > 0" class="flex gap-5"
+                            :class="isCardView ? 'flex-row' : 'flex-col'">
+                            <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]"
+                                v-for="(delivery, index) in currentPendingDeliveries" :key="index">
+                                <div class="size-full md:flex md:justify-center md:items-center md:p-3"
+                                    v-show="isCardView === true">
+                                    <div class="bg-red-400 size-full md:size-[90%]">
+                                        <img v-if="delivery.details.imgUrl" :src="delivery.details.imgUrl"
+                                            alt="item image" class="w-full h-full object-cover">
+                                        <img v-else src="@/assets/image.png" alt="fallback image"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                </div>
+                                <div class="w-full md:p-3">
+                                    <h1 class="text-lg font-semibold sm:text-xs truncate">
+                                        {{ delivery.details.itemName }}
+                                    </h1>
+                                    <p class="sm:text-xs truncate">
+                                        {{ delivery.details.itemDescription }}
+                                    </p>
+                                </div>
+                                <div class="flex justify-end w-full md:p-3">
+                                    <RouterLink :to="`/rider/requests/${delivery.trackingNumber}`">
+                                        <button
+                                            class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
+                                            Details</button>
+                                    </RouterLink>
+                                </div>
+                            </li>
                         </div>
-                        <div class="w-full md:p-3">
-                            <h1 class="text-lg font-semibold sm:text-xs truncate">
-                                {{ delivery.details.itemName }}
-                            </h1>
-                            <p class="sm:text-xs truncate">
-                                {{ delivery.details.itemDescription }}
+                        <div v-else>
+                            <p class="text-center font-bold text-xl text-red-500 bg-red-100 rounded-lg w-full p-5">No
+                                Pending
+                                Deliveries
                             </p>
                         </div>
-                        <div class="flex justify-end w-full md:p-3">
-                            <RouterLink :to="`/rider/requests/${delivery.trackingNumber}`">
-                                <button
-                                    class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
-                                    Details</button>
-                            </RouterLink>
-                        </div>
-                    </li>
+                    </div>
                 </div>
             </div>
         </template>
@@ -202,7 +215,6 @@ async function load() {
             userId.value = response.result.driverID;
             const dbRef = rtdbRef(db, 'deliveries');
             const snapshot = await rtdbGet(dbRef);
-
             if (snapshot.exists()) {
                 const deliveries = snapshot.val();
                 for (const delivery in deliveries) {
@@ -217,7 +229,10 @@ async function load() {
                                         trackingNumber: trackingNumber,
                                         details: itemDetails
                                     };
-                                    currentPendingDeliveries.value.push(pendingDelivery);
+                                    console.log(pendingDelivery.details);
+                                    if (pendingDelivery.details.ridersCancelled.includes(userId.value) == false || pendingDelivery.details.ridersCancelled == undefined) {
+                                        currentPendingDeliveries.value.push(pendingDelivery);
+                                    }
                                 }
                             }
                         }

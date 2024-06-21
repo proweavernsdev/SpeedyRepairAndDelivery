@@ -1,7 +1,7 @@
 <template>
   <div>
     <modal>
-        <ImageUploadModal v-if="uploadIsOpen" @close="uploadIsOpen = false" @fullURL = "getfullURL"/>
+      <ImageUploadModal v-if="uploadIsOpen" @close="uploadIsOpen = false" @fullURL="getfullURL" />
     </modal>
     <SRModalSlots v-show="isOpen == true" @close="isOpen = false">
       <template #Modal-Header>
@@ -363,16 +363,21 @@
             </div>
 
             <div class="w-full gap-3 p-3">
-                <label for="itemImg" class="block text-black font-bold mb-2"> Image <span class = "text-gray-400 text-sm"> - Leave blank if not applicable</span></label>
-                <div class="relative w-4/5 inline-block">
-                    <input v-model="truncURL" id="item_image" type="text" placeholder="-- Empty File --" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-8" disabled>
-                    <button v-if="truncURL" @click="clearImgURL" class="absolute inset-y-0 right-0 flex items-center px-2 text-red-500 hover:text-red-700">
-                        remove
-                    </button>
-                </div>
-                <button @click="handleOpenModal" class="bg-[#aa0909] hover:bg-[#AA0927] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">
-                    {{ itemImg != '' ? 'Change Image' : 'Upload Image' }}
+              <label for="itemImg" class="block text-black font-bold mb-2"> Image <span class="text-gray-400 text-sm"> -
+                  Leave blank if not applicable</span></label>
+              <div class="relative w-4/5 inline-block">
+                <input v-model="truncURL" id="item_image" type="text" placeholder="-- Empty File --"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-8"
+                  disabled>
+                <button v-if="truncURL" @click="clearImgURL"
+                  class="absolute inset-y-0 right-0 flex items-center px-2 text-red-500 hover:text-red-700">
+                  remove
                 </button>
+              </div>
+              <button @click="handleOpenModal"
+                class="bg-[#aa0909] hover:bg-[#AA0927] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">
+                {{ itemImg != '' ? 'Change Image' : 'Upload Image' }}
+              </button>
             </div>
 
 
@@ -468,12 +473,12 @@ const getfullURL = (e) => {
   itemImg.value = e;
   truncURL.value = e.split('/').pop();
   console.log(truncURL.value);
-} 
+}
 
 //clear Item Image URL
 const clearImgURL = () => {
-    itemImg.value = '';
-    truncURL.value = '';
+  itemImg.value = '';
+  truncURL.value = '';
 }
 
 // Modal variables
@@ -734,6 +739,7 @@ const bookingConfirm = async () => {
       lastUpdated: currentDate.toLocaleDateString() + " " + currentDate.toLocaleTimeString(),
       driverName: "", //driverName.value
       driverContact: "", //driverContact.value,
+      ridersCancelled: [''],
       orderCreatedTime: currentDate.toLocaleDateString() + " " + currentDate.toLocaleTimeString(),
       status: "pending",
       userId: userId.value,
