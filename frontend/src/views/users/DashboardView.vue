@@ -7,7 +7,7 @@
       <div class="flex 2xl:block 2xl:space-y-2">
         <!-- column 1 -->
         <div id="left"
-          class="flex flex-wrap w-[800px] gap-[20px] mr-5 2xl:w-full 2xl:mr-0&>&> [&>div.this]:border-2 [&>div.this]:border-solid [&>div.this]:rounded-lg [&>div.this]:border-gray-300 lg:w-full lg:gap-2">
+          class="flex flex-wrap w-[800px] gap-[20px] mr-5 2xl:w-full 2xl:mr-0&>&> [&>div.this]:border [&>div.this]:rounded-lg [&>div.this]:border-gray-300 lg:w-full lg:gap-2">
           <div id="FeedBack" class="inline-block w-full p-6 this sm:p-4 hover:shadow-sm">
             <span class="font-bold text-2xl-lg"> Latest Feedbacks </span>
             <a href="" class="relative float-right text-xl font-bold text-[#AA0927] sm:text-base">
@@ -135,7 +135,7 @@ onMounted(() => {
         data.data = "null";
       }
       const isDataContained = data.data;
-      console.log("data:", isDataContained);
+      console.log("User data:", isDataContained);
     })
     .catch((error) => {
       console.error("Error fetching data:", error);

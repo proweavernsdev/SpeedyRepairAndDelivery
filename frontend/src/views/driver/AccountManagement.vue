@@ -1,33 +1,4 @@
 <template>
-    <SRModalSlots v-show="isOpen == true" @close="isOpen = false">
-        <template #Modal-Header>
-            <div class="flex justify-between px-5 py-5 bg-[#AA0927] text-white text-3xl font-semibold">
-                <h2 v-show="DeleteProfile == true">Delete driver</h2>
-                <span><button @click="isOpen = false" class="w-6">
-                        <svg class="hover:scale-105" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                            <line x1="10" y1="10" x2="90" y2="90" stroke="currentColor" stroke-width="5" />
-                            <line x1="90" y1="10" x2="10" y2="90" stroke="currentColor" stroke-width="5" />
-                        </svg>
-                    </button>
-                </span>
-            </div>
-        </template>
-        <template #Modal-Body>
-            <div class="mx-6 mb-6">
-                <div v-show="DeleteProfile == true" id="delete" class="pt-5 text-3xl font-bold text-center">
-                    <h2>Are you sure you want to delete?</h2>
-                </div>
-            </div>
-        </template>
-        <template #Modal-Footer>
-            <div class="flex justify-end w-full px-6 py-5">
-                <div v-show="DeleteProfile == true">
-                    <button
-                        class="w-[223px] h-[64px] rounded-2xl bg-[#550514] text-2xl text-white font-bold hover:bg-rose-950">Delete</button>
-                </div>
-            </div>
-        </template>
-    </SRModalSlots>
     <SRContents>
         <template #Content-Header>
             <div class="flex flex-col gap-5">
@@ -39,7 +10,7 @@
         </template>
         <template #Content-Body>
             <div class="flex flex-row justify-center h-full">
-                <div class="w-full m-2 rounded-md">
+                <div class="w-2/3 m-2 rounded-md">
                     <div id="viewAccount" class="flex flex-col w-full p-2 rounded-md shadow-sm" v-if="!isEditModeOn">
                         <div class="flex flex-col items-center my-2 text-center">
                             <SRProfile :image="pfp" :isEditModeOn="isEditModeOn" />
@@ -54,7 +25,7 @@
                                     <span class="w-1/3 p-2 text-sm border">ID</span>
                                     <span class="flex items-center justify-center w-2/3 text-sm font-bold border">{{
                                         driverInformation.driverID
-                                    }}</span>
+                                        }}</span>
                                 </p>
                             </div>
                             <div class="flex flex-row text-center">
@@ -76,7 +47,7 @@
                                     <span class="w-1/3 p-2 text-sm border">ZIP</span>
                                     <span class="flex items-center justify-center w-2/3 text-sm font-bold border ">{{
                                         driverInformation.driver_zip
-                                    }}</span>
+                                        }}</span>
                                 </p>
                             </div>
                         </div>

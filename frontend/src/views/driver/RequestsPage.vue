@@ -113,54 +113,31 @@
                             </button>
                         </div>
                     </div>
-                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]">
+                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]"
+                        v-for="(delivery, index) in currentPendingDeliveries" :key="index">
                         <div class="size-full md:flex md:justify-center md:items-center md:p-3"
                             v-show="isCardView === true">
-                            <div class="bg-red-400 size-full md:size-[90%]"></div>
+                            <div class="bg-red-400 size-full md:size-[90%]">
+                                <img :src="item.pending[Object.keys(item.pending)[0]].imgUrl" alt="item image"
+                                    class="w-full h-full object-cover">
+                            </div>
                         </div>
                         <div class="w-full md:p-3">
-                            <h1 class="text-lg font-semibold sm:text-xs">List Item Heading</h1>
-                            <p class="sm:text-xs">List Item Description</p>
+                            <h1 class="text-lg font-semibold sm:text-xs truncate">
+                                {{ delivery.details.itemName }}
+                            </h1>
+                            <p class="sm:text-xs truncate">
+                                {{ delivery.details.itemDescription }}
+                            </p>
                         </div>
                         <div class="flex justify-end w-full md:p-3">
-                            <RouterLink to="/rider/requests/1">
+                            <RouterLink :to="`/rider/requests/${delivery.trackingNumber}`">
                                 <button
                                     class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
                                     Details</button>
                             </RouterLink>
                         </div>
                     </li>
-
-                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]">
-                        <div class="size-full md:flex md:justify-center md:items-center md:p-3"
-                            v-show="isCardView === true">
-                            <div class="bg-red-400 size-full md:size-[90%]"></div>
-                        </div>
-                        <div class="w-full md:p-3">
-                            <h1 class="text-lg font-semibold sm:text-xs">List Item Heading</h1>
-                            <p class="sm:text-xs">List Item Description</p>
-                        </div>
-                        <div class="flex justify-end w-full md:p-3">
-                            <button class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
-                                Details</button>
-                        </div>
-                    </li>
-
-                    <li :class="isCardView ? 'cardList' : 'listList'" class="hover:scale-[.98]">
-                        <div class="size-full md:flex md:justify-center md:items-center md:p-3"
-                            v-show="isCardView === true">
-                            <div class="bg-red-400 size-full md:size-[90%]"></div>
-                        </div>
-                        <div class="w-full md:p-3">
-                            <h1 class="text-lg font-semibold sm:text-xs">List Item Heading</h1>
-                            <p class="sm:text-xs">List Item Description</p>
-                        </div>
-                        <div class="flex justify-end w-full md:p-3">
-                            <button class="p-2 text-white bg-red-700 rounded-md hover:opacity-80 md:p-1 md:text-xs">View
-                                Details</button>
-                        </div>
-                    </li>
-
                 </div>
             </div>
         </template>
@@ -172,11 +149,16 @@
 import { RouterLink } from "vue-router";
 import icons from "@/assets/icons";
 import SRContents from "@/layouts/SRContents.vue";
-import { ref } from "vue";
+import { onMounted, computed, ref, watch } from "vue";
+import { driverRetrieveData } from "@/services/ApiServices.js";
+import { db } from '@/services/firebaseConfig';
+import { getDatabase } from "firebase/database";
+import { set as rtdbSet, ref as rtdbRef, get as rtdbGet, child } from 'firebase/database';
 
 const isCardView = ref(true);
 const isFilterandSortOpen = ref(false);
 const toggleFilterandSort = ref(false);
+const userId = ref('');
 
 function filterDialog() {
     isFilterandSortOpen.value = !isFilterandSortOpen.value;
@@ -211,6 +193,48 @@ function toggleSection(section) {
         filterSection.classList.remove('active');
     }
 }
+
+const currentPendingDeliveries = ref([]);
+async function load() {
+    try {
+        const getData = driverRetrieveData();
+        getData.then(async (response) => {
+            userId.value = response.result.driverID;
+            const dbRef = rtdbRef(db, 'deliveries');
+            const snapshot = await rtdbGet(dbRef);
+
+            if (snapshot.exists()) {
+                const deliveries = snapshot.val();
+                for (const delivery in deliveries) {
+                    if (deliveries.hasOwnProperty(delivery)) {
+                        const deliveryData = deliveries[delivery];
+                        if (deliveryData.hasOwnProperty('pending')) {
+                            const pendingItems = deliveryData.pending;
+                            for (const trackingNumber in pendingItems) {
+                                if (pendingItems.hasOwnProperty(trackingNumber)) {
+                                    const itemDetails = pendingItems[trackingNumber];
+                                    const pendingDelivery = {
+                                        trackingNumber: trackingNumber,
+                                        details: itemDetails
+                                    };
+                                    currentPendingDeliveries.value.push(pendingDelivery);
+                                }
+                            }
+                        }
+                    }
+                }
+                console.log("Deliveries: ", currentPendingDeliveries.value);
+            } else {
+                console.log('No data available');
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+onMounted(load)
 </script>
 
 <style lang="scss" scoped>

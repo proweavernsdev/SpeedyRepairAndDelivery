@@ -1,12 +1,36 @@
 import axios from "axios";
+import { ref } from "vue";
+// import { signInWithEmailAndPassword } from "@/services/firebaseConfig";
+import { getAuth, signInWithEmailAndPassword as signInFirebase } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAda3Bw4Dr0pXmDBNHwcR4EDWlByL81M4I",
+    authDomain: "speedyrepair-6f70d.firebaseapp.com",
+    databaseURL: "https://speedyrepair-6f70d-default-rtdb.firebaseio.com",
+    projectId: "speedyrepair-6f70d",
+    storageBucket: "speedyrepair-6f70d.appspot.com",
+    messagingSenderId: "93950013309",
+    appId: "1:93950013309:web:c70a629b99583ae9eea614",
+    measurementId: "G-T3BC6KBKTK"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
 
 const baseUrl = "https://speedyrepairanddelivery.com/api-delivery/";
-
-
 let pwauth = localStorage.getItem("token");
 let updateToken = () => {
     pwauth = localStorage.getItem("token");
 };
+
+let uidInfo = ref("");
+
+export { uidInfo };
 
 const requestConfig = {
     headers: {
@@ -26,15 +50,23 @@ const decryptToken = (token) => {
 
 //login
 export async function loginAuth(userName, password) {
-    console.log(baseUrl);
-    const credentials = btoa(userName + ":" + password);
-    const res = await axios.get(baseUrl + "Users_v2", {
-        headers: {
-            LOGINAUTH: "Basic " + credentials,
-        },
-    });
-    console.info(pwauth);
-    return res.data;
+    try {
+        const userCredential = await signInFirebase(auth, userName, password);
+        const user = userCredential.user;
+        uidInfo.value = user.uid;
+        console.log("User UID:", user.uid);
+
+        const credentials = btoa(userName + ":" + password);
+        const res = await axios.get(baseUrl + "Users_v2", {
+            headers: {
+                LOGINAUTH: "Basic " + credentials,
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error signing in or calling API:", error);
+        throw error;
+    }
 }
 
 //register
@@ -156,10 +188,10 @@ export async function uploadData(fileInputs) {
         const res = await axios.post(
             "Api/upload",
             formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        }
         );
         return res.data;
     } catch (error) {
@@ -168,6 +200,8 @@ export async function uploadData(fileInputs) {
     }
 }
 
+
+// Asynchronous function for viewing files
 export async function viewFiles() {
     updateToken();
     try {
@@ -183,10 +217,10 @@ export async function viewFiles() {
 export async function getCompDocs() {
     updateToken();
     await axios.get(baseUrl + "Company/docs", {
-            header: {
-                PWAUTH: pwauth,
-            },
-        })
+        header: {
+            PWAUTH: pwauth,
+        },
+    })
         .then((res) => {
             return res;
         })
@@ -200,10 +234,10 @@ export async function getCompDocs() {
 export async function getDriverDocs() {
     updateToken();
     await axios.get(baseUrl + "Company/docs", {
-            header: {
-                PWAUTH: pwauth,
-            },
-        })
+        header: {
+            PWAUTH: pwauth,
+        },
+    })
         .then((res) => {
             return res;
         })
@@ -383,6 +417,7 @@ export async function updateWeight(id, categoryName, min, max, setFee) {
     }
 }
 
+//Deletes the weight data on the Taxonomies Weight Page.
 export async function deleteWeight(id) {
     updateToken();
     await axios
@@ -457,6 +492,7 @@ export async function getVehicles() {
 //       console.error("Error: " + err);
 //     });
 // }
+
 //Get all data for Request Priority Page
 // export async function getDriverDocs() {
 //   updateToken();
@@ -532,10 +568,10 @@ export async function setCompStatus(companyID, status) {
         Status: status,
     };
     await axios.put(baseUrl + "Company", requestData, {
-            headers: {
-                PWAUTH: pwauth,
-            }
-        })
+        headers: {
+            PWAUTH: pwauth,
+        }
+    })
         .then((res) => {
             return res.data;
         })
@@ -790,11 +826,11 @@ export async function updateDriver(firstName, lastName, addr, townCity, state, z
         const response = await axios.put(
             baseUrl + "DeliveryDrivers",
             updatedDriverData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    PWAUTH: pwauth,
-                },
-            }
+            headers: {
+                "Content-Type": "multipart/form-data",
+                PWAUTH: pwauth,
+            },
+        }
         );
         return response.data;
     } catch (error) {
@@ -877,7 +913,6 @@ export async function vehicleUpdate(
 }
 
 // ========EMPLOYEE MANAGEMENT FUNCTIONS========
-
 // Create sub-users for company accounts
 export async function employeeRegistration(
     email,
@@ -889,15 +924,15 @@ export async function employeeRegistration(
     await axios
         .post(
             baseUrl + "Company/employee", {
-                email: email,
-                password: password,
-                FirstName: firstName,
-                LastName: lastName,
-            }, {
-                headers: {
-                    PWAUTH: pwauth,
-                },
-            }
+            email: email,
+            password: password,
+            FirstName: firstName,
+            LastName: lastName,
+        }, {
+            headers: {
+                PWAUTH: pwauth,
+            },
+        }
         )
         .then((res) => {
             return res.data;

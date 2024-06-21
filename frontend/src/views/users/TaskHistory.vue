@@ -65,50 +65,97 @@
                 <button class="text-3xl size-12" @click="openDialog('taskDetails', 'close')">✖</button>
             </div>
             <hr class="w-full border">
-            <div v-if="itemName === 'ongoingItem'"
-                class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
-                    <p class="sm:text-sm">12345</p>
+            <div v-if="itemName === 'pendingItem'">
+                <div
+                    class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Tracking Number</h2>
+                        <p class="sm:text-sm">{{ itemData.trackingNumber }}
+                        </p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
+                        <p class="sm:text-sm">{{ itemData.senderaddressInfo }}
+                        </p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
+                        <p class="sm:text-sm">{{ itemData.receiveraddressInfo }}</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
+                        <p class="sm:text-sm">Size: A </p>
+                        <p class="sm:text-sm">Weight: A</p>
+                        <p class="sm:text-sm">Special Instructions: {{ itemData.notes }}</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Status</h2>
+                        <p class="capitalize sm:text-sm">{{ itemData.status }}</p>
+                    </div>
+                    <div class="flex flex-col gap-px p-3">
+                        <h2 class="text-lg font-medium sm:text-lg">Tracking Link</h2>
+                        <a href="#"
+                            class="w-full p-1 text-center text-white bg-red-800 rounded-sm sm:text-sm hover:opacity-80">Track
+                            Package</a>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Preferred Delivery Time</h2>
+                        <p class="sm:text-sm">{{ itemData.preferredDeliveryDate }}</p>
+                    </div>
+                    <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                        <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
+                            @click="openDialog('reportBooking', 'open')">Report</button>
+                    </div>
                 </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
-                    <p class="sm:text-sm">123 Main St, Anytown, USA</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
-                    <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
-                    <p class="sm:text-sm">Size: Small</p>
-                    <p class="sm:text-sm">Weight: 1kg</p>
-                    <p class="sm:text-sm">Special Instructions: None</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Status</h2>
-                    <p class="sm:text-sm">Ongoing</p>
-                </div>
-                <div class="flex flex-col gap-px p-3">
-                    <h2 class="text-lg font-medium sm:text-lg">Tracking Link</h2>
-                    <a href="#"
-                        class="w-full p-1 text-center text-white bg-red-800 rounded-sm sm:text-sm hover:opacity-80">Track
-                        Package</a>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Estimated Delivery Time</h2>
-                    <p class="sm:text-sm">12:00 PM</p>
-                </div>
-                <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
-                    <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
-                        @click="openDialog('reportBooking', 'open')">Report</button>
+            </div>
+            <div v-if="itemName === 'ongoingItem'">
+                <div
+                    class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Tracking Number</h2>
+                        <p class="sm:text-sm">{{ itemData.trackingNumber }}
+                        </p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
+                        <p class="sm:text-sm">{{ itemData.senderaddressInfo }}
+                        </p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
+                        <p class="sm:text-sm">{{ itemData.receiveraddressInfo }}</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
+                        <p class="sm:text-sm">Size: A </p>
+                        <p class="sm:text-sm">Weight: A</p>
+                        <p class="sm:text-sm">Special Instructions: {{ itemData.notes }}</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Status</h2>
+                        <p class="capitalize sm:text-sm">{{ itemData.status }}</p>
+                    </div>
+                    <div class="flex flex-col gap-px p-3">
+                        <h2 class="text-lg font-medium sm:text-lg">Tracking Link</h2>
+                        <a href="#"
+                            class="w-full p-1 text-center text-white bg-red-800 rounded-sm sm:text-sm hover:opacity-80">Track
+                            Package</a>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Preferred Delivery Time</h2>
+                        <p class="sm:text-sm">{{ itemData.preferredDeliveryDate }}</p>
+                    </div>
+                    <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                        <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
+                            @click="openDialog('reportBooking', 'open')">Report</button>
+                    </div>
                 </div>
             </div>
             <div v-if="itemName === 'completedItem'"
                 class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
                 <div>
                     <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
-                    <p class="sm:text-sm">12345</p>
+                    <p class="sm:text-sm">123456</p>
                 </div>
                 <div>
                     <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
@@ -251,6 +298,8 @@
                 <div class="flex justify-between [&>*]:w-full [&>*]:border [&>*]:p-4">
                     <button @click="viewTableContents('all')"
                         :class="taskTable === 'all' ? 'text-red-500 border-8 border-red-500' : 'text-black'">All</button>
+                    <button @click="viewTableContents('pending')"
+                        :class="taskTable === 'pending' ? 'text-red-500 border-4 border-red-500' : 'text-black'">Pending</button>
                     <button @click="viewTableContents('ongoing')"
                         :class="taskTable === 'ongoing' ? 'text-red-500 border-4 border-red-500' : 'text-black'">Ongoing</button>
                     <button @click="viewTableContents('completed')"
@@ -265,18 +314,33 @@
                                 <th>Item Name</th>
                                 <th>Pickup Location</th>
                                 <th>Dropoff Location</th>
-                                <th>Package Details</th>
+                                <th>Size</th>
+                                <th>Weight</th>
                                 <th>Status</th>
-                                <th>Estimated Delivery Time</th>
                                 <th>Actions</th>
                             </template>
-                            <template #Table-Body>
+                            <template #Table-Body v-if="taskTable === 'pending' || taskTable === 'all'">
+                                <tr id="pending" :data-status="item.status" class=" [&>*]:p-4" v-for="item in
+                                    pendingDeliveries" :key="item.id">
+                                    <td>{{ item.itemName }}</td>
+                                    <td>{{ item.senderaddressInfo }}</td>
+                                    <td>{{ item.receiveraddressInfo }}</td>
+                                    <td>{{ item.height }} ✖ {{ item.width }} ✖ {{ item.length }} <br> {{
+                                        item.sizeDropdown }}</td>
+                                    <td>{{ item.weight }} {{ item.weightDropdown }}</td>
+                                    <td class="capitalize">{{ item.status }}</td>
+                                    <td>
+                                        <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
+                                            @click="openBooking('taskDetails', 'pendingItem', 'open', item.trackingNumber)">See
+                                            More</button>
+                                    </td>
+                                </tr>
                                 <tr id="ongoing" class="[&>*]:p-4"
                                     v-if="taskTable === 'ongoing' || taskTable === 'all'">
                                     <td>Item Name</td>
-                                    <td>Location A</td>
                                     <td>Location B</td>
-                                    <td>Small package</td>
+                                    <td>Location C</td>
+                                    <td>Medium package</td>
                                     <td>Ongoing</td>
                                     <td>5 days</td>
                                     <td>
@@ -336,6 +400,11 @@
                     </div>
                     <div class="hover:shadow-md">
                         <h2 class="text-lg font-bold sm:text-base ">Total Pending Deliveries: </h2>
+                        <h2 class="text-xl sm:text-base font-bold text-[#AA0927]">{{ pendingDeliveries.length }}
+                        </h2>
+                    </div>
+                    <div class="hover:shadow-md">
+                        <h2 class="text-lg font-bold sm:text-base ">Total Ongoing Deliveries: </h2>
                         <h2 class="text-xl sm:text-base font-bold text-[#AA0927]">0</h2>
                     </div>
                     <div class="hover:shadow-md">
@@ -357,10 +426,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
+import { customerRetrieveData } from '@/services/ApiServices';
+import { db } from '@/services/firebaseConfig';
+import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 
 const taskTable = ref('all');
 const itemName = ref('');
@@ -374,11 +446,15 @@ function openDialog(dialogName, action) {
     }
 }
 
-function openBooking(dialogName, table, state) {
+let itemData = ref([]);
+function openBooking(dialogName, table, state, trackingNumber) {
+
     itemName.value = table;
     const dialog = document.getElementById(dialogName);
     if (dialog && state === "open") {
         dialog.showModal();
+        itemData.value = pendingDeliveries.value.find(item => item.trackingNumber === trackingNumber);
+        console.log('Item Data:', itemData.value);
     } else {
         dialog.close();
     }
@@ -387,6 +463,40 @@ function openBooking(dialogName, table, state) {
 function viewTableContents(table) {
     taskTable.value = table;
 }
+
+const userId = ref('');
+const pendingDeliveries = ref([]);
+async function getData() {
+    try {
+        const data = await customerRetrieveData();
+        userId.value = data.data.cust_userOwner;
+        console.log('User ID:', userId.value);
+        const pendingRef = rtdbRef(db, `deliveries/${userId.value}/pending`);
+        console.log('Pending Ref:', pendingRef);
+        if (pendingRef) {
+            const snapshot = await rtdbGet(pendingRef);
+            console.log('Snapshot:', snapshot);
+            if (snapshot.exists()) {
+                const pendingData = snapshot.val();
+                console.log('Pending Data:', pendingData);
+                pendingDeliveries.value = Object.values(pendingData);
+                console.log('Pending Deliveries:', pendingDeliveries.value.length);
+            } else {
+                console.log('No pending deliveries found');
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+watch(pendingDeliveries, () => {
+    console.log('WATCH: Pending Deliveries:', pendingDeliveries.value);
+});
+
+
+
+onMounted(getData);
 
 </script>
 

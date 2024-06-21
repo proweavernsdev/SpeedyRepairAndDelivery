@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 header('Accept: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -8,14 +8,16 @@ header('Access-Control-Allow-Headers: LOGINAUTH, Content-Type, PWAUTH');
 
 require_once APPPATH . '/libraries/rest/Rest.php';
 
-class Users_v2 extends Rest {
+class Users_v2 extends Rest
+{
     private $fb;
     private $sm;
     private $cp;
     private $md;
     private $mw;
     private $br;
-    public function __construct(){
+    public function __construct()
+    {
         // Inherit parent's construct
         parent::__construct();
         // load Model
@@ -37,358 +39,111 @@ class Users_v2 extends Rest {
 
     }
 
-    /*  For testing purposes only, delete before deployment
-        ===================================================  */
-    protected function test_get(){
-        try{
-            if(!isset($_SERVER['HTTP_LOGINAUTH']))throw new Exception('No credentials detected');
-            $authorizationHeader = $_SERVER['HTTP_LOGINAUTH'];
-
-            if(strpos($authorizationHeader, 'Basic') !== 0)throw new Exception('Unsupported authentication scheme');
-            
-            $base64Credentials = substr($authorizationHeader, 5);
-            $credentials = base64_decode($base64Credentials);
-            $credentialsArray = explode(':', $credentials);
-            $email = $credentialsArray[0];
-            $password = $credentialsArray[1];
-
-            if(empty($email) && empty($password))throw new Exception('Fields must not be empty');
-            if(strpos($email, ' ') !== false || strpos($password, ' ') !== false)throw new Exception('input field must not contain whitespaces');
-
-            $login = $this->fb->login($email, $password);
-
-            $userRecord = $this->fb->userRecords($login['localId']);
-            
-            if($userRecord->emailVerified == true){
-                // once verified, check database
-                    $toArray = ['uid'=>$login['localId'], 'email'=>$email];
-                    // check if data in database is present
-                    $check = $this->md->checkDB($toArray);
-                    if($check){
-                        $data = [
-                            'UserID'=>$check->userID,
-                            'Email'=>$check->users_email,
-                            'UserAccess'=>$check->users_access_level_id
-                        ];
-                        $params = [
-                            'accessLevel'=> true,
-                            'levelParams'=> 'AccessLevelData',
-                            'basedOn'=> $data['UserAccess'],
-                        ];
-                        $this->responseOutput('Login success',json_decode($this->mw->createToken($data, $params)),200,true, true);
-                    }else{
-                    // If Speedy Delivery database query is false
-                        // Create HTTP Request to the Speedy Repair API to check for possible accounts
-                        $body = json_encode(['keypass'=>'laNzFSqL3D','email'=>$email,'uid'=>$login['localId']]);
-                        $header = ['Content-Type'=>'application/json'];
-                        // Submit HTTP Request to the Speedy Repair API 
-                        $bridge = $this->br->bridgePost('verify',$body,$header);
-                        // Check if the role is Customer
-                        if($bridge->user_role !== 'Customer')throw new Exception('User not a Customer type');
-                        // first, create account to db
-                        $loginArray = [
-                            'uid'=>$login['localId'],
-                            'email'=>$bridge->user_email,
-                            'accessID'=>3
-                        ];
-                        $this->md->registerDB($loginArray);
-                        $toArray =[
-                            'FirstName'=>$bridge->user_firstname,
-                            'LastName'=>$bridge->user_lastname,
-                            'Address'=>$bridge->user_address,
-                            'TownCity'=>$bridge->user_city,
-                            'State'=>$bridge->user_state,
-                            'ZIP'=>$bridge->user_zip
-                        ];
-                        $query = $this->CustomerModel->customerRegister($toArray, $login['localId']);
-                        if($query){
-                            $this->responseOutput('Account succesfully migrated', [], 200, true);
-                        }else throw new Exception('Query error');
-                    }
-                }else{
-                    if(isset($userRecord->email)){
-                        $verifyLink = $this->fb->getVerification($userRecord->email);
-                        $to_email = $userRecord->email;
-                        $subject = "Subject: Your Email Verification Link (Expires in 5 Minutes)";
-                        $body = "<div style='font-family: Arial, sans-serif; padding: 20px;'>
-                                <p>You have initiated the registration process for your account. To complete this process, please use the following verification link:</p>
-                                <p>Link: <span style='font-weight: bold;'> <a href= '" . $verifyLink . "'>link</a> </span></p>
-                                <p>This Link is valid for 5 minutes only and is essential for completing your registration securely. It helps us confirm your identity and maintain the security of your account.</p>
-                                <p>Please use the Link promptly to ensure a successful registration. Remember, it will expire in 5 minutes.</p>
-                                <p>Keep your Link confidential and avoid sharing it with anyone.</p>
-                                <p>If you didn't initiate this registration, please ignore this email.</p>
-                                </div>";
-                        $mail = $this->sm->sendEmail($to_email, $subject, $body);
-                        if($mail){
-                            $this->responseOutput('Email is not verified, verification link sent to email', ['email'=>$userRecord->email], 200,  true, true);
-                        }else{
-                            $this->responseOutput('Internal Server Error', ['email'=>$mail], 500, false, true);
-                        }
-                    }else{
-                        $this->responseOutput('Internal Server Error');
-                    }
-                }
-        } catch (Exception $e){
-            $this->responseOutput($e->getMessage());
-        }
-    }
-    /*  ===================================================
-        For testing purposes only, delete before deployment
-        ===================================================  */
-    // Login Prototype
-    protected function proto_get(){
-        if (isset($_SERVER['HTTP_LOGINAUTH'])) {
-            $authorizationHeader = $_SERVER['HTTP_LOGINAUTH'];
-            if(strpos($authorizationHeader, 'Basic') === 0){
-                $base64Credentials = substr($authorizationHeader, 5);
-                $credentials = base64_decode($base64Credentials);
-                $credentialsArray = explode(':', $credentials);
-                $email = $credentialsArray[0];
-                $password = $credentialsArray[1];
-                if (!empty($email) && !empty($password)){
-                    if(strpos($email, ' ') !== false || strpos($password, ' ') !== false){
-                        $this->response([
-                            'success' => false,
-                            'msg' => 'input field must not contain whitespaces',
-                        ],402);
-                    }else{
-                        // Place code here...
-                        $login = $this->fb->login($email, $password);
-                        // Check if UID is present
-                        if(isset($login['localId'])){
-                            // Get user record to check for verified email
-                            $userRecord = $this->fb->userRecords($login['localId']);
-                            // If verify is successful 
-                            if($userRecord){
-                                // Check if email is verified
-                                if($userRecord->emailVerified == true){
-                                // once verified, check database
-                                    $toArray = ['uid'=>$login['localId'], 'email'=>$email];
-                                    // check if data in database is present
-                                    $check = $this->md->checkDB($toArray);
-                                    if($check){
-                                        if($check->users_access_level_id === 0 || $check->users_access_level_id === 1){
-                                            $adminToken = $this->middleware->tokenize([
-                                                'UserID'=>$check->userID,
-                                                'Email'=>$check->users_email,
-                                                'UserAccess'=>$check->users_access_level_id
-                                            ]);
-                                            $this->response([
-                                                'success' => true,
-                                                'result' => json_decode($adminToken)
-                                            ],200);
-                                        }else{
-                                            $userToken = $this->cp->encrypt([
-                                                'UserID'=>$check->userID,
-                                                'Email'=>$check->users_email,
-                                                'UserAccess'=>$check->users_access_level_id
-                                            ]);
-                                            $this->response([
-                                                'success' => true,
-                                                'result' => json_decode($userToken)
-                                            ],200);
-                                        }
-                                    }else{
-                                    // If Speedy Delivery database query is false
-                                        // Create HTTP Request to the Speedy Repair API to check for possible accounts
-                                        $body = json_encode(['keypass'=>'laNzFSqL3D','email'=>$email,'uid'=>$login['localId']]);
-                                        $header = ['Content-Type'=>'application/json'];
-                                        // Submit HTTP Request to the Speedy Repair API 
-                                        $bridge = $this->br->bridgePost('verify',$body,$header);
-                                        if($bridge){
-                                            // $this->responseOutput('this',$bridge,200,true,true);
-                                        // If bridge outputs true and has data
-                                            // Check if the role is Customer
-                                            if($bridge->user_role == 'Customer'){
-                                                // first, create account to db
-                                                $loginArray = [
-                                                    'uid'=>$login['localId'],
-                                                    'email'=>$bridge->user_email,
-                                                    'accessID'=>3
-                                                ];
-                                                $register = $this->md->registerDB($loginArray);
-                                                if($register){
-                                                    $toArray =[
-                                                        'FirstName'=>$bridge->user_firstname,
-                                                        'LastName'=>$bridge->user_lastname,
-                                                        'Address'=>$bridge->user_address,
-                                                        'TownCity'=>$bridge->user_city,
-                                                        'State'=>$bridge->user_state,
-                                                        'ZIP'=>$bridge->user_zip
-                                                    ];
-                                                    $query = $this->CustomerModel->customerRegister($toArray, $login['localId']);
-                                                    if($query){
-                                                        $this->responseOutput('Account succesfully migrated', [], 200, true);
-                                                    }
-                                                }
-                                            }else{
-                                                $this->responseOutput('User not a Customer type',[],401);
-                                            }
-                                        }else{
-                                        // If bridge outputs false therefor no data
-                                            $this->response([
-                                                'success' => false,
-                                                'message' => 'Account does not exist'
-                                            ],500);
-                                        }
-                                    }
-                                }else{
-                                    if(isset($userRecord->email)){
-                                        $verifyLink = $this->fb->getVerification($userRecord->email);
-                                        $to_email = $userRecord->email;
-                                        $subject = "Subject: Your Email Verification Link (Expires in 5 Minutes)";
-                                        $body = "<div style='font-family: Arial, sans-serif; padding: 20px;'>
-                                                <p>You have initiated the registration process for your account. To complete this process, please use the following verification link:</p>
-                                                <p>Link: <span style='font-weight: bold;'> <a href= '" . $verifyLink . "'>link</a> </span></p>
-                                                <p>This Link is valid for 5 minutes only and is essential for completing your registration securely. It helps us confirm your identity and maintain the security of your account.</p>
-                                                <p>Please use the Link promptly to ensure a successful registration. Remember, it will expire in 5 minutes.</p>
-                                                <p>Keep your Link confidential and avoid sharing it with anyone.</p>
-                                                <p>If you didn't initiate this registration, please ignore this email.</p>
-                                                </div>";
-                                        $mail = $this->sm->sendEmail($to_email, $subject, $body);
-                                        if($mail){
-                                            $this->responseOutput('Email is not verified, verification link sent to email', ['email'=>$userRecord->email], 200,  true, true);
-                                        }else{
-                                            $this->responseOutput('Internal Server Error', ['email'=>$mail], 500, false, true);
-                                        }
-                                    }else{
-                                        $this->responseOutput('Internal Server Error', []);
-                                    }
-                                }
-                            }else{
-                                $this->responseOutput('Internal Server Error', []);
-                            }
-                        }else{
-                            $this->response([
-                                'success' => false,
-                                $login
-                            ],500);
-                        }
-                    }
-                }else{
-                // If fields are empty
-                    $this->response([
-                        'success' => false,
-                        'message' => 'Fields must not be empty 1'
-                    ],400);
-                }
-            }else{
-            // If the received authentication unsupported
-                $this->response([
-                    'success' => false,
-                    'msg' => 'Unsupported authentication scheme',
-                ],403);
-            }
-        }
-    }
-    /*  ===================================================
-        For testing purposes only, delete before deployment  */
-
-
     // -- Sign-in/Login -- //
     /**
      * When account is unverified, send email verification.
      * When account is verified, account details from Firebase will be saved onto MySQL database
      * HTTP Request: GET
      */
-    protected function _get(){
+    protected function _get()
+    {
         if (isset($_SERVER['HTTP_LOGINAUTH'])) {
             $authorizationHeader = $_SERVER['HTTP_LOGINAUTH'];
-            if(strpos($authorizationHeader, 'Basic') === 0){
+            if (strpos($authorizationHeader, 'Basic') === 0) {
                 $base64Credentials = substr($authorizationHeader, 5);
                 $credentials = base64_decode($base64Credentials);
                 $credentialsArray = explode(':', $credentials);
                 $email = $credentialsArray[0];
                 $password = $credentialsArray[1];
-                if (!empty($email) && !empty($password)){
-                    if(strpos($email, ' ') !== false || strpos($password, ' ') !== false){
+                if (!empty($email) && !empty($password)) {
+                    if (strpos($email, ' ') !== false || strpos($password, ' ') !== false) {
                         $this->response([
                             'success' => false,
                             'msg' => 'input field must not contain whitespaces',
-                        ],402);
-                    }else{
+                        ], 402);
+                    } else {
                         // Place code here...
                         $login = $this->fb->login($email, $password);
                         // Check if UID is present
-                        if(isset($login['localId'])){
+                        if (isset($login['localId'])) {
                             // Get user record to check for verified email
                             $userRecord = $this->fb->userRecords($login['localId']);
                             // If verify is successful 
-                            if($userRecord){
+                            if ($userRecord) {
                                 // Check if email is verified
-                                if($userRecord->emailVerified == true){
-                                // once verified, check database
-                                    $toArray = ['uid'=>$login['localId'], 'email'=>$email];
+                                if ($userRecord->emailVerified == true) {
+                                    // once verified, check database
+                                    $toArray = ['uid' => $login['localId'], 'email' => $email];
                                     // check if data in database is present
                                     $check = $this->md->checkDB($toArray);
-                                    if($check){
-                                        if($check->users_access_level_id === "0" || $check->users_access_level_id === "1"){
+                                    if ($check) {
+                                        if ($check->users_access_level_id === "0" || $check->users_access_level_id === "1") {
                                             $adminToken = $this->middleware->tokenize([
-                                                'UserID'=>$check->userID,
-                                                'Email'=>$check->users_email,
-                                                'UserAccess'=>$check->users_access_level_id
+                                                'UserID' => $check->userID,
+                                                'Email' => $check->users_email,
+                                                'UserAccess' => $check->users_access_level_id
                                             ]);
                                             $this->response([
                                                 'success' => true,
                                                 'result' => $adminToken
-                                            ],200);
-                                        }else{
+                                            ], 200);
+                                        } else {
                                             $userToken = $this->cp->encrypt([
-                                                'UserID'=>$check->userID,
-                                                'Email'=>$check->users_email,
-                                                'UserAccess'=>$check->users_access_level_id
+                                                'UserID' => $check->userID,
+                                                'Email' => $check->users_email,
+                                                'UserAccess' => $check->users_access_level_id
                                             ]);
                                             $this->response([
                                                 'success' => true,
                                                 'result' => $userToken
-                                            ],200);
+                                            ], 200);
                                         }
-                                    }else{
-                                    // If Speedy Delivery database query is false
+                                    } else {
+                                        // If Speedy Delivery database query is false
                                         // Create HTTP Request to the Speedy Repair API to check for possible accounts
-                                        $body = json_encode(['keypass'=>'laNzFSqL3D','email'=>$email,'uid'=>$login['localId']]);
-                                        $header = ['Content-Type'=>'application/json'];
+                                        $body = json_encode(['keypass' => 'laNzFSqL3D', 'email' => $email, 'uid' => $login['localId']]);
+                                        $header = ['Content-Type' => 'application/json'];
                                         // Submit HTTP Request to the Speedy Repair API 
-                                        $bridge = $this->br->bridgePost('verify',$body,$header);
-                                        if($bridge){
+                                        $bridge = $this->br->bridgePost('verify', $body, $header);
+                                        if ($bridge) {
                                             // $this->responseOutput('this',$bridge,200,true,true);
-                                        // If bridge outputs true and has data
+                                            // If bridge outputs true and has data
                                             // Check if the role is Customer
-                                            if($bridge->user_role == 'Customer'){
+                                            if ($bridge->user_role == 'Customer') {
                                                 // first, create account to db
                                                 $loginArray = [
-                                                    'uid'=>$login['localId'],
-                                                    'email'=>$bridge->user_email,
-                                                    'accessID'=>3
+                                                    'uid' => $login['localId'],
+                                                    'email' => $bridge->user_email,
+                                                    'accessID' => 3
                                                 ];
                                                 $register = $this->md->registerDB($loginArray);
-                                                if($register){
-                                                    $toArray =[
-                                                        'FirstName'=>$bridge->user_firstname,
-                                                        'LastName'=>$bridge->user_lastname,
-                                                        'Address'=>$bridge->user_address,
-                                                        'TownCity'=>$bridge->user_city,
-                                                        'State'=>$bridge->user_state,
-                                                        'Zip'=>$bridge->user_zip
+                                                if ($register) {
+                                                    $toArray = [
+                                                        'FirstName' => $bridge->user_firstname,
+                                                        'LastName' => $bridge->user_lastname,
+                                                        'Address' => $bridge->user_address,
+                                                        'TownCity' => $bridge->user_city,
+                                                        'State' => $bridge->user_state,
+                                                        'Zip' => $bridge->user_zip
                                                     ];
                                                     $query = $this->CustomerModel->customerRegister($toArray, $login['localId']);
-                                                    if($query){
+                                                    if ($query) {
                                                         $this->responseOutput('Account succesfully migrated', [], 200, true);
                                                     }
                                                 }
-                                            }else{
-                                                $this->responseOutput('User not a Customer type',[],401);
+                                            } else {
+                                                $this->responseOutput('User not a Customer type', [], 401);
                                             }
-                                        }else{
-                                        // If bridge outputs false therefor no data
+                                        } else {
+                                            // If bridge outputs false therefor no data
                                             $this->response([
                                                 'success' => false,
                                                 'message' => 'Account does not exist'
-                                            ],500);
+                                            ], 500);
                                         }
                                     }
-                                }else{
-                                    if(isset($userRecord->email)){
+                                } else {
+                                    if (isset($userRecord->email)) {
                                         $verifyLink = $this->fb->getVerification($userRecord->email);
                                         $to_email = $userRecord->email;
                                         $subject = "Subject: Your Email Verification Link (Expires in 5 Minutes)";
@@ -401,38 +156,38 @@ class Users_v2 extends Rest {
                                                 <p>If you didn't initiate this registration, please ignore this email.</p>
                                                 </div>";
                                         $mail = $this->sm->sendEmail($to_email, $subject, $body);
-                                        if($mail){
-                                            $this->responseOutput('Email is not verified, verification link sent to email', ['email'=>$userRecord->email], 200,  true, true);
-                                        }else{
-                                            $this->responseOutput('Internal Server Error', ['email'=>$mail], 500, false, true);
+                                        if ($mail) {
+                                            $this->responseOutput('Email is not verified, verification link sent to email', ['email' => $userRecord->email], 200, true, true);
+                                        } else {
+                                            $this->responseOutput('Internal Server Error', ['email' => $mail], 500, false, true);
                                         }
-                                    }else{
+                                    } else {
                                         $this->responseOutput('Internal Server Error', []);
                                     }
                                 }
-                            }else{
+                            } else {
                                 $this->responseOutput('Internal Server Error', []);
                             }
-                        }else{
+                        } else {
                             $this->response([
                                 'success' => false,
-                                'message'=>$login
-                            ],500);
+                                'message' => $login
+                            ], 500);
                         }
                     }
-                }else{
-                // If fields are empty
+                } else {
+                    // If fields are empty
                     $this->response([
                         'success' => false,
                         'message' => 'Fields must not be empty 1'
-                    ],400);
+                    ], 400);
                 }
-            }else{
-            // If the received authentication unsupported
+            } else {
+                // If the received authentication unsupported
                 $this->response([
                     'success' => false,
                     'msg' => 'Unsupported authentication scheme',
-                ],403);
+                ], 403);
             }
         }
     }
@@ -441,30 +196,32 @@ class Users_v2 extends Rest {
      * Decrypts token and outputs the data inside the token
      * HTTP Request: GET
      */
-    protected function info_get(){
-        if(isset($_SERVER['HTTP_PWAUTH'])){
+    protected function info_get()
+    {
+        if (isset($_SERVER['HTTP_PWAUTH'])) {
             $token = $_SERVER['HTTP_PWAUTH'];
             $decrypted = $this->cp->decrypt($token);
-            if(!$decrypted){
+            if (!$decrypted) {
                 $this->response([
                     'success' => false,
                     'message' => 'Invalid Token'
-                ],401);
-            }else{
-                $this->responseOutput('User data request successful',$decrypted,200,true,true);
+                ], 401);
+            } else {
+                $this->responseOutput('User data request successful', $decrypted, 200, true, true);
             }
-        }else{
+        } else {
             $this->response([
                 'success' => false,
                 'message' => 'Unauthorized access'
-            ],401);
+            ], 401);
         }
     }
-    protected function proto_info_get(){
-        try{
+    protected function proto_info_get()
+    {
+        try {
             $data = $this->mw->checkToken()->getData();
-            $this->responseOutput('Proccess Successful', $data, 200,true,true);
-        } catch (Exception $e){
+            $this->responseOutput('Proccess Successful', $data, 200, true, true);
+        } catch (Exception $e) {
             $this->responseOutput($e->getMessage());
         }
     }
@@ -475,27 +232,29 @@ class Users_v2 extends Rest {
      * Send email verification after successful registration
      * HTTP Request: POST
      */
-    protected function _post(){
+    protected function _post()
+    {
         $data = $this->json();
-        if(empty($data['email']) && empty($data['password'])){
+        if (empty($data['email']) && empty($data['password'])) {
             $this->responseOutput('Fields must not be empty');
-        }else{
-            if(strpos($data['email'], ' ') == true || strpos($data['password'], ' ') == true){
+        } else {
+            if (strpos($data['email'], ' ') == true || strpos($data['password'], ' ') == true) {
                 $this->responseOutput('Fields must not have whitespaces');
-            }else{
-                if(!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) $this->responseOutput('Invalid email format');
+            } else {
+                if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL))
+                    $this->responseOutput('Invalid email format');
                 $reg = $this->fb->register($data);
-                if($reg){
+                if ($reg) {
                     $fbAcc = $this->fb->userRecordsbyEmail($data['email']);
-                    if($fbAcc){
+                    if ($fbAcc) {
                         // $this->responseOutput('get data',[$fbAcc->uid,$fbAcc->email],200,true,true);
                         $register = $this->md->registerDB([
-                            'uid'=>$fbAcc->uid,
-                            'email'=>$fbAcc->email,
-                            'password'=>$data['password'],
-                            'accessID'=>null
+                            'uid' => $fbAcc->uid,
+                            'email' => $fbAcc->email,
+                            'password' => $data['password'],
+                            'accessID' => null
                         ]);
-                        if($register){
+                        if ($register) {
                             $verifyLink = $this->fb->getVerification($fbAcc->email);
                             $to_email = $fbAcc->email;
                             $subject = "Subject: Your Email Verification Link (Expires in 5 Minutes)";
@@ -508,18 +267,18 @@ class Users_v2 extends Rest {
                                     <p>If you didn't initiate this registration, please ignore this email.</p>
                                     </div>";
                             $mail = $this->sm->sendEmail($to_email, $subject, $body);
-                            if($mail){
-                                $this->responseOutput('Email verification link has been sent',[],200,true);
-                            }else{
+                            if ($mail) {
+                                $this->responseOutput('Email verification link has been sent', [], 200, true);
+                            } else {
                                 $this->responseOutput('Something went wrong, Email not sent');
                             }
-                        }else{
+                        } else {
                             $this->responseOutput('Something went wrong, Account creation failed');
                         }
-                    }else{
+                    } else {
                         $this->responseOutput('Account does not exist');
                     }
-                }else{
+                } else {
                     $this->responseOutput('Something went wrong, Account creation failed');
                 }
             }
@@ -533,25 +292,27 @@ class Users_v2 extends Rest {
      *  This is for Admin and Users
      *  HTTP Request: PUT
      */
-    protected function _put(){
-        if(isset($_SERVER['HTTP_PWAUTH'])){
+    protected function _put()
+    {
+        if (isset($_SERVER['HTTP_PWAUTH'])) {
             $token = $_SERVER['HTTP_PWAUTH'];
             $decrypted = $this->cp->decrypt($token);
-            if(!$decrypted){
+            if (!$decrypted) {
                 $this->response([
                     'success' => false,
                     'message' => 'Unauthorize access'
-                ],401);
-            }else{
+                ], 401);
+            } else {
                 // Check if token has no expiry, this is to indicate as a normal User
-                if(!array_key_exists('expires_at', $decrypted)){
-                    if(empty($decrypted['Email'])){
-                        $this->responseOutput('Fields must not be empty',['Email'=>$decrypted->data],401,false,true);
-                    }else{
-                        if(strpos($decrypted['Email'], ' ') == true){
+                if (!array_key_exists('expires_at', $decrypted)) {
+                    if (empty($decrypted['Email'])) {
+                        $this->responseOutput('Fields must not be empty', ['Email' => $decrypted->data], 401, false, true);
+                    } else {
+                        if (strpos($decrypted['Email'], ' ') == true) {
                             $this->responseOutput('Fields must not have whitespaces');
-                        }else{
-                            if(!filter_var($decrypted['Email'], FILTER_VALIDATE_EMAIL)) $this->responseOutput('Invalid email format');
+                        } else {
+                            if (!filter_var($decrypted['Email'], FILTER_VALIDATE_EMAIL))
+                                $this->responseOutput('Invalid email format');
                             $verifyLink = $this->fb->getPassResetLink($decrypted['Email']);
                             $to_email = $decrypted['Email'];
                             $subject = "Subject: Your Password Reset Link (Expires in 5 Minutes)";
@@ -564,29 +325,30 @@ class Users_v2 extends Rest {
                                     <p>If you didn't initiate this password reset, please ignore this email.</p>
                                     </div>";
                             $mail = $this->sm->sendEmail($to_email, $subject, $body);
-                            if($mail){
-                                $this->responseOutput('Password reset link has been sent',[],200,true);
-                            }else{
+                            if ($mail) {
+                                $this->responseOutput('Password reset link has been sent', [], 200, true);
+                            } else {
                                 $this->responseOutput('Something went wrong, Email not sent');
                             }
                         }
                     }
-                }else{
-                // Check if token has expiry, this is to indicate user is Admin
+                } else {
+                    // Check if token has expiry, this is to indicate user is Admin
                     // Check if the expiry has passed
-                    if(time() >= $decrypted['expires_at']){
+                    if (time() >= $decrypted['expires_at']) {
                         $this->response([
                             'success' => false,
                             'message' => 'Token is expired'
-                        ],401);
-                    }else{
-                        if(empty($decrypted['data']['Email'])){
-                            $this->responseOutput('Fields must not be empty',['Email'=>$decrypted['data']['Email']],401,false,true);
-                        }else{
-                            if(strpos($decrypted['data']['Email'], ' ') == true){
+                        ], 401);
+                    } else {
+                        if (empty($decrypted['data']['Email'])) {
+                            $this->responseOutput('Fields must not be empty', ['Email' => $decrypted['data']['Email']], 401, false, true);
+                        } else {
+                            if (strpos($decrypted['data']['Email'], ' ') == true) {
                                 $this->responseOutput('Fields must not have whitespaces');
-                            }else{
-                                if(!filter_var($decrypted['data']['Email'], FILTER_VALIDATE_EMAIL)) $this->responseOutput('Invalid email format');
+                            } else {
+                                if (!filter_var($decrypted['data']['Email'], FILTER_VALIDATE_EMAIL))
+                                    $this->responseOutput('Invalid email format');
                                 $verifyLink = $this->fb->getPassResetLink($decrypted['data']['Email']);
                                 $to_email = $decrypted['data']['Email'];
                                 $subject = "Subject: Your Password Reset Link (Expires in 5 Minutes)";
@@ -599,9 +361,9 @@ class Users_v2 extends Rest {
                                         <p>If you didn't initiate this password reset, please ignore this email.</p>
                                         </div>";
                                 $mail = $this->sm->sendEmail($to_email, $subject, $body);
-                                if($mail){
-                                    $this->responseOutput('Password reset link has been sent',[],200,true);
-                                }else{
+                                if ($mail) {
+                                    $this->responseOutput('Password reset link has been sent', [], 200, true);
+                                } else {
                                     $this->responseOutput('Something went wrong, Email not sent');
                                 }
                             }
@@ -609,37 +371,11 @@ class Users_v2 extends Rest {
                     }
                 }
             }
-        }else{
+        } else {
             $this->response([
                 'success' => false,
                 'message' => 'Unauthorized access'
-            ],401);
-        }
-    }
-    protected function test_put(){
-        try{
-            $checker = $this->mw->checkToken();
-            $data = $checker->getData();
-            
-            if(empty($data->Email))throw new Exception('Email is empty');
-            if(!filter_var($data->Email, FILTER_VALIDATE_EMAIL))throw new Exception('Invalid email format');
-
-            $verifyLink = $this->fb->getPassResetLink($data->Email);
-            $to_email = $data->Email;
-            $subject = "Subject: Your Password Reset Link (Expires in 5 Minutes)";
-            $body = "<div style='font-family: Arial, sans-serif; padding: 20px;'>
-                    <p>You have initiated the password reset process for your account. To complete this process, please use the following verification link:</p>
-                    <p>Link: <span style='font-weight: bold;'> <a href= '" . $verifyLink . "'>link</a> </span></p>
-                    <p>This Link is valid for 5 minutes only and is essential for completing your password reset securely. It helps us confirm your identity and maintain the security of your account.</p>
-                    <p>Please use the Link promptly to ensure a successful password reset. Remember, it will expire in 5 minutes.</p>
-                    <p>Keep your Link confidential and avoid sharing it with anyone.</p>
-                    <p>If you didn't initiate this password reset, please ignore this email.</p>
-                    </div>";
-            $mail = $this->sm->sendEmail($to_email, $subject, $body);
-            if(!$mail)throw new Exception('An error has occured, Email not sent');
-            $this->responseOutput('Password reset link has been sent',[],200,true);
-        } catch (Exception $e) {
-            $this->responseOutput($e->getMessage());
+            ], 401);
         }
     }
 }
