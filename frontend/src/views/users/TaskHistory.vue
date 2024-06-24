@@ -219,32 +219,34 @@
             </div>
         </dialog>
         <dialog id="leaveFeedback" class="w-2/3 p-5 rounded-xl ">
-            <div class="flex items-center justify-between w-full p-3 md:p-1">
-                <h2 class="flex items-center text-3xl font-medium text-red-800">Leave Feedback</h2>
-                <button class="text-3xl size-12" @click="openDialog('leaveFeedback', 'close')">✖</button>
-            </div>
-            <hr class="w-full border">
-            <div class="flex flex-col gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
-                <h2 class="text-lg font-medium sm:text-lg">Feedback</h2>
-                <textarea
-                    class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border"
-                    name="feedback" id="feedback" cols="30" rows="10"></textarea>
-            </div>
-            <div class="flex gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-[#D9D9D9]">
-                <h2 class="text-lg font-medium text-center sm:text-lg">Rating</h2>
-                <select name="rating" id="rating"
-                    class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-            </div>
-            <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
-                <button class="w-full p-2 text-red-700 border border-red-700 rounded-md hover:opacity-80">Submit
-                    Feedback</button>
-            </div>
+            <form @submit.prevent="submitFeedback()">
+                <div class="flex items-center justify-between w-full p-3 md:p-1">
+                    <h2 class="flex items-center text-3xl font-medium text-red-800">Leave Feedback</h2>
+                    <button class="text-3xl size-12" @click="openDialog('leaveFeedback', 'close')">✖</button>
+                </div>
+                <hr class="w-full border">
+                <div class="flex flex-col gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                    <h2 class="text-lg font-medium sm:text-lg">Feedback</h2>
+                    <textarea
+                        class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border"
+                        v-model="feedback" name="feedback" id="feedback" cols="30" rows="10"></textarea>
+                </div>
+                <div class="flex gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-[#D9D9D9]">
+                    <h2 class="text-lg font-medium text-center sm:text-lg">Rating</h2>
+                    <select v-model="rating" name="rating" id="rating"
+                        class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">6</option>
+                    </select>
+                </div>
+                <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                    <button class="w-full p-2 text-red-700 border border-red-700 rounded-md hover:opacity-80">Submit
+                        Feedback</button>
+                </div>
+            </form>
         </dialog>
         <dialog id="reportBooking" class="w-2/3 p-5 rounded-xl ">
             <div class="flex items-center justify-between w-full p-3 md:p-1">
@@ -430,12 +432,14 @@ import { onMounted, ref, watch } from 'vue';
 import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
-import { customerRetrieveData } from '@/services/ApiServices';
+import { customerRetrieveData, addReview } from '@/services/ApiServices';
 import { db } from '@/services/firebaseConfig';
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 
 const taskTable = ref('all');
 const itemName = ref('');
+const feedback = ref('');
+const rating = ref(0);
 
 function openDialog(dialogName, action) {
     const dialog = document.getElementById(dialogName);
@@ -462,6 +466,29 @@ function openBooking(dialogName, table, state, trackingNumber) {
 
 function viewTableContents(table) {
     taskTable.value = table;
+}
+
+function submitFeedback() {
+    const feedbackData = {
+        driver_id: '1',
+        customer_id: userId.value,
+        comment: feedback.value,
+        rating: rating.value,
+        created_at: new Date().toISOString().slice(0, 10),
+    }
+
+    addReview(feedbackData).then((result) => {
+        if (result.status === 200) {
+            console.log('Feedback submitted successfully');
+            feedback.value = '';
+            rating.value = 0;
+            openDialog('feedback-dialog', 'close');
+        } else {
+            console.log('Failed to submit feedback');
+        }
+    }).catch((err) => {
+        console.error('Error submitting feedback:', err);
+    });
 }
 
 const userId = ref('');

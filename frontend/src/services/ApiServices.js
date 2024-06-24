@@ -1,86 +1,89 @@
-import axios from "axios";
-import { ref } from "vue";
+import axios from 'axios'
+import { ref } from 'vue'
 // import { signInWithEmailAndPassword } from "@/services/firebaseConfig";
-import { getAuth, signInWithEmailAndPassword as signInFirebase } from "firebase/auth";
-import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
+import {
+  getAuth,
+  signInWithEmailAndPassword as signInFirebase,
+} from 'firebase/auth'
+import { initializeApp } from 'firebase/app'
+import { getDatabase } from 'firebase/database'
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAda3Bw4Dr0pXmDBNHwcR4EDWlByL81M4I",
-    authDomain: "speedyrepair-6f70d.firebaseapp.com",
-    databaseURL: "https://speedyrepair-6f70d-default-rtdb.firebaseio.com",
-    projectId: "speedyrepair-6f70d",
-    storageBucket: "speedyrepair-6f70d.appspot.com",
-    messagingSenderId: "93950013309",
-    appId: "1:93950013309:web:c70a629b99583ae9eea614",
-    measurementId: "G-T3BC6KBKTK"
-};
+  apiKey: 'AIzaSyAda3Bw4Dr0pXmDBNHwcR4EDWlByL81M4I',
+  authDomain: 'speedyrepair-6f70d.firebaseapp.com',
+  databaseURL: 'https://speedyrepair-6f70d-default-rtdb.firebaseio.com',
+  projectId: 'speedyrepair-6f70d',
+  storageBucket: 'speedyrepair-6f70d.appspot.com',
+  messagingSenderId: '93950013309',
+  appId: '1:93950013309:web:c70a629b99583ae9eea614',
+  measurementId: 'G-T3BC6KBKTK',
+}
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const db = getDatabase(app)
 
-
-const baseUrl = "https://speedyrepairanddelivery.com/api-delivery/";
-let pwauth = localStorage.getItem("token");
+// const baseUrl = "https://speedyrepairanddelivery.com/api-delivery/";
+const baseUrl = 'http://localhost/codeigniter/'
+let pwauth = localStorage.getItem('token')
 let updateToken = () => {
-    pwauth = localStorage.getItem("token");
-};
+  pwauth = localStorage.getItem('token')
+}
 
-let uidInfo = ref("");
+let uidInfo = ref('')
 
-export { uidInfo };
+export { uidInfo }
 
 const requestConfig = {
-    headers: {
-        PWAUTH: pwauth,
-    },
-};
+  headers: {
+    PWAUTH: pwauth,
+  },
+}
 
 const decryptToken = (token) => {
-    try {
-        const bytes = crypto.AES.decrypt(token, 'your-secret-key');
-        const decryptedData = JSON.parse(bytes.toString(crypto.enc.Utf8));
-        return decryptedData;
-    } catch (error) {
-        return null;
-    }
-};
+  try {
+    const bytes = crypto.AES.decrypt(token, 'your-secret-key')
+    const decryptedData = JSON.parse(bytes.toString(crypto.enc.Utf8))
+    return decryptedData
+  } catch (error) {
+    return null
+  }
+}
 
 //login
 export async function loginAuth(userName, password) {
-    try {
-        const userCredential = await signInFirebase(auth, userName, password);
-        const user = userCredential.user;
-        uidInfo.value = user.uid;
-        console.log("User UID:", user.uid);
+  try {
+    const userCredential = await signInFirebase(auth, userName, password)
+    const user = userCredential.user
+    uidInfo.value = user.uid
+    console.log('User UID:', user.uid)
 
-        const credentials = btoa(userName + ":" + password);
-        const res = await axios.get(baseUrl + "Users_v2", {
-            headers: {
-                LOGINAUTH: "Basic " + credentials,
-            },
-        });
-        return res.data;
-    } catch (error) {
-        console.error("Error signing in or calling API:", error);
-        throw error;
-    }
+    const credentials = btoa(userName + ':' + password)
+    const res = await axios.get(baseUrl + 'Users_v2', {
+      headers: {
+        LOGINAUTH: 'Basic ' + credentials,
+      },
+    })
+    return res.data
+  } catch (error) {
+    console.error('Error signing in or calling API:', error)
+    throw error
+  }
 }
 
 //register
 export async function register(email, password) {
-    try {
-        const res = await axios.post(baseUrl + "Users_v2", {
-            email: email,
-            password: password,
-        });
-        return res.data;
-    } catch (error) {
-        console.error("Error:", error);
-        throw error;
-    }
+  try {
+    const res = await axios.post(baseUrl + 'Users_v2', {
+      email: email,
+      password: password,
+    })
+    return res.data
+  } catch (error) {
+    console.error('Error:', error)
+    throw error
+  }
 }
 
 //register 2
@@ -95,64 +98,64 @@ export async function register(email, password) {
 
 //update access
 export async function updateAccess(accessID) {
-    const requestData = {
-        update_access: true,
-        update_passwordAccMgt: false,
-        forgot_password: false,
-        accessID: accessID,
-    };
+  const requestData = {
+    update_access: true,
+    update_passwordAccMgt: false,
+    forgot_password: false,
+    accessID: accessID,
+  }
 
-    const res = await axios.put(baseUrl + "Users", requestData, requestConfig);
-    return res.data;
+  const res = await axios.put(baseUrl + 'Users', requestData, requestConfig)
+  return res.data
 }
 
 //change password
 export async function changePassword(
-    oldPassword,
-    newPassword,
-    confPassword,
-    otp
+  oldPassword,
+  newPassword,
+  confPassword,
+  otp,
 ) {
-    const requestData = {
-        update_access: false,
-        update_passwordAccMgt: true,
-        forgot_password: false,
-        oldPassword: oldPassword,
-        newPassword: newPassword,
-        confPassword: confPassword,
-        otp: otp,
-    };
-    const res = await axios.put(baseUrl + "Users", requestData, requestConfig);
-    return res.data;
+  const requestData = {
+    update_access: false,
+    update_passwordAccMgt: true,
+    forgot_password: false,
+    oldPassword: oldPassword,
+    newPassword: newPassword,
+    confPassword: confPassword,
+    otp: otp,
+  }
+  const res = await axios.put(baseUrl + 'Users', requestData, requestConfig)
+  return res.data
 }
 
 //reset password
 export async function resetPassword(email, newPassword, confPassword, token) {
-    if (token == null) {
-        token = "";
-    }
-    const requestData = {
-        update_access: false,
-        update_passwordAccMgt: false,
-        forgot_password: true,
-        email: email,
-        forget_password_token: token,
-        newPassword: newPassword,
-        confPassword: confPassword,
-    };
-    const res = await axios.put(baseUrl + "Users", requestData);
-    return res.data;
+  if (token == null) {
+    token = ''
+  }
+  const requestData = {
+    update_access: false,
+    update_passwordAccMgt: false,
+    forgot_password: true,
+    email: email,
+    forget_password_token: token,
+    newPassword: newPassword,
+    confPassword: confPassword,
+  }
+  const res = await axios.put(baseUrl + 'Users', requestData)
+  return res.data
 }
 
 //Retrieves data from the Users endpoint using axios.
 export async function retrieveData() {
-    updateToken();
-    const res = await axios.get(baseUrl + "Users_v2/info", {
-        headers: {
-            PWAUTH: pwauth,
-        },
-    });
-    return res.data;
+  updateToken()
+  const res = await axios.get(baseUrl + 'Users_v2/info', {
+    headers: {
+      PWAUTH: pwauth,
+    },
+  })
+  return res.data
 }
 
 //Retrieves data from the Users endpoint using axios.
@@ -179,72 +182,70 @@ export async function retrieveData() {
 
 // Asynchronous function for uploading files
 export async function uploadData(fileInputs) {
-    updateToken();
-    const formData = new FormData();
-    for (const fileInput of fileInputs) {
-        formData.append("files[]", fileInput);
-    }
-    try {
-        const res = await axios.post(
-            "Api/upload",
-            formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        }
-        );
-        return res.data;
-    } catch (error) {
-        console.error("Error:", error);
-        throw error;
-    }
+  updateToken()
+  const formData = new FormData()
+  for (const fileInput of fileInputs) {
+    formData.append('files[]', fileInput)
+  }
+  try {
+    const res = await axios.post('Api/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    return res.data
+  } catch (error) {
+    console.error('Error:', error)
+    throw error
+  }
 }
-
 
 // Asynchronous function for viewing files
 export async function viewFiles() {
-    updateToken();
-    try {
-        const response = await axios.get('/api/upload');
-        return response.data;
-    } catch (error) {
-        console.error("Error:", error);
-        throw error;
-    }
-};
+  updateToken()
+  try {
+    const response = await axios.get('/api/upload')
+    return response.data
+  } catch (error) {
+    console.error('Error:', error)
+    throw error
+  }
+}
 
 // Get all as Company User
 export async function getCompDocs() {
-    updateToken();
-    await axios.get(baseUrl + "Company/docs", {
-        header: {
-            PWAUTH: pwauth,
-        },
+  updateToken()
+  await axios
+    .get(baseUrl + 'Company/docs', {
+      header: {
+        PWAUTH: pwauth,
+      },
     })
-        .then((res) => {
-            return res;
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            throw error;
-        });
+    .then((res) => {
+      return res
+    })
+    .catch((error) => {
+      console.error('Error:', error)
+      throw error
+    })
 }
 
 // Get all as Driver User
 export async function getDriverDocs() {
-    updateToken();
-    await axios.get(baseUrl + "Company/docs", {
-        header: {
-            PWAUTH: pwauth,
-        },
+  updateToken()
+  await axios
+    .get(baseUrl + 'Company/docs', {
+      header: {
+        PWAUTH: pwauth,
+      },
     })
-        .then((res) => {
-            return res;
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            throw error;
-        });
+    .then((res) => {
+      return res
+    })
+    .catch((error) => {
+      console.error('Error:', error)
+      throw error
+    })
 }
 
 // export async function getDriverDocs(token) {
@@ -275,209 +276,208 @@ export async function getDriverDocs() {
 //   }
 // };
 
-
 //Get all data for Taxonomies Page
 export async function getTaxonomies() {
-    updateToken();
-    const res = await axios
-        .get(baseUrl + "TaxonomyHub", {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            throw error;
-        });
-    return res;
+  updateToken()
+  const res = await axios
+    .get(baseUrl + 'TaxonomyHub', {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    .catch((error) => {
+      console.error('Error:', error)
+      throw error
+    })
+  return res
 }
 
 //Adds a new size to the Taxonomies Page.
 export async function addSize(categoryName, min, max, setFee) {
-    updateToken();
-    let setSize = {
-        Category: categoryName,
-        Min: min,
-        Max: max,
-        SetFee: setFee,
-    };
-    try {
-        const res = await axios.post(
-            baseUrl + "TaxonomyHub/size",
-            setSize,
-            requestConfig
-        );
-        return res;
-    } catch (error) {
-        console.error("Error:", error);
-        throw error;
-    }
+  updateToken()
+  let setSize = {
+    Category: categoryName,
+    Min: min,
+    Max: max,
+    SetFee: setFee,
+  }
+  try {
+    const res = await axios.post(
+      baseUrl + 'TaxonomyHub/size',
+      setSize,
+      requestConfig,
+    )
+    return res
+  } catch (error) {
+    console.error('Error:', error)
+    throw error
+  }
 }
 
 //Adds a new weight to the Taxonomies Page.
 export async function addWeight(categoryName, min, max, setFee) {
-    updateToken();
-    let setWeight = {
-        Category: categoryName,
-        Min: min,
-        Max: max,
-        SetFee: setFee,
-    };
-    try {
-        const res = await axios.post(
-            baseUrl + "TaxonomyHub/weight",
-            setWeight,
-            requestConfig
-        );
-        return res;
-    } catch (error) {
-        console.error("Error:", error);
-        throw error;
-    }
+  updateToken()
+  let setWeight = {
+    Category: categoryName,
+    Min: min,
+    Max: max,
+    SetFee: setFee,
+  }
+  try {
+    const res = await axios.post(
+      baseUrl + 'TaxonomyHub/weight',
+      setWeight,
+      requestConfig,
+    )
+    return res
+  } catch (error) {
+    console.error('Error:', error)
+    throw error
+  }
 }
 
 //Updates the data on the Taxonomies Page.
 export async function updateData(data) {
-    updateToken();
-    await axios
-        .put(baseUrl + "TaxonomyHub", data, {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        })
-        .then((res) => {
-            return res;
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            throw error;
-        });
+  updateToken()
+  await axios
+    .put(baseUrl + 'TaxonomyHub', data, {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    .then((res) => {
+      return res
+    })
+    .catch((error) => {
+      console.error('Error:', error)
+      throw error
+    })
 }
 
 //Updates the size data on the Taxonomies Page.
 export async function updateSize(id, categoryName, min, max, setFee) {
-    updateToken();
-    let updateSizes = {
-        ID: id,
-        Category: categoryName,
-        Min: min,
-        Max: max,
-        SetFee: setFee,
-    };
-    try {
-        const res = await axios.put(
-            baseUrl + "TaxonomyHub/size",
-            updateSizes,
-            requestConfig
-        );
-        return res;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  updateToken()
+  let updateSizes = {
+    ID: id,
+    Category: categoryName,
+    Min: min,
+    Max: max,
+    SetFee: setFee,
+  }
+  try {
+    const res = await axios.put(
+      baseUrl + 'TaxonomyHub/size',
+      updateSizes,
+      requestConfig,
+    )
+    return res
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 //Deletes the size data on the Taxonomies Size Page.
 export async function deleteSize(id) {
-    updateToken();
-    await axios
-        .delete(baseUrl + "TaxonomyHub/size/", {
-            headers: {
-                PWAUTH: pwauth,
-                DELID: id,
-            },
-        })
-        .then((res) => {
-            return res;
-        })
-        .catch((err) => {
-            console.error("Error: " + err);
-        });
+  updateToken()
+  await axios
+    .delete(baseUrl + 'TaxonomyHub/size/', {
+      headers: {
+        PWAUTH: pwauth,
+        DELID: id,
+      },
+    })
+    .then((res) => {
+      return res
+    })
+    .catch((err) => {
+      console.error('Error: ' + err)
+    })
 }
 
 //Updates the weight data on the Taxonomies Page.
 export async function updateWeight(id, categoryName, min, max, setFee) {
-    updateToken();
-    let updateWeights = {
-        ID: id,
-        Category: categoryName,
-        Min: min,
-        Max: max,
-        SetFee: setFee,
-    };
-    try {
-        const res = await axios.put(
-            baseUrl + "TaxonomyHub/weight",
-            updateWeights,
-            requestConfig
-        );
-        return res;
-    } catch (err) {
-        console.error("Weight was not updated");
-    }
+  updateToken()
+  let updateWeights = {
+    ID: id,
+    Category: categoryName,
+    Min: min,
+    Max: max,
+    SetFee: setFee,
+  }
+  try {
+    const res = await axios.put(
+      baseUrl + 'TaxonomyHub/weight',
+      updateWeights,
+      requestConfig,
+    )
+    return res
+  } catch (err) {
+    console.error('Weight was not updated')
+  }
 }
 
 //Deletes the weight data on the Taxonomies Weight Page.
 export async function deleteWeight(id) {
-    updateToken();
-    await axios
-        .delete(baseUrl + "TaxonomyHub/weight/", {
-            headers: {
-                PWAUTH: pwauth,
-                DELID: id,
-            },
-        })
-        .then((res) => {
-            return res;
-        })
-        .catch((err) => {
-            console.error("Error: " + err);
-        });
+  updateToken()
+  await axios
+    .delete(baseUrl + 'TaxonomyHub/weight/', {
+      headers: {
+        PWAUTH: pwauth,
+        DELID: id,
+      },
+    })
+    .then((res) => {
+      return res
+    })
+    .catch((err) => {
+      console.error('Error: ' + err)
+    })
 }
 
 //Get all data for Fees Page
 export async function getFees() {
-    updateToken();
-    const res = await axios
-        .get(baseUrl + "App", {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        })
-        .catch((err) => {
-            console.error("Error: " + err);
-        });
-    return res;
+  updateToken()
+  const res = await axios
+    .get(baseUrl + 'App', {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    .catch((err) => {
+      console.error('Error: ' + err)
+    })
+  return res
 }
 
 //Updates the data on the Fees Page.
 export async function updateFees(data) {
-    updateToken();
-    const res = await axios
-        .put(baseUrl + "App", data, {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        })
-        .catch((err) => {
-            console.error("Error: " + err);
-        });
-    return res;
+  updateToken()
+  const res = await axios
+    .put(baseUrl + 'App', data, {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    .catch((err) => {
+      console.error('Error: ' + err)
+    })
+  return res
 }
 
 //Get all data for Vehicles Page
 export async function getVehicles() {
-    updateToken();
-    const res = await axios
-        .get(baseUrl + "Vehicles", {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        })
-        .catch((err) => {
-            console.error("Error: " + err);
-        });
-    return res;
+  updateToken()
+  const res = await axios
+    .get(baseUrl + 'Vehicles', {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    .catch((err) => {
+      console.error('Error: ' + err)
+    })
+  return res
 }
 
 //Get all data for Fees Page
@@ -510,153 +510,158 @@ export async function getVehicles() {
 
 //Creates a company with the given information and documents.
 export async function createCompany(
-    compName,
-    compAddr,
-    townCity,
-    compState,
-    compZip,
-    docs
+  compName,
+  compAddr,
+  townCity,
+  compState,
+  compZip,
+  docs,
 ) {
-    updateToken();
-    const formData = new FormData();
+  updateToken()
+  const formData = new FormData()
 
-    // Append company data
-    formData.append("CompName", compName);
-    formData.append("CompAddr", compAddr);
-    formData.append("TownCity", townCity);
-    formData.append("CompState", compState);
-    formData.append("CompZip", compZip);
+  // Append company data
+  formData.append('CompName', compName)
+  formData.append('CompAddr', compAddr)
+  formData.append('TownCity', townCity)
+  formData.append('CompState', compState)
+  formData.append('CompZip', compZip)
 
-    // Append files
-    for (const doc of docs) {
-        formData.append("files[]", doc);
-    }
+  // Append files
+  for (const doc of docs) {
+    formData.append('files[]', doc)
+  }
 
-    try {
-        const response = await axios.post(baseUrl + "Company", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                PWAUTH: pwauth,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Error creating company:", error);
-        throw error;
-    }
+  try {
+    const response = await axios.post(baseUrl + 'Company', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        PWAUTH: pwauth,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error creating company:', error)
+    throw error
+  }
 }
 
 //Retrieves data from the Company API endpoint.
 export async function compRetrieveData() {
-    updateToken();
-    console.log();
-    const res = await axios.get(baseUrl + "Company", {
-        headers: {
-            PWAUTH: pwauth,
-        },
-    }).catch((err) => {
-        console.error("Error: " + err);
-    });
-    return res.data;
+  updateToken()
+  console.log()
+  const res = await axios
+    .get(baseUrl + 'Company', {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    .catch((err) => {
+      console.error('Error: ' + err)
+    })
+  return res.data
 }
 
 //Sets the status of a company.
 export async function setCompStatus(companyID, status) {
-    updateToken();
-    const requestData = {
-        CompanyID: companyID,
-        Status: status,
-    };
-    await axios.put(baseUrl + "Company", requestData, {
-        headers: {
-            PWAUTH: pwauth,
-        }
+  updateToken()
+  const requestData = {
+    CompanyID: companyID,
+    Status: status,
+  }
+  await axios
+    .put(baseUrl + 'Company', requestData, {
+      headers: {
+        PWAUTH: pwauth,
+      },
     })
-        .then((res) => {
-            return res.data;
-        })
-        .catch((err) => {
-            console.error(err);
-            return err.data;
-        });
+    .then((res) => {
+      return res.data
+    })
+    .catch((err) => {
+      console.error(err)
+      return err.data
+    })
 }
 
 //Asynchronous function for setting a company profile picture.
 export async function uploadProfilePicture(fileInputs) {
-    updateToken();
-    const formData = new FormData();
-    formData.append("file", fileInputs);
-    try {
-        const res = await axios.post(baseUrl + "Company/upload", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                PWAUTH: pwauth,
-            },
-        });
-        console.log("Upload successful:", res.data);
-    } catch (error) {
-        console.error("Error uploading files:", error);
-    }
+  updateToken()
+  const formData = new FormData()
+  formData.append('file', fileInputs)
+  try {
+    const res = await axios.post(baseUrl + 'Company/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        PWAUTH: pwauth,
+      },
+    })
+    console.log('Upload successful:', res.data)
+  } catch (error) {
+    console.error('Error uploading files:', error)
+  }
 }
 
 // ========DRIVER MANAGEMENT FUNCTIONS========
 
 //Creates a driver with the given information and documents.
 export async function createDriver(
-    firstName,
-    lastName,
-    addr,
-    townCity,
-    state,
-    zip,
-    licenseNumber,
-    vehicleType,
-    docs
+  firstName,
+  lastName,
+  addr,
+  townCity,
+  state,
+  zip,
+  licenseNumber,
+  vehicleType,
+  docs,
 ) {
-    updateToken();
-    const formData = new FormData();
+  updateToken()
+  const formData = new FormData()
 
-    // Append company data
-    formData.append("FirstName", firstName);
-    formData.append("LastName", lastName);
-    formData.append("Address", addr);
-    formData.append("TownCity", townCity);
-    formData.append("State", state);
-    formData.append("Zip", zip);
-    formData.append("LicenseNumber", licenseNumber);
-    // formData.append("VehicleType", vehicleType);
+  // Append company data
+  formData.append('FirstName', firstName)
+  formData.append('LastName', lastName)
+  formData.append('Address', addr)
+  formData.append('TownCity', townCity)
+  formData.append('State', state)
+  formData.append('Zip', zip)
+  formData.append('LicenseNumber', licenseNumber)
+  // formData.append("VehicleType", vehicleType);
 
-    // Append files
-    for (const doc of docs) {
-        formData.append("files[]", doc);
-    }
+  // Append files
+  for (const doc of docs) {
+    formData.append('files[]', doc)
+  }
 
-    try {
-        const response = await axios.post(baseUrl + "DeliveryDrivers", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                PWAUTH: pwauth,
-            },
-        });
-        //console.log('Upload successful:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Error creating company:", error);
-        throw error;
-    }
+  try {
+    const response = await axios.post(baseUrl + 'DeliveryDrivers', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        PWAUTH: pwauth,
+      },
+    })
+    //console.log('Upload successful:', response.data);
+    return response.data
+  } catch (error) {
+    console.error('Error creating company:', error)
+    throw error
+  }
 }
 
 //Retrieves data from the DeliveryDrivers API endpoint.
 export async function driverRetrieveData() {
-    updateToken();
-    const res = await axios.get(baseUrl + "DeliveryDrivers", {
-        headers: {
-            PWAUTH: pwauth,
-        },
-    }).catch((err) => {
-        console.error("Error: " + err);
-    });
-    return res.data;
+  updateToken()
+  const res = await axios
+    .get(baseUrl + 'DeliveryDrivers', {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    .catch((err) => {
+      console.error('Error: ' + err)
+    })
+  return res.data
 }
 
 // export async function driverRetrieveData(token) {
@@ -681,20 +686,20 @@ export async function driverRetrieveData() {
 
 //Updates the driver status in the system.
 export async function setDriverStatus(driverID, status) {
-    updateToken();
-    const requestData = {
-        DriverID: driverID,
-        Status: status,
-    };
-    await axios
-        .put(baseUrl + "DeliveryDrivers", requestData, requestConfig)
-        .then((res) => {
-            return res.data;
-        })
-        .catch((err) => {
-            console.error(err);
-            return err.data;
-        });
+  updateToken()
+  const requestData = {
+    DriverID: driverID,
+    Status: status,
+  }
+  await axios
+    .put(baseUrl + 'DeliveryDrivers', requestData, requestConfig)
+    .then((res) => {
+      return res.data
+    })
+    .catch((err) => {
+      console.error(err)
+      return err.data
+    })
 }
 
 // export async function setDriverStatus(token, data) {
@@ -730,51 +735,57 @@ export async function setDriverStatus(driverID, status) {
 
 //Creates a driver with the given information and documents.
 export async function postDeliveryDriver(token, postData) {
-    updateToken();
-    const validated = decryptToken(token);
-    const pattern = /^[a-zA-Z0-9_]+$/;
-    if (!validated) throw new Error('Token is Invalid');
-    if (!validated.UserID) throw new Error('Token is empty');
+  updateToken()
+  const validated = decryptToken(token)
+  const pattern = /^[a-zA-Z0-9_]+$/
+  if (!validated) throw new Error('Token is Invalid')
+  if (!validated.UserID) throw new Error('Token is empty')
 
-    if (validatePostData(postData, pattern)) {
-        try {
-            const res = await axios.post(`${baseUrl}/deliverydrivers`, postData, {
-                headers: {
-                    PWAUTH: token
-                }
-            });
+  if (validatePostData(postData, pattern)) {
+    try {
+      const res = await axios.post(`${baseUrl}/deliverydrivers`, postData, {
+        headers: {
+          PWAUTH: token,
+        },
+      })
 
-            const upld = await filehelper.uploadMultiple(`Users/Driver/${validated.UserID}/docs`, 'files', true);
-            if (res.data && upld) {
-                console.log("Driver created successfully:", res.data);
-            } else {
-                throw new Error('Internal Server Error');
-            }
-        } catch (error) {
-            console.error("Error: " + error);
-            throw new Error(error.response ? error.response.data.message : 'Internal Server Error');
-        }
-    } else {
-        throw new Error('Input fields must not include white spaces');
+      const upld = await filehelper.uploadMultiple(
+        `Users/Driver/${validated.UserID}/docs`,
+        'files',
+        true,
+      )
+      if (res.data && upld) {
+        console.log('Driver created successfully:', res.data)
+      } else {
+        throw new Error('Internal Server Error')
+      }
+    } catch (error) {
+      console.error('Error: ' + error)
+      throw new Error(
+        error.response ? error.response.data.message : 'Internal Server Error',
+      )
     }
-};
+  } else {
+    throw new Error('Input fields must not include white spaces')
+  }
+}
 
 //Asynchronous function for setting a driver profile picture.
 export async function driverSetPfp(fileInputs) {
-    updateToken();
-    const formData = new FormData();
-    formData.append("file", fileInputs);
-    try {
-        const res = await axios.post(baseUrl + "DeliveryDrivers/upload", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                PWAUTH: pwauth,
-            },
-        });
-        console.log("Upload successful:", res.data);
-    } catch (error) {
-        console.error("Error uploading files:", error);
-    }
+  updateToken()
+  const formData = new FormData()
+  formData.append('file', fileInputs)
+  try {
+    const res = await axios.post(baseUrl + 'DeliveryDrivers/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        PWAUTH: pwauth,
+      },
+    })
+    console.log('Upload successful:', res.data)
+  } catch (error) {
+    console.error('Error uploading files:', error)
+  }
 }
 
 // export async function driverSetPfp(token, file) {
@@ -810,238 +821,260 @@ export async function driverSetPfp(fileInputs) {
 // }
 
 //Updates the driver in the system.
-export async function updateDriver(firstName, lastName, addr, townCity, state, zip, licenseNumber, vehicleType) {
-    updateToken();
-    const updatedDriverData = {
-        FirstName: firstName,
-        LastName: lastName,
-        Address: addr,
-        TownCity: townCity,
-        State: state,
-        Zip: zip,
-        LicenseNumber: licenseNumber,
-        VehicleType: vehicleType,
-    };
-    try {
-        const response = await axios.put(
-            baseUrl + "DeliveryDrivers",
-            updatedDriverData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                PWAUTH: pwauth,
-            },
-        }
-        );
-        return response.data;
-    } catch (error) {
-        console.error("Error creating company:", error);
-        throw error;
-    }
+export async function updateDriver(
+  firstName,
+  lastName,
+  addr,
+  townCity,
+  state,
+  zip,
+  licenseNumber,
+  vehicleType,
+) {
+  updateToken()
+  const updatedDriverData = {
+    FirstName: firstName,
+    LastName: lastName,
+    Address: addr,
+    TownCity: townCity,
+    State: state,
+    Zip: zip,
+    LicenseNumber: licenseNumber,
+    VehicleType: vehicleType,
+  }
+  try {
+    const response = await axios.put(
+      baseUrl + 'DeliveryDrivers',
+      updatedDriverData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          PWAUTH: pwauth,
+        },
+      },
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error creating company:', error)
+    throw error
+  }
 }
 
 const validatePostData = (postData, pattern) => {
-    const { FirstName, LastName, Address, TownCity, State, Zip, LicenseNumber } = postData;
-    return (
-        FirstName && LastName && Address && TownCity && State && Zip && LicenseNumber && [FirstName, LastName, Address, TownCity, State, Zip, LicenseNumber].every(field => pattern.test(field))
-    );
-};
+  const { FirstName, LastName, Address, TownCity, State, Zip, LicenseNumber } =
+    postData
+  return (
+    FirstName &&
+    LastName &&
+    Address &&
+    TownCity &&
+    State &&
+    Zip &&
+    LicenseNumber &&
+    [FirstName, LastName, Address, TownCity, State, Zip, LicenseNumber].every(
+      (field) => pattern.test(field),
+    )
+  )
+}
 
 // ========VEHICLE MANAGEMENT FUNCTIONS========
 
 //Add a new vehicle with the given parameters to the database.
 export async function vehicleAdd(id, type, baseDistance, baseFee, distanceFee) {
-    updateToken();
-    let createVehicle = {
-        VehicleType: type,
-        BaseDistance: baseDistance,
-        BaseFee: baseFee,
-        DistanceFee: distanceFee,
-    };
-    try {
-        const res = await axios.post(
-            baseUrl + "Vehicles",
-            createVehicle,
-            requestConfig
-        );
-        console.log("Successfully updated the size");
-        return res;
-    } catch (err) {
-        console.error("Weight was not updated");
-    }
+  updateToken()
+  let createVehicle = {
+    VehicleType: type,
+    BaseDistance: baseDistance,
+    BaseFee: baseFee,
+    DistanceFee: distanceFee,
+  }
+  try {
+    const res = await axios.post(
+      baseUrl + 'Vehicles',
+      createVehicle,
+      requestConfig,
+    )
+    console.log('Successfully updated the size')
+    return res
+  } catch (err) {
+    console.error('Weight was not updated')
+  }
 }
 
 //Retrieves data from the Vehicles API endpoint.
 export async function vehicleRetrieve() {
-    return await axios
-        .get(baseUrl + "Vehicles", requestConfig)
-        .then((res) => {
-            return res.data;
-        })
-        .catch((err) => {
-            console.error(err);
-            return {};
-        });
+  return await axios
+    .get(baseUrl + 'Vehicles', requestConfig)
+    .then((res) => {
+      return res.data
+    })
+    .catch((err) => {
+      console.error(err)
+      return {}
+    })
 }
 
 //Updates the vehicle in the system.
 export async function vehicleUpdate(
-    id,
-    type,
-    baseDistance,
-    baseFee,
-    distanceFee
+  id,
+  type,
+  baseDistance,
+  baseFee,
+  distanceFee,
 ) {
-    updateToken();
-    let updateVehicle = {
-        TypeID: id,
-        VehicleType: type,
-        BaseDistance: baseDistance,
-        BaseFee: baseFee,
-        DistanceFee: distanceFee,
-    };
-    try {
-        const res = await axios.put(
-            baseUrl + "Vehicles",
-            updateVehicle,
-            requestConfig
-        );
-        return res;
-    } catch (err) {
-        console.error("Weight was not updated");
-        console.error("", err);
-    }
+  updateToken()
+  let updateVehicle = {
+    TypeID: id,
+    VehicleType: type,
+    BaseDistance: baseDistance,
+    BaseFee: baseFee,
+    DistanceFee: distanceFee,
+  }
+  try {
+    const res = await axios.put(
+      baseUrl + 'Vehicles',
+      updateVehicle,
+      requestConfig,
+    )
+    return res
+  } catch (err) {
+    console.error('Weight was not updated')
+    console.error('', err)
+  }
 }
 
 // ========EMPLOYEE MANAGEMENT FUNCTIONS========
 // Create sub-users for company accounts
 export async function employeeRegistration(
-    email,
-    password,
-    firstName,
-    lastName
+  email,
+  password,
+  firstName,
+  lastName,
 ) {
-    updateToken();
-    await axios
-        .post(
-            baseUrl + "Company/employee", {
-            email: email,
-            password: password,
-            FirstName: firstName,
-            LastName: lastName,
-        }, {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        }
-        )
-        .then((res) => {
-            return res.data;
-        })
-        .catch((err) => {
-            console.error(err);
-        });
+  updateToken()
+  await axios
+    .post(
+      baseUrl + 'Company/employee',
+      {
+        email: email,
+        password: password,
+        FirstName: firstName,
+        LastName: lastName,
+      },
+      {
+        headers: {
+          PWAUTH: pwauth,
+        },
+      },
+    )
+    .then((res) => {
+      return res.data
+    })
+    .catch((err) => {
+      console.error(err)
+    })
 }
 
 // Get all Company User
 export async function retrieveEmployee() {
-    updateToken();
-    try {
-        const res = await axios.get(baseUrl + "Company/employee", {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (error) {
-        console.error("Error: " + error);
-    }
+  updateToken()
+  try {
+    const res = await axios.get(baseUrl + 'Company/employee', {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (error) {
+    console.error('Error: ' + error)
+  }
 }
 
 // Set employee status
 export async function setEmployeeStatus(sub_userID, status) {
-    updateToken();
-    const requestData = {
-        CompanyID: sub_userID,
-        Status: status,
-    };
-    await axios
-        .put(baseUrl + "Company/employee", requestData, requestConfig)
-        .then((res) => {
-            return res.data;
-        })
-        .catch((err) => {
-            console.error(err);
-            return err.data;
-        });
+  updateToken()
+  const requestData = {
+    CompanyID: sub_userID,
+    Status: status,
+  }
+  await axios
+    .put(baseUrl + 'Company/employee', requestData, requestConfig)
+    .then((res) => {
+      return res.data
+    })
+    .catch((err) => {
+      console.error(err)
+      return err.data
+    })
 }
 
 //Asynchronous function for setting a employee profile picture.
 export async function setEmployeePfp(fileInputs) {
-    updateToken();
-    const formData = new FormData();
-    formData.append("file", fileInputs);
-    try {
-        const res = await axios.post(baseUrl + "Company/employee/pfp", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (error) {
-        console.error("Error uploading files:", error);
-    }
+  updateToken()
+  const formData = new FormData()
+  formData.append('file', fileInputs)
+  try {
+    const res = await axios.post(baseUrl + 'Company/employee/pfp', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (error) {
+    console.error('Error uploading files:', error)
+  }
 }
 
 // ========CUSTOMER MANAGEMENT FUNCTIONS========
 
 //Create a new customer with the given parameters to the database.
 export async function createCustomer(postData) {
-    updateToken();
-    try {
-        const response = await axios.post(baseUrl + "Customer", postData, {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        });
-        return response.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  updateToken()
+  try {
+    const response = await axios.post(baseUrl + 'Customer', postData, {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    return response.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 //Retrieves data from the Customer API endpoint.
 export async function userRetrieveData() {
-    updateToken();
-    try {
-        const res = await axios.get(baseUrl + "Customer/user", { //Initial value is "Customer/user" | "/customer/${decrypted.UserID}"
-            headers: {
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  updateToken()
+  try {
+    const res = await axios.get(baseUrl + 'Customer/user', {
+      //Initial value is "Customer/user" | "/customer/${decrypted.UserID}"
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
-
 
 //Retrieves data from the Customer API endpoint.
 export async function customerRetrieveData() {
-    updateToken();
-    try {
-        const res = await axios.get(baseUrl + "Customer/user", {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  updateToken()
+  try {
+    const res = await axios.get(baseUrl + 'Customer/user', {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 // export async function customerRetrieveData(token) {
@@ -1063,18 +1096,18 @@ export async function customerRetrieveData() {
 
 //Updates the customer in the system.
 export async function updateCustomer(data) {
-    updateToken();
-    try {
-        const res = await axios.put(baseUrl + "Customer", data, {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  updateToken()
+  try {
+    const res = await axios.put(baseUrl + 'Customer', data, {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 // export async function updateCustomer(token, data) {
@@ -1096,168 +1129,159 @@ export async function updateCustomer(data) {
 
 //Updates the customer status in the system.
 export async function updateStatus(pwauth, data) {
-    try {
-        const res = await axios.put(baseUrl + "Company", data, {
-            headers: {
-                'Content-Type': 'application/json',
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  try {
+    const res = await axios.put(baseUrl + 'Company', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
-
 export async function getPfp(pwauth) {
-    try {
-        const res = await axios.get(baseUrl + "Company/pfp", {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  try {
+    const res = await axios.get(baseUrl + 'Company/pfp', {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 export async function createEmployee(pwauth, postData) {
-    try {
-        const res = await axios.post(baseUrl + "Company/employee", postData, {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  try {
+    const res = await axios.post(baseUrl + 'Company/employee', postData, {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 export async function uploadPfp(pwauth, file) {
-    try {
-        const formData = new FormData();
-        formData.append('file', file);
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
 
-        const res = await axios.post(baseUrl + "Company/pfp", formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+    const res = await axios.post(baseUrl + 'Company/pfp', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 export async function updateCompanyDetails(pwauth, data) {
-    try {
-        const res = await axios.put(baseUrl + "Company/update", data, {
-            headers: {
-                'Content-Type': 'application/json',
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  try {
+    const res = await axios.put(baseUrl + 'Company/update', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 export async function updateEmployee(pwauth, data) {
-    try {
-        const res = await axios.put(baseUrl + "Company/employee", data, {
-            headers: {
-                PWAUTH: pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  try {
+    const res = await axios.put(baseUrl + 'Company/employee', data, {
+      headers: {
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 // ========BOOKING HISTORY========
 export async function getBookingHistory() {
-    try {
-        const res = await axios.get(baseUrl + `BookService`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'PWAUTH': pwauth,
-            },
-        });
-        console.info(pwauth);
-        console.log("baseUrl", baseUrl);
-        console.log("getBookingHistory: ", res.data);
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  try {
+    const res = await axios.get(baseUrl + `BookService`, {
+      headers: {
+        'Content-Type': 'application/json',
+        PWAUTH: pwauth,
+      },
+    })
+    console.info(pwauth)
+    console.log('baseUrl', baseUrl)
+    console.log('getBookingHistory: ', res.data)
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 // ========BOOKING FUNCTIONS========
 export async function createBooking(data) {
-    try {
-        const res = await axios.post(baseUrl, '/BookService', data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'PWAUTH': pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  try {
+    const res = await axios.post(baseUrl, '/BookService', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
 // ========BOOKING FUNCTIONS========
 export async function updateBooking(data) {
-    try {
-        const res = await axios.put(baseUrl, 'BookService', data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'PWAUTH': pwauth,
-            },
-        });
-        return res.data;
-    } catch (err) {
-        console.error("Error: " + err);
-        throw err;
-    }
+  try {
+    const res = await axios.put(baseUrl, 'BookService', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
 }
 
-// ========AUTHENTICATION FUNCTIONS========
-// export async function loginAuth(email, password) {
-//   try {
-//     const res = await axios.get(baseUrl + "Users_v2", {
-//       headers: {
-//         LOGINAUTH: 'Basic ' + btoa(email + ':' + password),
-//       },
-//     });
-//     return res.data;
-//   } catch (err) {
-//     console.error("Error: " + err);
-//     throw err;
-//   }
-// }
-
-// export async function register(data) {
-//   try {
-//     const res = await axios.post(baseUrl + "Users_v2", data);
-//     return res.data;
-//   } catch (err) {
-//     console.error("Error: " + err);
-//     throw err;
-//   }
-// }
+export async function addReview(data) {
+  console.log(data)
+  updateToken()
+  try {
+    const res = await axios.post(baseUrl, 'Review', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
+}
