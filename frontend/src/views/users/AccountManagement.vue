@@ -172,7 +172,9 @@ import SRProfile from '@/components/SRProfile.vue';
 import SRModalSlots from '@/components/SRModalSlots.vue';
 import { customerRetrieveData, updateCustomer } from '@/services/ApiServices.js';
 import { update } from 'firebase/database';
+import { useToast } from 'vue-toast-notification';
 
+const toast = useToast();
 let isOpen = ref(false);
 let isEditModeOn = ref(false);
 let DeleteProfile = ref(false);
@@ -193,6 +195,7 @@ function editProfile() {
 function updateProfile() {
     try {
         const customerData = {
+            
             cust_firstName: cust_firstName.value,
             cust_lastName: cust_lastName.value,
             cust_address: cust_address.value,
@@ -204,6 +207,15 @@ function updateProfile() {
         const response = updateCustomer(customerData);
         response.then((data) => {
             console.log(data);
+            if (data.success === true) {
+                isEditModeOn.value = false;
+                toast.open({
+                    message: 'Profile updated successfully',
+                    type: 'success',
+                    duration: 5000
+                });
+                load();
+            }
         }).catch((error) => {
             console.log(error);
         })
