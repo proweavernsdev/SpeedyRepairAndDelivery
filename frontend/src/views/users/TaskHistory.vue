@@ -474,7 +474,6 @@ function submitFeedback() {
         customer_id: userId.value,
         comment: feedback.value,
         rating: rating.value,
-        created_at: new Date().toISOString().slice(0, 10),
     }
 
     addReview(feedbackData).then((result) => {

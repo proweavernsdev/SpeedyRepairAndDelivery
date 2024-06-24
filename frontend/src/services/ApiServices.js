@@ -24,8 +24,8 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const db = getDatabase(app)
 
-// const baseUrl = "https://speedyrepairanddelivery.com/api-delivery/";
-const baseUrl = 'http://localhost/codeigniter/'
+const baseUrl = 'https://speedyrepairanddelivery.com/api-delivery/'
+// const baseUrl = 'http://localhost/codeigniter/';
 let pwauth = localStorage.getItem('token')
 let updateToken = () => {
   pwauth = localStorage.getItem('token')
@@ -1272,8 +1272,9 @@ export async function updateBooking(data) {
 export async function addReview(data) {
   console.log(data)
   updateToken()
+  console.log(pwauth)
   try {
-    const res = await axios.post(baseUrl, 'Review', data, {
+    const res = await axios.post(baseUrl, 'Reviews', data, {
       headers: {
         'Content-Type': 'application/json',
         PWAUTH: pwauth,
