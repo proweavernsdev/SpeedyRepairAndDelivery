@@ -155,3 +155,11 @@ For any questions or suggestions, please contact the project maintainer at [prod
 # CI/CD
 Create a pull request and merge into main branch for both frontend and backend
 - 🔑 FTP Server Credentials is securely stored in Github Secrets
+
+### CPANEL Acc
+https://vps-ip4221.proweaverhosting.com:2083/cpsess8009449674/3rdparty/phpMyAdmin/index.php?route=/sql&pos=0&db=speedyrepairandd_delivery&table=srdr_users&login=1&post_login=26535606085697
+USERNAME: speedyrepairandd
+PASSWORD: @RIv}AYqtkSRdGWG;u
+
+
+
