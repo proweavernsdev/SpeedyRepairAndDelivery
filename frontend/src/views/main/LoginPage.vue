@@ -20,7 +20,7 @@
                         Sign In
                     </button>
                 </form>
-                <div class="flex flex-col">
+                <div class="flex flex-col items-center">
                     <router-link to="/reset" class="p-2 text-sm text-left w-fit">
                         <button class="text-[#39030D] md:text-white hover:underline active:underline">
                             Forgot Password?
