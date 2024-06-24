@@ -587,7 +587,7 @@ export async function uploadProfilePicture(fileInputs) {
     const formData = new FormData();
     formData.append("file", fileInputs);
     try {
-        const res = await axios.post(baseUrl + "Company/upload", formData, {
+        const res = await axios.post(baseUrl + "Customer/upload", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
                 PWAUTH: pwauth,

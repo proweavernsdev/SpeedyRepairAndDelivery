@@ -45,7 +45,6 @@ const handleFileChange = (event) => {
 // Function to set profile picture
 function setProfilePictures(photos) {
     uploadProfilePicture(photos).then(() => {
-        console.log("Image changed");
         window.location.reload();
     });
 }
