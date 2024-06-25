@@ -282,7 +282,10 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { createCompany, createDriver, createCustomer, vehicleRetrieve } from '@/services/ApiServices.js';
+import { vehicleRetrieve } from '@/services/ApiServices.js';
+import { createDriver } from '@/services/driver.js';
+import { createCustomer } from '@/services/customer.js';
+import { createCompany } from '@/services/company.js';
 
 var isOpen = ref(false);
 const router = useRouter();

@@ -122,7 +122,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { retrieveData, compRetrieveData, driverRetrieveData, userRetrieveData, customerRetrieveData } from "@/services/ApiServices.js";
+import { userRetrieveData, retrieveData  } from '@/services/ApiServices.js';
+import { driverRetrieveData } from '@/services/driver.js';
+import { customerRetrieveData } from '@/services/customer.js';
+import { compRetrieveData } from '@/services/company.js';
 // import { userRetrieveData } from "@/services/api/customer.js";
 
 const router = useRouter();
