@@ -432,7 +432,8 @@ import { onMounted, ref, watch } from 'vue';
 import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
-import { customerRetrieveData, addReview } from '@/services/ApiServices';
+import { addReview } from '@/services/ApiServices';
+import { customerRetrieveData } from '@/services/customer';
 import { db } from '@/services/firebaseConfig';
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 

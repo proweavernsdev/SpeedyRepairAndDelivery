@@ -18,7 +18,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { driverRetrieveData } from "@/services/ApiServices.js";
+import { driverRetrieveData } from "@/services/driver.js";
 import { db } from '@/services/firebaseConfig';
 import { ref as firebaseRef, get } from 'firebase/database';
 

@@ -417,7 +417,7 @@ import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
 import { mapboxgl, accessToken } from '@/services/mapbox';
 import axios from 'axios';
 import { useToast } from 'vue-toast-notification';
-import { customerRetrieveData } from '@/services/ApiServices';
+import { customerRetrieveData } from '@/services/customer';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';

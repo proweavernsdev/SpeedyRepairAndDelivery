@@ -37,7 +37,7 @@
 import { RouterLink } from "vue-router";
 import icons from "@/assets/icons";
 import { onMounted, ref, watch } from "vue";
-import { driverRetrieveData } from "@/services/ApiServices.js";
+import { driverRetrieveData } from "@/services/driver.js";
 import { db } from '@/services/firebaseConfig';
 import { ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 import { useRouter, useRoute } from "vue-router";

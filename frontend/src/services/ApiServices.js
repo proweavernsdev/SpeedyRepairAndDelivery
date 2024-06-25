@@ -25,7 +25,6 @@ const auth = getAuth(app)
 const db = getDatabase(app)
 
 const baseUrl = 'https://speedyrepairanddelivery.com/api-delivery/'
-// const baseUrl = 'http://localhost/codeigniter/';
 let pwauth = localStorage.getItem('token')
 let updateToken = () => {
   pwauth = localStorage.getItem('token')
@@ -41,6 +40,7 @@ const requestConfig = {
   },
 }
 
+//Decrypt token
 const decryptToken = (token) => {
   try {
     const bytes = crypto.AES.decrypt(token, 'your-secret-key')
@@ -85,16 +85,6 @@ export async function register(email, password) {
     throw error
   }
 }
-
-//register 2
-// export async function register(data) {
-//   try {
-//     const res = await axios.post('/api/testRegisterVerified', data);
-//     return res.data;
-//   } catch (error) {
-//     console.error("Error:", error);
-//   }
-// }
 
 //update access
 export async function updateAccess(accessID) {
@@ -157,28 +147,6 @@ export async function retrieveData() {
   })
   return res.data
 }
-
-//Retrieves data from the Users endpoint using axios.
-// export async function retrieveData(token) {
-//   updateToken();
-//   const decrypted = decryptToken(token);
-//   if (!decrypted) {
-//     throw new Error('Invalid Token');
-//   }
-
-//   if (!decrypted.expires_at || Date.now() >= decrypted.expires_at) {
-//     throw new Error('Token expired');
-//   }
-
-//   try {
-//     const response = await axios.get('/customer', {
-//       headers: { 'PWAUTH': token }
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error: " + error);
-//   }
-// };
 
 // Asynchronous function for uploading files
 export async function uploadData(fileInputs) {
@@ -247,34 +215,6 @@ export async function getDriverDocs() {
       throw error
     })
 }
-
-// export async function getDriverDocs(token) {
-//   updateToken();
-//   const decrypted = decryptToken(token);
-//   if (!decrypted) {
-//     throw new Error('Invalid Token');
-//   }
-//   try {
-//     if (!decrypted.expires_at) {
-//       const res = await filehelper.viewfiles(`Users/Company/${decrypted.UserID}`);
-//       return res;
-//     } else {
-//       if (Date.now() >= decrypted.expires_at) {
-//         throw new Error('Token is expired');
-//       } else {
-//         const jsonData = validateAndSanitizeUserInput(); // Implement this function
-//         const res = await filehelper.viewfiles(`Users/Company/${jsonData.UserID}`);
-//         if (!res) {
-//           throw new Error('Internal Server Error :D');
-//         }
-//         return res;
-//       }
-//     }
-//   } catch (error) {
-//     console.error("Error: " + error);
-//     throw new Error(error.message || 'Unauthorized access');
-//   }
-// };
 
 //Get all data for Taxonomies Page
 export async function getTaxonomies() {
@@ -480,32 +420,11 @@ export async function getVehicles() {
   return res
 }
 
-//Get all data for Fees Page
-// export async function getDriverDocs() {
-//   updateToken();
-//   await axios
-//     .get(baseUrl + "Company/docs", {})
-//     .then((res) => {
-//       return res;
-//     })
-//     .catch((err) => {
-//       console.error("Error: " + err);
-//     });
-// }
 
-//Get all data for Request Priority Page
-// export async function getDriverDocs() {
-//   updateToken();
-//   await axios
-//     .get(baseUrl + "Company/docs", {})
-//     .then((res) => {
-//       return res;
-//     })
-//     .catch((err) => {
-//       console.error("Error: " + err);
-//     });
-// }
 
+
+
+/*
 // ========COMPANY MANAGEMENT FUNCTIONS========
 
 //Creates a company with the given information and documents.
@@ -601,6 +520,14 @@ export async function uploadProfilePicture(fileInputs) {
         console.error("Error uploading files:", error);
     }
 }
+*/
+
+
+
+
+
+/*
+
 
 // ========DRIVER MANAGEMENT FUNCTIONS========
 
@@ -664,26 +591,6 @@ export async function driverRetrieveData() {
   return res.data
 }
 
-// export async function driverRetrieveData(token) {
-//   updateToken();
-//   const decrypted = decryptToken(token);
-//   if (!decrypted) {
-//     throw new Error('Unauthorized access');
-//   }
-//   try {
-//     const url = !decrypted.expires_at ? `${baseUrl}/deliverydrivers/${decrypted.UserID}` : `${baseUrl}/deliverydrivers`;
-//     const res = await axios.get(url, {
-//       headers: {
-//         PWAUTH: token
-//       }
-//     });
-//     return res.data;
-//   } catch (error) {
-//     console.error("Error: " + error);
-//     throw new Error(error.response ? error.response.data.message : 'Unauthorized access');
-//   }
-// };
-
 //Updates the driver status in the system.
 export async function setDriverStatus(driverID, status) {
   updateToken()
@@ -701,37 +608,6 @@ export async function setDriverStatus(driverID, status) {
       return err.data
     })
 }
-
-// export async function setDriverStatus(token, data) {
-//   updateToken();
-//   const decrypted = decryptToken(token);
-//   if (!decrypted) {
-//     throw new Error('Unauthorized access');
-//   }
-//   if (!decrypted.expires_at) {
-//     throw new Error('Unauthorized access');
-//   } else {
-//     if (Date.now() >= decrypted.expires_at) {
-//       throw new Error('Token is expired');
-//     } else {
-//       try {
-//         const res = await axios.put(`${baseUrl}/deliverydrivers/status`, data, {
-//           headers: {
-//             PWAUTH: token
-//           }
-//         });
-//         if (res.data) {
-//           return res.data;
-//         } else {
-//           throw new Error('Status has failed to update');
-//         }
-//       } catch (error) {
-//         console.error("Error: " + error);
-//         throw new Error(error.response ? error.response.data.message : 'Status has failed to update');
-//       }
-//     }
-//   }
-// }
 
 //Creates a driver with the given information and documents.
 export async function postDeliveryDriver(token, postData) {
@@ -788,38 +664,6 @@ export async function driverSetPfp(fileInputs) {
   }
 }
 
-// export async function driverSetPfp(token, file) {
-//   updateToken();
-//   const decrypted = decryptToken(token);
-//   if (!decrypted) {
-//     throw new Error('Invalid Token');
-//   }
-
-//   const currentTimestamp = Date.now();
-//   try {
-//     const upload = await filehelper.upload(`Users/Company/${decrypted.UserID}/pfp/${currentTimestamp}`, file, true);
-//     if (upload) {
-//       const path = upload.result.path;
-//       const res = await axios.post(`${baseUrl}/profile-picture`, { path }, {
-//         headers: {
-//           PWAUTH: token
-//         }
-//       });
-
-//       if (res.data) {
-//         return res.data;
-//       } else {
-//         throw new Error('Internal Server Error');
-//       }
-//     } else {
-//       throw new Error('Internal Server Error');
-//     }
-//   } catch (error) {
-//     console.error("Error: " + error);
-//     throw new Error(error.response ? error.response.data.message : 'Unauthorized access');
-//   }
-// }
-
 //Updates the driver in the system.
 export async function updateDriver(
   firstName,
@@ -860,6 +704,7 @@ export async function updateDriver(
   }
 }
 
+//Validate the post data for the driver.
 const validatePostData = (postData, pattern) => {
   const { FirstName, LastName, Address, TownCity, State, Zip, LicenseNumber } =
     postData
@@ -876,6 +721,13 @@ const validatePostData = (postData, pattern) => {
     )
   )
 }
+
+
+*/
+
+
+
+
 
 // ========VEHICLE MANAGEMENT FUNCTIONS========
 
@@ -943,7 +795,16 @@ export async function vehicleUpdate(
   }
 }
 
+
+
+
+
+
+
+/*
+
 // ========EMPLOYEE MANAGEMENT FUNCTIONS========
+
 // Create sub-users for company accounts
 export async function employeeRegistration(
   email,
@@ -1025,7 +886,15 @@ export async function setEmployeePfp(fileInputs) {
     console.error('Error uploading files:', error)
   }
 }
+*/
 
+
+
+
+
+
+
+/*
 // ========CUSTOMER MANAGEMENT FUNCTIONS========
 
 //Create a new customer with the given parameters to the database.
@@ -1077,23 +946,6 @@ export async function customerRetrieveData() {
   }
 }
 
-// export async function customerRetrieveData(token) {
-//   updateToken();
-//   const decrypted = decryptToken(token);
-//   if (!decrypted) {
-//     console.error('Invalid Token');
-//   }
-
-//   try {
-//     const response = await axios.get(`/customer/${decrypted.UserID}`, {
-//       headers: { 'PWAUTH': token }
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error: " + error);
-//   }
-// };
-
 //Updates the customer in the system.
 export async function updateCustomer(data) {
   updateToken()
@@ -1109,23 +961,6 @@ export async function updateCustomer(data) {
     throw err
   }
 }
-
-// export async function updateCustomer(token, data) {
-//   updateToken();
-//   const decrypted = decryptToken(token);
-//   if (!decrypted || !decrypted.UserID) {
-//     console.error('Token is Invalid or empty');
-//   }
-
-//   try {
-//     const response = await axios.put(`/customer/${decrypted.UserID}`, data, {
-//       headers: { 'PWAUTH': token }
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error: " + error);
-//   }
-// };
 
 //Updates the customer status in the system.
 export async function updateStatus(pwauth, data) {
@@ -1143,6 +978,7 @@ export async function updateStatus(pwauth, data) {
   }
 }
 
+//Asynchronous function for getting a customer profile picture.
 export async function getPfp(pwauth) {
   try {
     const res = await axios.get(baseUrl + 'Company/pfp', {
@@ -1157,6 +993,7 @@ export async function getPfp(pwauth) {
   }
 }
 
+//Asynchronous function for creating an employee.
 export async function createEmployee(pwauth, postData) {
   try {
     const res = await axios.post(baseUrl + 'Company/employee', postData, {
@@ -1171,6 +1008,7 @@ export async function createEmployee(pwauth, postData) {
   }
 }
 
+//Asynchronous function for setting an employee profile picture.
 export async function uploadPfp(pwauth, file) {
   try {
     const formData = new FormData()
@@ -1189,6 +1027,7 @@ export async function uploadPfp(pwauth, file) {
   }
 }
 
+//Asynchronous function for updating the company details.
 export async function updateCompanyDetails(pwauth, data) {
   try {
     const res = await axios.put(baseUrl + 'Company/update', data, {
@@ -1204,6 +1043,7 @@ export async function updateCompanyDetails(pwauth, data) {
   }
 }
 
+//Asynchronous function for updating the employee details.
 export async function updateEmployee(pwauth, data) {
   try {
     const res = await axios.put(baseUrl + 'Company/employee', data, {
@@ -1218,7 +1058,16 @@ export async function updateEmployee(pwauth, data) {
   }
 }
 
+*/
+
+
+
+
+
+
 // ========BOOKING HISTORY========
+
+//Retrieves data from the BookService API endpoint.
 export async function getBookingHistory() {
   try {
     const res = await axios.get(baseUrl + `BookService`, {
@@ -1237,7 +1086,15 @@ export async function getBookingHistory() {
   }
 }
 
+
+
+
+
+
+
 // ========BOOKING FUNCTIONS========
+
+//Creates a booking with the given information.
 export async function createBooking(data) {
   try {
     const res = await axios.post(baseUrl, '/BookService', data, {
@@ -1253,7 +1110,13 @@ export async function createBooking(data) {
   }
 }
 
+
+
+
+
+
 // ========BOOKING FUNCTIONS========
+//Updates a booking with the given information.
 export async function updateBooking(data) {
   try {
     const res = await axios.put(baseUrl, 'BookService', data, {
@@ -1269,6 +1132,7 @@ export async function updateBooking(data) {
   }
 }
 
+//Add a review to the database.
 export async function addReview(data) {
   console.log(data)
   updateToken()

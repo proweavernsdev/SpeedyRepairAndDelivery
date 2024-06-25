@@ -121,7 +121,7 @@
 import { RouterLink } from "vue-router";
 import icons from "@/assets/icons";
 import { onMounted, ref } from "vue";
-import { driverRetrieveData } from "@/services/ApiServices.js";
+import { driverRetrieveData } from "@/services/driver.js";
 import { db } from '@/services/firebaseConfig';
 import { ref as rtdbRef, get as rtdbGet, update, set as rtdbSet } from 'firebase/database';
 import { useRouter, useRoute } from "vue-router";

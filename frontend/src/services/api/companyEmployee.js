@@ -96,6 +96,7 @@ export async function setEmployeePfp(fileInputs) {
     }
 }
 
+//Asynchronous function for creating an employee.
 export async function createEmployee(pwauth, postData) {
     try {
         const res = await axios.post(baseUrl + "Company/employee", postData, {
@@ -110,6 +111,7 @@ export async function createEmployee(pwauth, postData) {
     }
 }
 
+//Asynchronous function for updating an employee.
 export async function updateEmployee(pwauth, data) {
     try {
         const res = await axios.put(baseUrl + "Company/employee", data, {
