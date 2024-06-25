@@ -586,20 +586,20 @@ export async function setCompStatus(companyID, status) {
 
 //Asynchronous function for setting a company profile picture.
 export async function uploadProfilePicture(fileInputs) {
-  updateToken()
-  const formData = new FormData()
-  formData.append('file', fileInputs)
-  try {
-    const res = await axios.post(baseUrl + 'Company/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        PWAUTH: pwauth,
-      },
-    })
-    console.log('Upload successful:', res.data)
-  } catch (error) {
-    console.error('Error uploading files:', error)
-  }
+    updateToken();
+    const formData = new FormData();
+    formData.append("file", fileInputs);
+    try {
+        const res = await axios.post(baseUrl + "Customer/upload", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                PWAUTH: pwauth,
+            },
+        });
+        console.log("Upload successful:", res.data);
+    } catch (error) {
+        console.error("Error uploading files:", error);
+    }
 }
 
 // ========DRIVER MANAGEMENT FUNCTIONS========
