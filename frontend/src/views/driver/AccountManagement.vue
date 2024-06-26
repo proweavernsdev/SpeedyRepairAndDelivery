@@ -139,7 +139,7 @@ import SRContents from "@/layouts/SRContents.vue";
 import SRProfile from '@/components/SRProfile.vue';
 import SRModalSlots from '@/components/SRModalSlots.vue'
 import { onMounted, ref } from 'vue';
-import { driverRetrieveData } from '@/services/driver.js';
+import { driverRetrieveData } from '@/services/api/driver.js';
 
 let isOpen = ref(Boolean);
 let isEditModeOn = ref(false);

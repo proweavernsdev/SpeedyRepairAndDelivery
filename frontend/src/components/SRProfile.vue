@@ -18,7 +18,7 @@
 // Imports
 import icons from '@/assets/icons.js';
 import { ref } from 'vue';
-import { uploadProfilePicture } from '@/services/ApiServices.js';
+import { uploadProfilePicture } from '@/services/api/company.js';
 
 // Variables
 const userNotFound = ref("/admin-delivery/src/assets/user.svg");

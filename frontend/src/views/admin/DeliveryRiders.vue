@@ -145,7 +145,7 @@ import SRSearchDisplay from "@/components/SRSearchDisplay.vue";
 import SRScroll from "@/components/SRScroll.vue";
 import SRTable from "@/components/SRTable.vue";
 import SRContents from "@/layouts/SRContents.vue";
-import { driverRetrieveData, setDriverStatus } from "@/services/ApiServices.js";
+import { driverRetrieveData, setDriverStatus } from "@/services/api/driver.js";
 
 const isOpen = ref(false);
 const StatusView = ref(false);

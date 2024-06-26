@@ -122,11 +122,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { userRetrieveData, retrieveData  } from '@/services/ApiServices.js';
-import { driverRetrieveData } from '@/services/driver.js';
-import { customerRetrieveData } from '@/services/customer.js';
-import { compRetrieveData } from '@/services/company.js';
-// import { userRetrieveData } from "@/services/api/customer.js";
+import { retrieveData  } from '@/services/ApiServices.js';
+import { userRetrieveData } from "@/services/api/customer.js";
+import { driverRetrieveData } from '@/services/api/driver.js';
+import { customerRetrieveData } from '@/services/api/customer.js';
+import { compRetrieveData } from '@/services/api/company.js';
 
 const router = useRouter();
 let accessLevelNumber = ref("");

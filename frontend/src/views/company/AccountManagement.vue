@@ -187,8 +187,8 @@ import SRContents from "@/layouts/SRContents.vue";
 import SRProfile from '@/components/SRProfile.vue';
 import SRModalSlots from '@/components/SRModalSlots.vue'
 import { onMounted, ref } from 'vue';
-import { compRetrieveData } from '@/services/company.js';
-import { retrieveEmployee } from '@/services/companyEmployee.js';
+import { compRetrieveData } from '@/services/api/company.js';
+import { retrieveEmployee } from '@/services/api/companyEmployee.js';
 
 let isOpen = ref(Boolean);
 let isEditModeOn = ref(false);

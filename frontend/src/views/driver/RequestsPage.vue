@@ -167,7 +167,7 @@ import { RouterLink } from "vue-router";
 import icons from "@/assets/icons";
 import SRContents from "@/layouts/SRContents.vue";
 import { onMounted, computed, ref, watch } from "vue";
-import { driverRetrieveData } from "@/services/driver.js";
+import { driverRetrieveData } from "@/services/api/driver.js";
 import { db } from '@/services/firebaseConfig';
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet, child } from 'firebase/database';
 import DeliveryMonitor from '@/views/driver/DeliveryMonitor.vue';

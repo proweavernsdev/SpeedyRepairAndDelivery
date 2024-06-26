@@ -79,7 +79,7 @@
 import { ref, onMounted } from "vue";
 import SRContents from "@/layouts/SRContents.vue";
 import { useRoute } from "vue-router";
-import { compRetrieveData } from "@/services/company.js";
+import { compRetrieveData } from "@/services/api/company.js";
 
 var userStatus = ref("");
 

@@ -79,7 +79,7 @@
 import { ref, onMounted } from "vue";
 import SRContents from "@/layouts/SRContents.vue";
 import { useRoute } from "vue-router";
-import { driverRetrieveData } from "@/services/driver.js";
+import { driverRetrieveData } from "@/services/api/driver.js";
 
 var userStatus = ref("");
 

@@ -159,7 +159,8 @@ import SRSearchDisplay from "@/components/SRSearchDisplay.vue";
 import SRScroll from "@/components/SRScroll.vue";
 import SRTable from "@/components/SRTable.vue";
 import SRContents from "@/layouts/SRContents.vue";
-import { compRetrieveData, setCompStatus } from "@/services/ApiServices.js";
+import { compRetrieveData } from "@/services/api/company.js";
+import { setCompStatus } from "@/services/api/company.js";
 import { onMounted, ref } from "vue";
 
 const isOpen = ref(false);

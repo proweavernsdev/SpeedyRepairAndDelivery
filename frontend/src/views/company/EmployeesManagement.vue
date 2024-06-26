@@ -190,7 +190,7 @@ import SRProfile from "@/components/SRProfile.vue";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
 import SRContents from "@/layouts/SRContents.vue";
-import { retrieveEmployee, employeeRegistration } from "@/services/companyEmployee.js";
+import { retrieveEmployee, employeeRegistration } from "@/services/api/companyEmployee.js";
 import { onMounted, ref } from "vue";
 
 const fname = ref("");

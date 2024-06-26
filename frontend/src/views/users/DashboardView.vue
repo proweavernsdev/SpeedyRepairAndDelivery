@@ -168,7 +168,7 @@
 <script setup>
 import SRContents from "@/layouts/SRContents.vue";
 import { useRouter, useRoute } from "vue-router";
-import { customerRetrieveData } from "@/services/customer.js";
+import { customerRetrieveData } from "@/services/api/customer.js";
 import { onMounted, ref, watch, computed } from 'vue';
 import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";

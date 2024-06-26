@@ -170,7 +170,7 @@ import { ref, onMounted } from 'vue';
 import SRContents from "@/layouts/SRContents.vue";
 import SRProfile from '@/components/SRProfile.vue';
 import SRModalSlots from '@/components/SRModalSlots.vue';
-import { customerRetrieveData, updateCustomer } from '@/services/customer.js';
+import { customerRetrieveData, updateCustomer } from '@/services/api/customer.js';
 import { update } from 'firebase/database';
 import { useToast } from 'vue-toast-notification';
 
