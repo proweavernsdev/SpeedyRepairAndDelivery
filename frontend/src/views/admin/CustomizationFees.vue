@@ -46,17 +46,19 @@
               </div>
               <div class="flex items-center justify-between [&>*]:w-1/2 text-xl font-normal">
                 <label for="">Base Distance Value: </label>
-                <input type="tel" class="p-2 border rounded focus:border-gray-400 focus:outline-none"
+                <input type="number" min="1" max="999"
+                  class="p-2 border rounded focus:border-gray-400 focus:outline-none"
                   v-model="vehicleBaseDistanceValue" />
               </div>
               <div class="flex items-center justify-between [&>*]:w-1/2 text-xl font-normal">
                 <label for="">Base Fee Value:</label>
-                <input type="tel" class="p-2 border rounded focus:outline-none focus:border-gray-400"
-                  v-model="vehicleBaseFeeValue" />
+                <input type="number" min="1" max="999"
+                  class="p-2 border rounded focus:outline-none focus:border-gray-400" v-model="vehicleBaseFeeValue" />
               </div>
               <div class="flex items-center justify-between [&>*]:w-1/2 text-xl font-normal">
                 <label for="">Distance Fee Value:</label>
-                <input type="tel" class="p-2 border rounded focus:outline-none focus:border-gray-400"
+                <input type="number" min="1" max="999"
+                  class="p-2 border rounded focus:outline-none focus:border-gray-400"
                   v-model="vehicleDistanceFeeValue" />
               </div>
             </div>
@@ -75,17 +77,20 @@
               </div>
               <div class="flex items-center justify-between [&>*]:w-1/2 text-xl font-normal">
                 <label for="">Base Distance Value: </label>
-                <input type="tel" class="p-2 border rounded focus:border-gray-400 focus:outline-none"
+                <input type="number" min="1" max="999"
+                  class="p-2 border rounded focus:border-gray-400 focus:outline-none"
                   :placeholder="viewVehicle.vehicle_baseDistance" v-model="vehicleBaseDistanceValue" />
               </div>
               <div class="flex items-center justify-between [&>*]:w-1/2 text-xl font-normal">
                 <label for="">Base Fee Value:</label>
-                <input type="tel" class="p-2 border rounded focus:outline-none focus:border-gray-400"
+                <input type="number" min="1" max="999"
+                  class="p-2 border rounded focus:outline-none focus:border-gray-400"
                   :placeholder="viewVehicle.vehicle_baseFee" v-model="vehicleBaseFeeValue" />
               </div>
               <div class="flex items-center justify-between [&>*]:w-1/2 text-xl font-normal">
                 <label for="">Distance Fee Value:</label>
-                <input type="tel" class="p-2 border rounded focus:outline-none focus:border-gray-400"
+                <input type="number" min="1" max="999"
+                  class="p-2 border rounded focus:outline-none focus:border-gray-400"
                   :placeholder="viewVehicle.vehicle_distanceFee" v-model="vehicleDistanceFeeValue" />
               </div>
             </div>
@@ -201,8 +206,8 @@
                   </div>
                   <div>
                     <p v-show="!editAppFee == true" class="p-2">{{ items.af_appFees }}</p>
-                    <input type="tel" name="" id="" v-model="feeValue" :placeholder="items.af_appFees"
-                      v-show="editAppFee == true"
+                    <input type="number" min="1" max="999" name="" id="" v-model="feeValue"
+                      :placeholder="items.af_appFees" v-show="editAppFee == true"
                       class="p-2 text-center border rounded-lg focus:border-gray-400 focus:outline-none">
                   </div>
                   <div>
@@ -215,7 +220,7 @@
                   </div>
                   <div>
                     <p v-show="!editAppFee == true" class="p-2">{{ items.af_vat }}</p>
-                    <input type="tel" name="" id="" v-model="vatValue" :placeholder="items.af_vat"
+                    <input type="number" min="1" max="999" name="" id="" v-model="vatValue" :placeholder="items.af_vat"
                       v-show="editAppFee == true"
                       class="p-2 text-center border rounded-lg focus:border-gray-400 focus:outline-none">
                   </div>
@@ -394,4 +399,16 @@ async function getData() {
 onMounted(getData);
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>

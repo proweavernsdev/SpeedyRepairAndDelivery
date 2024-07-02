@@ -292,9 +292,9 @@
                   <p class="w-1/4 text-center">Size:</p>
                   <span class="flex justify-center w-full gap-2 md:w-3/4 md:items-end md:flex-col">
                     <span id="height"
-                      class="flex items-center justify-center w-full gap-5 text-center rounded bg-red-50 md:gap-px md:p-px md:flex-col focus:border-red-400 focus:outline-none">
+                      class="flex items-center justify-center w-full gap-5 text-center rounded truncate px-3 bg-red-50 md:gap-px md:p-px md:flex-col focus:border-red-400 focus:outline-none">
                       <p class="text-lg font-medium text-red-700">{{ sizeCategory }}</p>
-                      <p class="text-sm">{{ sizeMeasurements }}</p>
+                      <p class="text-sm w-full truncate md:w-[90%]">{{ sizeMeasurements }}</p>
                     </span>
                     <button
                       @click="ChangePickupAddress = false, ChangeDeliveryAddress = false, ConfirmBooking = false, UpdateSize = true, UpdateWeight = false, isOpen = true"
@@ -365,9 +365,9 @@
             <div class="w-full gap-3 p-3">
               <label for="itemImg" class="block text-black font-bold mb-2"> Image <span class="text-gray-400 text-sm"> -
                   Leave blank if not applicable</span></label>
-              <div class="relative w-4/5 inline-block">
+              <div class="relative w-4/5 inline-block 2xl:flex 2xl:flex-col 2xl:gap-2 2xl:w-full">
                 <input v-model="truncURL" id="item_image" type="text" placeholder="-- Empty File --"
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-8"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-8 2xl:my-2"
                   disabled>
                 <button v-if="truncURL" @click="clearImgURL"
                   class="absolute inset-y-0 right-0 flex items-center px-2 text-red-500 hover:text-red-700">
@@ -375,7 +375,7 @@
                 </button>
               </div>
               <button @click="handleOpenModal"
-                class="bg-[#aa0909] hover:bg-[#AA0927] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">
+                class="bg-[#aa0909] hover:bg-[#AA0927] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2 2xl:ml-0 2xl:w-full">
                 {{ itemImg != '' ? 'Change Image' : 'Upload Image' }}
               </button>
             </div>
@@ -455,6 +455,8 @@ const preferredDeliveryDate = ref('');
 const preferredDeliveryTimeFrom = ref('');
 const estimatedCost = ref('$0.017 per kilometer');
 const paymentMethod = ref('Cash on Delivery');
+const totalDistanceInKm = ref(0);
+const sizeName = ref('');
 const itemImg = ref('');
 const truncURL = ref('');
 const uploadIsOpen = ref(false);
@@ -616,9 +618,12 @@ const calculateDistanceAndDirections = async () => {
     const response = await axios.get(directionsUrl);
     const date = new Date(preferredDeliveryDate.value);
     const data = response.data;
+    const distance = data.routes[0].distance;
     const travelTimeSeconds = data.routes[0].duration;
     const arrivalDateTime = new Date(date.getTime() + travelTimeSeconds * 1000 + 24 * 60 * 60 * 1000);
     arrivalDate.value = arrivalDateTime.toLocaleDateString();
+    totalDistanceInKm.value = (distance / 1000).toFixed(2);
+    console.log('Travel time:', totalDistanceInKm.value); // Convert meters to kilometers
   } catch (error) {
     console.error('Error calculating travel time and date:', error);
   }
@@ -740,6 +745,8 @@ const bookingConfirm = async () => {
       driverName: "", //driverName.value
       driverContact: "", //driverContact.value,
       ridersCancelled: [''],
+      totalDistanceInKm: 0,
+      sizeName: sizeCategory.value,
       orderCreatedTime: currentDate.toLocaleDateString() + " " + currentDate.toLocaleTimeString(),
       status: "pending",
       userId: userId.value,

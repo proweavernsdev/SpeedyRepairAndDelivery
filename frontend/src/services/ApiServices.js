@@ -1269,12 +1269,17 @@ export async function updateBooking(data) {
   }
 }
 
-export async function addReview(data) {
-  console.log(data)
+export async function addReview(driverID, customerId, comment, rating) {
+  const data = {
+    driver_id: driverID,
+    customerID: customerId,
+    comment: comment,
+    rating: rating,
+  }
   updateToken()
-  console.log(pwauth)
+
   try {
-    const res = await axios.post(baseUrl, 'Reviews', data, {
+    const res = await axios.post(baseUrl + 'Reviews', data, {
       headers: {
         'Content-Type': 'application/json',
         PWAUTH: pwauth,

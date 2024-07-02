@@ -1,6 +1,6 @@
 <template>
     <div class=" w-full flex justify-end items-end">
-        <div v-for="item in currentDelivery" :key="item.trackingNumber" class="flex">
+        <div class="flex">
             <div class="flex items-end justify-end p-3 bg-green-100 rounded-lg gap-3 md:w-auto">
                 <div class="flex items-center">
                     <div class="m-2 size-4 bg-green-500 rounded-full animate-pulse"></div>
@@ -8,8 +8,10 @@
                         Ongoing Delivery
                     </p>
                 </div>
-                <button
-                    class="text-sm p-2 font-medium text-green-700 bg-green-300 rounded-lg hover:opacity-80 ">Details</button>
+                <RouterLink :to="`/rider/requests/${currentDelivery.trackingNumber}/track`">
+                    <button
+                        class="text-sm p-2 font-medium text-white bg-green-300 rounded-lg hover:opacity-80 ">Details</button>
+                </RouterLink>
             </div>
         </div>
     </div>
@@ -21,8 +23,9 @@ import { ref, onMounted } from 'vue';
 import { driverRetrieveData } from "@/services/ApiServices.js";
 import { db } from '@/services/firebaseConfig';
 import { ref as firebaseRef, get } from 'firebase/database';
+import { RouterLink, useRouter } from "vue-router";
 
-const currentDelivery = ref([]);
+const currentDelivery = ref('');
 const userId = ref('');
 
 onMounted(async () => {
@@ -36,8 +39,8 @@ onMounted(async () => {
             for (const delivery in deliveries) {
                 if (deliveries.hasOwnProperty(delivery)) {
                     const deliveryData = deliveries[delivery];
-                    if (deliveryData.hasOwnProperty('pending')) {
-                        const pendingItems = deliveryData.pending;
+                    if (deliveryData.hasOwnProperty('accepted')) {
+                        const pendingItems = deliveryData.accepted;
                         for (const trackingNumber in pendingItems) {
                             if (pendingItems.hasOwnProperty(trackingNumber)) {
                                 const itemDetails = pendingItems[trackingNumber];
@@ -45,11 +48,12 @@ onMounted(async () => {
                                     trackingNumber: trackingNumber,
                                     details: itemDetails
                                 };
-                                if (!pendingDelivery.details.ridersCancelled || !pendingDelivery.details.ridersCancelled.includes(userId.value)) {
-                                    currentDelivery.value.push(pendingDelivery);
-                                }
+                                currentDelivery.value = pendingDelivery;
+                                console.log("Delivery Monitor: ", currentDelivery.value.trackingNumber);
+                                break; // Exit the inner loop
                             }
                         }
+                        break; // Exit the outer loop
                     }
                 }
             }
@@ -61,6 +65,8 @@ onMounted(async () => {
         console.error("Error retrieving data: ", error);
     }
 });
+
+
 </script>
 
 <style scoped type="text/tailwindcss">

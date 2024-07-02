@@ -41,18 +41,19 @@
             </div>
             <div class="flex items-center [&>*]:w-1/2 my-2">
               <label for="" class="text-xl text-left">Minimum Value :</label>
-              <input type="tel" class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none"
-                v-model="sizeMin" required />
+              <input type="number" min="1" max="999"
+                class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none" v-model="sizeMin" required />
             </div>
             <div class="flex items-center [&>*]:w-1/2 my-2">
               <label for="" class="text-xl text-left">Maximum Value :</label>
-              <input type="tel" class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none"
-                v-model="sizeMax" required />
+              <input type="number" min="1" max="999"
+                class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none" v-model="sizeMax" required />
             </div>
             <div class="flex items-center [&>*]:w-1/2 my-2">
               <label for="" class="text-xl text-left focus:border-gray-400 focus:outline-none">Set Fee :</label>
-              <input type="tel" class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none"
-                v-model="sizeSetFee" required />
+              <input type="number" min="1" max="999"
+                class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none" v-model="sizeSetFee"
+                required />
             </div>
           </form>
         </div>
@@ -96,18 +97,21 @@
             </div>
             <div class="flex items-center [&>*]:w-1/2 my-2">
               <label for="" class="text-xl text-left">Minimum Value</label>
-              <input type="tel" class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none"
-                v-model="weightMin" required />
+              <input type="number" min="1" max="999"
+                class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none" v-model="weightMin"
+                required />
             </div>
             <div class="flex items-center [&>*]:w-1/2 my-2">
               <label for="" class="text-xl text-left">Maximum Value</label>
-              <input type="tel" class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none"
-                v-model="weightMax" required />
+              <input type="number" min="1" max="999"
+                class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none" v-model="weightMax"
+                required />
             </div>
             <div class="flex items-center [&>*]:w-1/2 my-2">
               <label for="" class="text-xl text-left">Set Fee</label>
-              <input type="tel" class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none"
-                v-model="weightSetFee" required />
+              <input type="number" min="1" max="999"
+                class="w-1/2 p-2 border rounded focus:border-gray-400 focus:outline-none" v-model="weightSetFee"
+                required />
             </div>
           </form>
         </div>
@@ -657,5 +661,17 @@ onMounted(getData);
   padding: 0.5rem;
   margin: 0.25rem;
   border-radius: 0.375rem;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 </style>

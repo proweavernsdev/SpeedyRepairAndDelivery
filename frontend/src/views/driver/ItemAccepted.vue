@@ -34,7 +34,7 @@
         </div>
         <div class="flex justify-center">
             <RouterLink :to="`/rider/requests/${currentDeliveryItem.trackingNumber}/success`"
-                class="w-11/12 p-2 m-auto border-2 text-center rounded-lg sm:text-sm text-[#AA0927] bg-slate-200 hover:opacity-75">
+                class="w-11/12 p-2 m-auto border-2 hover:border-slate-400 text-center rounded-lg sm:text-sm text-[#AA0927] bg-slate-200 hover:opacity-75 ">
                 Delivery Location Arrived
             </RouterLink>
         </div>

@@ -136,7 +136,7 @@
                                 </div>
                                 <div class="flex flex-row text-center">
                                     <p class="flex items-center justify-center w-1/3 p-2 text-sm">ZIP Code:</p>
-                                    <input type="tel" name="" id=""
+                                    <input type="number" min="1" max="999" name="" id=""
                                         class="w-2/3 bg-[#E3D5D8] rounded-lg px-2 text-sm border focus:ring focus:ring-[#C6ACB1] focus:border-gray-400 focus:outline-none"
                                         :placeholder="companyInformation.comp_zip">
                                 </div>
@@ -257,5 +257,17 @@ label.label input[type="file"] {
 
 .label:valid+span {
     color: #ffffff;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
 }
 </style>

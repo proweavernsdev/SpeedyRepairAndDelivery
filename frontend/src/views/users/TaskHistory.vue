@@ -469,14 +469,7 @@ function viewTableContents(table) {
 }
 
 function submitFeedback() {
-    const feedbackData = {
-        driver_id: '1',
-        customer_id: userId.value,
-        comment: feedback.value,
-        rating: rating.value,
-    }
-
-    addReview(feedbackData).then((result) => {
+    addReview('1', userCustomerId.value, feedback.value, rating.value).then((result) => {
         if (result.status === 200) {
             console.log('Feedback submitted successfully');
             feedback.value = '';
@@ -491,11 +484,13 @@ function submitFeedback() {
 }
 
 const userId = ref('');
+const userCustomerId = ref('');
 const pendingDeliveries = ref([]);
 async function getData() {
     try {
         const data = await customerRetrieveData();
         userId.value = data.data.cust_userOwner;
+        userCustomerId.value = data.data.customerID;
         console.log('User ID:', userId.value);
         const pendingRef = rtdbRef(db, `deliveries/${userId.value}/pending`);
         console.log('Pending Ref:', pendingRef);
