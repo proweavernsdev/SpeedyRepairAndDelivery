@@ -20,7 +20,7 @@
                         Sign In
                     </button>
                 </form>
-                <div class="flex flex-col">
+                <div class="flex flex-col items-center">
                     <router-link to="/reset" class="p-2 text-sm text-left w-fit">
                         <button class="text-[#39030D] md:text-white hover:underline active:underline">
                             Forgot Password?
@@ -34,8 +34,18 @@
                 </div>
             </div>
         </div>
-        <div v-if="isLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-            <img src="/src/assets/loading.gif" alt="Loading" />
+        <div v-if = "isLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 200 200">
+                <circle fill="#FF156D" stroke="#FF156D" stroke-width="5" r="15" cx="40" cy="65">
+                    <animate attributeName="cy" calcMode="spline" dur="0.6" values="65;135;65;" keySplines="0.3 0.6 0.7 1;0.3 0.6 0.7 0.3" repeatCount="indefinite" begin="-.2"></animate>
+                </circle>
+                <circle fill="#FF156D" stroke="#FF156D" stroke-width="5" r="15" cx="100" cy="65">
+                    <animate attributeName="cy" calcMode="spline" dur="0.6" values="65;135;65;" keySplines="0.3 0.6 0.7 1;0.3 0.6 0.7 0.3" repeatCount="indefinite" begin="-.1"></animate>
+                </circle>
+                <circle fill="#FF156D" stroke="#FF156D" stroke-width="5" r="15" cx="160" cy="65">
+                    <animate attributeName="cy" calcMode="spline" dur="0.6" values="65;135;65;" keySplines="0.3 0.6 0.7 1;0.3 0.6 0.7 0.3" repeatCount="indefinite" begin="0"></animate>
+                </circle>
+            </svg>
         </div>
     </div>
 </template>

@@ -135,127 +135,6 @@
       </div>
     </div>
 
-    <!-- <div id="admin" v-if="userStatus == 1" class="flex flex-col justify-between h-full pb-2">
-      <div>
-        <p class="mx-6 my-6 text-sm font-bold uppercase text-slate-500">
-          Management
-        </p>
-        <ul
-          class="flex flex-col w-full gap-1 text-base font-bold text-white lg:flex-wrap lg:justify-center lg md:block md:overflow-hidden">
-          <RouterLink :to="`/admin/dashboard`">
-            <li
-              class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
-              <span class="flex justify-center mr-2">
-                <i v-html="icons.Home" class="text-slate-500 hover:text-[#AA0927]"></i>
-              </span>
-              <span>Dashboard</span>
-            </li>
-          </RouterLink>
-          <RouterLink :to="`/admin/account`">
-            <li
-              class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
-              <span class="flex justify-center mr-2">
-                <i v-html="icons.Gear" class="text-slate-500"></i>
-              </span>
-              <span>Account Management</span>
-            </li>
-          </RouterLink>
-          <div>
-            <button @click="dropDown('user')"
-              class="flex items-center w-[88%] p-3 transition-all rounded mx-5 hover:bg-white hover:text-[#AA0927] active:text-[#AA0927] lg:w-[95%]">
-              <li class="flex justify-between w-full">
-                <span class="flex items-center">
-                  <span class="flex justify-center mr-2">
-                    <i v-html="icons.User" class="text-slate-500 hover:text-[#AA0927]"></i>
-                  </span>
-                  <span>Users Management </span>
-                </span>
-                <span class="flex justify-center fill-cyan-500 hover:fill-cyan-700">
-                  <i v-if="isDropdownOpenUser === false" v-html="icons.DownTriangle"></i>
-                  <i v-else v-html="icons.UpTriangle"></i>
-                </span>
-              </li>
-            </button>
-            <ul id="user" class="hidden transition-all">
-              <RouterLink class-active="active" :to="`/admin/manage/company`">
-                <li class="transition-all text-slate-500 hover:text-[#AA0927]">
-                  Companies
-                </li>
-              </RouterLink>
-              <RouterLink class-active="active" :to="`/admin/manage/customer`">
-                <li class="transition-all text-slate-500 hover:text-[#AA0927]">
-                  Customers
-                </li>
-              </RouterLink>
-              <RouterLink class-active="active" :to="`/admin/manage/riders`">
-                <li class="transition-all text-slate-500 hover:text-[#AA0927]">
-                  Delivery Riders
-                </li>
-              </RouterLink>
-            </ul>
-          </div>
-          <div class="">
-            <button @click="dropDown('custom')"
-              class="flex items-center w-[88%] p-3 transition-all rounded mx-5 hover:bg-white hover:text-[#AA0927] lg:w-[95%]">
-              <li class="flex justify-between w-full">
-                <span class="flex items-center">
-                  <span class="flex justify-center mr-2">
-                    <i v-html="icons.Custom" class="text-slate-500 hover:text-[#AA0927]"></i>
-                  </span>
-                  <span>Customization </span>
-                </span>
-                <span class="flex flex-col justify-center">
-                  <i v-if="isDropdownOpenCustom === false" v-html="icons.DownTriangle"></i>
-                  <i v-else v-html="icons.UpTriangle"></i>
-                </span>
-              </li>
-            </button>
-            <ul id="customize" class="hidden">
-              <RouterLink class-active="active" :to="`/admin/customization/taxonomies`">
-                <li class="transition-all text-slate-500 hover:text-[#AA0927]">
-                  Taxonomies
-                </li>
-              </RouterLink>
-              <RouterLink class-active="active" :to="`/admin/customization/fees`">
-                <li class="transition-all text-slate-500 hover:text-[#AA0927]">
-                  Fees
-                </li>
-              </RouterLink>
-              <RouterLink class-active="active" :to="`/admin/customization/requestpriority`">
-                <li class="transition-all text-slate-500 hover:text-[#AA0927]">
-                  Request Priority
-                </li>
-              </RouterLink>
-            </ul>
-          </div>
-          <RouterLink class-active="active" :to="`/admin/delivery`">
-            <li
-              class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
-              <span class="flex justify-center mr-2">
-                <i v-html="icons.Delivery" class="text-slate-500 hover:text-[#AA0927]"></i>
-              </span>
-              <span>Book Delivery Service</span>
-            </li>
-          </RouterLink>
-          <RouterLink class-active="active" :to="`/admin/reports/request`">
-            <li
-              class="flex items-center p-3 mx-5 transition-all rounded justify-left hover:bg-white hover:text-[#AA0927]">
-              <span class="flex justify-center mr-2">
-                <i v-html="icons.Booking" class="text-slate-500 hover:text-[#AA0927]"></i>
-              </span>
-              <span>Booking History</span>
-            </li>
-          </RouterLink>
-        </ul>
-      </div>
-      <div class="mx-2">
-        <button @click="logout"
-          class="text-center w-full text-white flex justify-center p-2 bg-[#AA0927] hover:bg-slate-100 hover:text-[#AA0927] rounded-md">
-          Logout
-        </button>
-      </div>
-    </div> -->
-
     <div id="company" v-if="userStatus == 2" class="flex flex-col justify-between h-full pb-2">
       <div>
         <p class="mx-6 my-6 text-sm font-bold uppercase text-slate-500">
@@ -494,6 +373,8 @@ let props = defineProps({
 });
 
 const router = useRouter();
+
+const activeTab = ref("");
 
 //Functions
 function dropDown(prop) {
