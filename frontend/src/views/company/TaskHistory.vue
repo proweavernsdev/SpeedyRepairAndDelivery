@@ -356,7 +356,7 @@ import { onMounted, ref } from 'vue';
 import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
-import { getBookingHistory } from "@/services/ApiServices.js";
+import { getBookingHistory, addReview } from "@/services/ApiServices.js";
 
 const taskTable = ref('all');
 const itemName = ref('');
@@ -379,6 +379,14 @@ function openBooking(dialogName, table, state) {
     } else {
         dialog.close();
     }
+}
+
+function submitFeedback() {
+    addReview('1', userCustomerId.value, feedback.value, rating.value).then((response) => {
+        console.log(response);
+    }).catch((error) => {
+        console.log(error);
+    });
 }
 
 function viewTableContents(table) {

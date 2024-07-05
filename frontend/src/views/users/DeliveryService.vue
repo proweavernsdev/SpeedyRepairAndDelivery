@@ -421,6 +421,7 @@ import { customerRetrieveData } from '@/services/ApiServices';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
+import { confirmBooking } from '@/services/modalFunctions';
 
 const toast = useToast();
 const router = useRouter();
@@ -756,7 +757,8 @@ const bookingConfirm = async () => {
 
     const deliveryRef = rtdbRef(db, `deliveries/${userId.value}/pending/${deliveryData.trackingNumber}`);
     await rtdbSet(deliveryRef, deliveryData);
-    console.log('Booking confirmed and data saved successfully.');
+    toast.success('Booking confirmed and data saved successfully.');
+    isOpen.value = false;
   } catch (error) {
     console.error('Error:', error);
   }

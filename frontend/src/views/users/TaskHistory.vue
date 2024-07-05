@@ -469,14 +469,17 @@ function viewTableContents(table) {
 }
 
 function submitFeedback() {
+    console.log('Feedback:', feedback.value, 'Rating:', rating.value, 'User ID:', userCustomerId.value);
     addReview('1', userCustomerId.value, feedback.value, rating.value).then((result) => {
-        if (result.status === 200) {
+        console.log('Result:', result.success);
+        if (result.success === true) {
             console.log('Feedback submitted successfully');
             feedback.value = '';
             rating.value = 0;
-            openDialog('feedback-dialog', 'close');
+            openDialog('leaveFeedback', 'close');
         } else {
             console.log('Failed to submit feedback');
+            openDialog('leaveFeedback', 'close');
         }
     }).catch((err) => {
         console.error('Error submitting feedback:', err);

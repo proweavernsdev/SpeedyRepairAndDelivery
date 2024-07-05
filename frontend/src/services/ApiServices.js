@@ -586,20 +586,20 @@ export async function setCompStatus(companyID, status) {
 
 //Asynchronous function for setting a company profile picture.
 export async function uploadProfilePicture(fileInputs) {
-    updateToken();
-    const formData = new FormData();
-    formData.append("file", fileInputs);
-    try {
-        const res = await axios.post(baseUrl + "Customer/upload", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                PWAUTH: pwauth,
-            },
-        });
-        console.log("Upload successful:", res.data);
-    } catch (error) {
-        console.error("Error uploading files:", error);
-    }
+  updateToken()
+  const formData = new FormData()
+  formData.append('file', fileInputs)
+  try {
+    const res = await axios.post(baseUrl + 'Customer/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        PWAUTH: pwauth,
+      },
+    })
+    console.log('Upload successful:', res.data)
+  } catch (error) {
+    console.error('Error uploading files:', error)
+  }
 }
 
 // ========DRIVER MANAGEMENT FUNCTIONS========
@@ -1276,10 +1276,27 @@ export async function addReview(driverID, customerId, comment, rating) {
     comment: comment,
     rating: rating,
   }
-  updateToken()
 
+  console.log(data)
+  updateToken()
   try {
     const res = await axios.post(baseUrl + 'Reviews', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
+}
+
+export async function getReviews() {
+  updateToken()
+  try {
+    const res = await axios.get(baseUrl + 'Reviews', {
       headers: {
         'Content-Type': 'application/json',
         PWAUTH: pwauth,

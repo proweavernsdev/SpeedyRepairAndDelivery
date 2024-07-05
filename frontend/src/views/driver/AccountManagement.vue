@@ -10,14 +10,16 @@
         </template>
         <template #Content-Body>
             <div class="flex flex-row justify-center h-full">
-                <div class="w-2/3 m-2 rounded-md">
+                <div class="w-2/3 m-2 rounded-md bg-slate-300 sm:w-full">
                     <div id="viewAccount" class="flex flex-col w-full p-2 rounded-md shadow-sm" v-if="!isEditModeOn">
                         <div class="flex flex-col items-center my-2 text-center">
                             <SRProfile :image="pfp" :isEditModeOn="isEditModeOn" />
                         </div>
                         <p class="flex flex-col w-full">
-                            <span class="m-2 text-base text-center">{{ driverInformation.comp_driverName }}</span>
-                            <span class="m-2 text-base text-center">{{ driverInformation.comp_address }}</span>
+                            <span class="m-2 text-base text-center font-bold">{{ driverInformation.driver_firstName }}
+                                {{
+                                    driverInformation.driver_lastName }}</span>
+                            <span class="m-2 text-base text-center">{{ driverInformation.driver_address }}</span>
                         </p>
                         <div class="p-5">
                             <div class="flex flex-row text-center">
@@ -25,7 +27,7 @@
                                     <span class="w-1/3 p-2 text-sm border">ID</span>
                                     <span class="flex items-center justify-center w-2/3 text-sm font-bold border">{{
                                         driverInformation.driverID
-                                        }}</span>
+                                    }}</span>
                                 </p>
                             </div>
                             <div class="flex flex-row text-center">
@@ -47,7 +49,7 @@
                                     <span class="w-1/3 p-2 text-sm border">ZIP</span>
                                     <span class="flex items-center justify-center w-2/3 text-sm font-bold border ">{{
                                         driverInformation.driver_zip
-                                        }}</span>
+                                    }}</span>
                                 </p>
                             </div>
                         </div>
@@ -55,6 +57,16 @@
                             <button class="w-2/3 p-2 text-sm bg-[#550514] text-white rounded-lg"
                                 @click="editProfile">Update
                                 Profile</button>
+                        </div>
+                        <div class="flex justify-around items-center my-10 text-left">
+                            <h2 class="text-2xl font-bold">Ratings and Reviews</h2>
+                            <div class="text-center">
+                                <h1 class="text-xl flex items-center">
+                                    <span class="font-bold">{{ averageRating }} </span>
+                                    <span class="text-base">({{ totalReviews }}) </span>
+                                </h1>
+                                <p>out of 5</p>
+                            </div>
                         </div>
                     </div>
                     <div id="editAccount" class="flex flex-col w-full p-2 rounded-md shadow-sm " v-else>
@@ -127,7 +139,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </template>
     </SRContents>
@@ -139,7 +150,7 @@ import SRContents from "@/layouts/SRContents.vue";
 import SRProfile from '@/components/SRProfile.vue';
 import SRModalSlots from '@/components/SRModalSlots.vue'
 import { onMounted, ref } from 'vue';
-import { driverRetrieveData } from '@/services/ApiServices.js';
+import { driverRetrieveData, getReviews } from '@/services/ApiServices.js';
 
 let isOpen = ref(Boolean);
 let isEditModeOn = ref(false);
@@ -151,6 +162,26 @@ function editProfile() {
     isEditModeOn.value = true;
 }
 
+const reviews = ref([]);
+const averageRating = ref(0);
+const totalReviews = ref(0);
+
+function reviewsInfo() {
+    const reviewData = getReviews();
+    reviewData.then((reviewsInfo) => {
+        const filteredReviews = reviewsInfo.result.filter(review => review.driver_id === driverInformation.value.driverID);
+        totalReviews.value = filteredReviews.length;
+        const sumOfRatings = filteredReviews.reduce((sum, review) => sum + parseInt(review.rating, 10), 0);
+        averageRating.value = totalReviews.value > 0 ? (sumOfRatings / totalReviews.value).toFixed(2) : 0;
+
+        console.log("Reviewses:", filteredReviews);
+        console.log("Total Reviews:", totalReviews.value);
+        console.log("Average Rating:", averageRating.value);
+    }).catch((error) => {
+        console.error('Error fetching data:', error);
+    });
+}
+
 function load() {
     try {
         const driverData = driverRetrieveData();
@@ -159,10 +190,10 @@ function load() {
             pfp.value = compData.result.driver_userPhoto;
             driverInformation.value = compData.result;
             console.log('Current User:', driverInformation.value);
+            reviewsInfo();
         }).catch((error) => {
             console.error('Error fetching data:', error);
         });
-
     } catch (error) {
         console.error('An error occurred:', error);
     }
