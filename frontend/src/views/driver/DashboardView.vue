@@ -1,7 +1,12 @@
 <template>
   <SRContents>
     <template #Content-Header>
-      <h2>Dashboard</h2>
+      <div class="flex justify-between items-center md:flex-col-reverse gap-10">
+        <h1 class="text-3xl font-bold">Dashboard</h1>
+        <div class="flex gap-2 md:w-full">
+          <DeliveryMonitor />
+        </div>
+      </div>
     </template>
     <template #Content-Body>
       <div class="flex 2xl:block 2xl:space-y-2">
@@ -80,6 +85,7 @@ import { ref, onMounted } from "vue";
 import SRContents from "@/layouts/SRContents.vue";
 import { useRoute } from "vue-router";
 import { driverRetrieveData } from "@/services/ApiServices.js";
+import DeliveryMonitor from '@/views/driver/DeliveryMonitor.vue';
 
 var userStatus = ref("");
 

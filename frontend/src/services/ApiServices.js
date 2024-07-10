@@ -1308,3 +1308,20 @@ export async function getReviews() {
     throw err
   }
 }
+
+export async function addReport(report) {
+  updateToken()
+  try {
+    console.log(baseUrl + 'Reports')
+    const res = await axios.post(baseUrl + 'Report', report, {
+      headers: {
+        'Content-Type': 'application/json',
+        PWAUTH: pwauth,
+      },
+    })
+    return res.data
+  } catch (err) {
+    console.error('Error: ' + err)
+    throw err
+  }
+}

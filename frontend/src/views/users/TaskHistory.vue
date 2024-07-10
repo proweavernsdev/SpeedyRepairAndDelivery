@@ -84,8 +84,9 @@
                     </div>
                     <div>
                         <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
-                        <p class="sm:text-sm">Size: A </p>
-                        <p class="sm:text-sm">Weight: A</p>
+                        <p class="sm:text-sm">Size: {{ itemData.height }} ✖ {{ itemData.width }} ✖ {{ itemData.length }}
+                            {{ itemData.sizeDropdown }} </p>
+                        <p class="sm:text-sm">Weight: {{ itemData.weight }} {{ itemData.weightDropdown }}</p>
                         <p class="sm:text-sm">Special Instructions: {{ itemData.notes }}</p>
                     </div>
                     <div>
@@ -107,9 +108,13 @@
                             @click="openDialog('reportBooking', 'open')">Report</button>
                     </div>
                 </div>
+                <div v-if="pendingDeliveries.length <= 0"></div>
             </div>
             <div v-if="itemName === 'ongoingItem'">
-                <div
+                <div v-show="ongoingDeliveriesLength.length <= 0">
+                    <h1 class="text-3xl font-bold text-[#AA0927]">No Pending Deliveries</h1>
+                </div>
+                <div v-show="ongoingDeliveriesLength.length > 0"
                     class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
                     <div>
                         <h2 class="text-lg font-medium sm:text-lg">Tracking Number</h2>
@@ -151,71 +156,82 @@
                     </div>
                 </div>
             </div>
-            <div v-if="itemName === 'completedItem'"
-                class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
-                    <p class="sm:text-sm">123456</p>
+            <div v-if="itemName === 'completedItem'">
+                <div v-show="completedDeliveriesLength.length <= 0">
+                    <h1 class="text-3xl font-bold text-[#AA0927]">No Completed Deliveries</h1>
                 </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
-                    <p class="sm:text-sm">123 Main St, Anytown, USA</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
-                    <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
-                    <p class="sm:text-sm">Size: Small</p>
-                    <p class="sm:text-sm">Weight: 1kg</p>
-                    <p class="sm:text-sm">Special Instructions: None</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Status</h2>
-                    <p class="sm:text-sm">Completed</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Completion Date and Time</h2>
-                    <p class="sm:text-sm">01/01/2023 11:00 AM</p>
-                </div>
-                <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
-                    <button class="w-full p-2 text-xl text-red-700 border border-red-700 rounded-md hover:opacity-80"
-                        @click="openDialog('leaveFeedback', 'open')">Leave
-                        Feedback</button>
-                    <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
-                        @click="openDialog('reportBooking', 'open')">Report</button>
+                <div v-show="completedDeliveriesLength.length >= 0"
+                    class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
+                        <p class="sm:text-sm">123456</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
+                        <p class="sm:text-sm">123 Main St, Anytown, USA</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
+                        <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
+                        <p class="sm:text-sm">Size: Small</p>
+                        <p class="sm:text-sm">Weight: 1kg</p>
+                        <p class="sm:text-sm">Special Instructions: None</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Status</h2>
+                        <p class="sm:text-sm">Completed</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Completion Date and Time</h2>
+                        <p class="sm:text-sm">01/01/2023 11:00 AM</p>
+                    </div>
+                    <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                        <button
+                            class="w-full p-2 text-xl text-red-700 border border-red-700 rounded-md hover:opacity-80"
+                            @click="openDialog('leaveFeedback', 'open')">Leave
+                            Feedback</button>
+                        <button class="w-full p-2 text-xl bg-red-700 rounded-lg hover:opacity-80"
+                            @click="openDialog('reportBooking', 'open')">Report</button>
+                    </div>
                 </div>
             </div>
-            <div v-if="itemName === 'cancelledItem'"
-                class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full  [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
-                    <p class="sm:text-sm">12345</p>
+            <div v-if="itemName === 'cancelledItem'">
+                <div v-show="canceledDeliveriesLength.length <= 0">
+                    <div>No completed deliveries</div>
                 </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
-                    <p class="sm:text-sm">123 Main St, Anytown, USA</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
-                    <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
-                    <p class="sm:text-sm">Size: Small</p>
-                    <p class="sm:text-sm">Weight: 1kg</p>
-                    <p class="sm:text-sm">Special Instructions: None</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Status</h2>
-                    <p class="sm:text-sm">Canceled</p>
-                </div>
-                <div>
-                    <h2 class="text-lg font-medium sm:text-lg">Cancellation Reason</h2>
-                    <p class="sm:text-sm">Customer Request</p>
-                </div>
+                <div v-show="canceledDeliveriesLength.length >= 0"
+                    class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full  [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Task ID</h2>
+                        <p class="sm:text-sm">12345</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Pickup Location</h2>
+                        <p class="sm:text-sm">123 Main St, Anytown, USA</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Dropoff Location</h2>
+                        <p class="sm:text-sm">456 Pine St, Anytown, USA</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Package Details</h2>
+                        <p class="sm:text-sm">Size: Small</p>
+                        <p class="sm:text-sm">Weight: 1kg</p>
+                        <p class="sm:text-sm">Special Instructions: None</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Status</h2>
+                        <p class="sm:text-sm">Canceled</p>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium sm:text-lg">Cancellation Reason</h2>
+                        <p class="sm:text-sm">Customer Request</p>
+                    </div>
 
+                </div>
             </div>
         </dialog>
         <dialog id="leaveFeedback" class="w-2/3 p-5 rounded-xl ">
@@ -239,7 +255,7 @@
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
-                        <option value="5">6</option>
+                        <option value="5">5</option>
                     </select>
                 </div>
                 <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
@@ -254,31 +270,34 @@
                 <button class="text-3xl size-12" @click="openDialog('reportBooking', 'close')">✖</button>
             </div>
             <hr class="w-full border">
-            <div class="flex flex-col gap-3 p-3 [&>*]:w-full [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
-                <select name="report" id="report_type" class="text-lg font-medium rounded-md sm:text-lg bg-slate-50"
-                    @change="reportBooking">
-                    <option disabled selected>Issue Type</option>
-                    <option value="packageIssues">Package Issues</option>
-                    <option value="deliveryIssues">Delivery Issues</option>
-                    <option value="handlingIssues">Handling Issues</option>
-                    <option value="serviceIssues">Service Issues</option>
-                    <option value="technicalIssues">Technical Issues</option>
-                    <option value="customerServiceIssues">Customer Service Issues</option>
-                    <option value="productIssues">Product Issues</option>
-                    <option value="feedbackAndImprovement">Feedback and Improvement</option>
-                    <option value="other">Other</option>
-                </select>
-                <textarea
-                    class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9] focus:border"
-                    name="report" id="report" cols="30" rows="10" placeholder="Describe the issue"></textarea>
-                <input type="file" accept="image/png, image/gif, image/jpeg" id="report_file" name="report_file"
-                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-[#630617] dark:border-none dark:placeholder-gray-400"
-                    multiple>
-            </div>
-            <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
-                <button class="w-full p-2 text-red-700 border border-red-700 rounded-md hover:opacity-80">Submit
-                    Report</button>
-            </div>
+            <form @submit.prevent="sendReport(trackingNum.value)">
+                <div class="flex flex-col gap-3 p-3 w-full border-2 border-[#D9D9D9]">
+                    <select v-model="issueType" class="text-lg font-medium rounded-md sm:text-lg bg-slate-50">
+                        <option disabled value="">Select Issue Type</option>
+                        <option value="packageIssues">Package Issues</option>
+                        <option value="deliveryIssues">Delivery Issues</option>
+                        <option value="handlingIssues">Handling Issues</option>
+                        <option value="serviceIssues">Service Issues</option>
+                        <option value="technicalIssues">Technical Issues</option>
+                        <option value="customerServiceIssues">Customer Service Issues</option>
+                        <option value="productIssues">Product Issues</option>
+                        <option value="feedbackAndImprovement">Feedback and Improvement</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <textarea v-model="description"
+                        class="w-full p-2 border-2 border-[#D9D9D9] rounded-md focus:outline-none focus:border-[#D9D9D9] focus:ring-[#D9D9D9]"
+                        placeholder="Describe the issue"></textarea>
+
+                    <input type="file" id="reportFile" ref="reportFile"
+                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50"
+                        accept="image/png, image/gif, image/jpeg" multiple>
+                    <div class="flex p-3 gap-2 text-white justify-end w-full [&>*]:w-[25%]">
+                        <button class="w-full p-2 text-red-700 border border-red-700 rounded-md hover:opacity-80">Submit
+                            Report</button>
+                    </div>
+                </div>
+            </form>
         </dialog>
         <div class="flex flex-col gap-10 py-3 sm:py-1">
             <h1 class="text-3xl sm:text-lg font-bold text-[#AA0927]">Task List</h1>
@@ -321,64 +340,80 @@
                                 <th>Status</th>
                                 <th>Actions</th>
                             </template>
-                            <template #Table-Body v-if="taskTable === 'pending' || taskTable === 'all'">
-                                <tr id="pending" :data-status="item.status" class=" [&>*]:p-4" v-for="item in
-                                    pendingDeliveries" :key="item.id">
-                                    <td>{{ item.itemName }}</td>
-                                    <td>{{ item.senderaddressInfo }}</td>
-                                    <td>{{ item.receiveraddressInfo }}</td>
-                                    <td>{{ item.height }} ✖ {{ item.width }} ✖ {{ item.length }} <br> {{
-                                        item.sizeDropdown }}</td>
-                                    <td>{{ item.weight }} {{ item.weightDropdown }}</td>
-                                    <td class="capitalize">{{ item.status }}</td>
-                                    <td>
-                                        <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
-                                            @click="openBooking('taskDetails', 'pendingItem', 'open', item.trackingNumber)">See
-                                            More</button>
-                                    </td>
-                                </tr>
-                                <tr id="ongoing" class="[&>*]:p-4"
-                                    v-if="taskTable === 'ongoing' || taskTable === 'all'">
-                                    <td>Item Name</td>
-                                    <td>Location B</td>
-                                    <td>Location C</td>
-                                    <td>Medium package</td>
-                                    <td>Ongoing</td>
-                                    <td>5 days</td>
-                                    <td>
-                                        <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
-                                            @click="openBooking('taskDetails', 'ongoingItem', 'open')">See
-                                            More</button>
-                                    </td>
-                                </tr>
-                                <tr id="completed" class="[&>*]:p-4"
-                                    v-if="taskTable === 'completed' || taskTable === 'all'">
-                                    <td>Item Name</td>
-                                    <td>Location C</td>
-                                    <td>Location D</td>
-                                    <td>Medium package</td>
-                                    <td>Completed</td>
-                                    <td>5 days</td>
-                                    <td>
-                                        <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
-                                            @click="openBooking('taskDetails', 'completedItem', 'open')">See
-                                            More</button>
-                                    </td>
-                                </tr>
-                                <tr id="canceled" class="[&>*]:p-4"
-                                    v-if="taskTable === 'cancelled' || taskTable === 'all'">
-                                    <td>Item Name</td>
-                                    <td>Location E</td>
-                                    <td>Location F</td>
-                                    <td>Large package</td>
-                                    <td>Cancelled</td>
-                                    <td>5 days</td>
-                                    <td>
-                                        <button class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
-                                            @click="openBooking('taskDetails', 'cancelledItem', 'open')">See
-                                            More</button>
-                                    </td>
-                                </tr>
+                            <template #Table-Body>
+                                <template v-if="taskTable === 'pending' || taskTable === 'all'">
+                                    <tr id="pending" :data-status="item.status" class="[&>*]:p-4"
+                                        v-for="item in pendingDeliveries" :key="item.id">
+                                        <td>{{ item.itemName }}</td>
+                                        <td>{{ item.senderaddressInfo }}</td>
+                                        <td>{{ item.receiveraddressInfo }}</td>
+                                        <td>{{ item.height }} ✖ {{ item.width }} ✖ {{ item.length }} <br> {{
+                                            item.sizeDropdown }}</td>
+                                        <td>{{ item.weight }} {{ item.weightDropdown }}</td>
+                                        <td class="capitalize">{{ item.status }}</td>
+                                        <td>
+                                            <button
+                                                class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
+                                                @click="openBooking('taskDetails', 'pendingItem', 'open', item.trackingNumber)">See
+                                                More</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template v-if="taskTable === 'ongoing' || taskTable === 'all'">
+                                    <tr id="ongoing" :data-status="item.status" class="[&>*]:p-4"
+                                        v-for="item in ongoingDeliveries" :key="item.id">
+                                        <td>{{ item.itemName }}</td>
+                                        <td>{{ item.senderaddressInfo }}</td>
+                                        <td>{{ item.receiveraddressInfo }}</td>
+                                        <td>{{ item.height }} ✖ {{ item.width }} ✖ {{ item.length }} <br> {{
+                                            item.sizeDropdown }}</td>
+                                        <td>{{ item.weight }} {{ item.weightDropdown }}</td>
+                                        <td class="capitalize">{{ item.status }}</td>
+                                        <td>
+                                            <button
+                                                class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
+                                                @click="openBooking('taskDetails', 'ongoingItem', 'open', item.trackingNumber)">See
+                                                More</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template v-if="taskTable === 'completed' || taskTable === 'all'">
+                                    <tr id="completed" :data-status="item.status" class="[&>*]:p-4"
+                                        v-for="item in completedDeliveries" :key="item.id">
+                                        <td>{{ item.itemName }}</td>
+                                        <td>{{ item.senderaddressInfo }}</td>
+                                        <td>{{ item.receiveraddressInfo }}</td>
+                                        <td>{{ item.height }} ✖ {{ item.width }} ✖ {{ item.length }} <br> {{
+                                            item.sizeDropdown }}</td>
+                                        <td>{{ item.weight }} {{ item.weightDropdown }}</td>
+                                        <td class="capitalize">{{ item.status }}</td>
+                                        <td>
+                                            <button
+                                                class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
+                                                @click="openBooking('taskDetails', 'completedItem', 'open', item.trackingNumber)">See
+                                                More</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template v-if="taskTable === 'cancelled' || taskTable === 'all'">
+                                    <tr id="canceled" :data-status="item.status" class="[&>*]:p-4"
+                                        v-for="item in cancelledDeliveries" :key="item.id">
+                                        <td>{{ item.itemName }}</td>
+                                        <td>{{ item.senderaddressInfo }}</td>
+                                        <td>{{ item.receiveraddressInfo }}</td>
+                                        <td>{{ item.height }} ✖ {{ item.width }} ✖ {{ item.length }} <br> {{
+                                            item.sizeDropdown }}</td>
+                                        <td>{{ item.weight }} {{ item.weightDropdown }}</td>
+                                        <td class="capitalize">{{ item.status }}</td>
+                                        <td>
+                                            <button
+                                                class="text-sm p-2 rounded-sm text-white bg-[#AA0927] hover:opacity-90"
+                                                @click="openBooking('taskDetails', 'cancelledItem', 'open', item.trackingNumber)">See
+                                                More</button>
+                                        </td>
+                                    </tr>
+                                </template>
+
                             </template>
                         </SRTable>
                     </div>
@@ -407,7 +442,7 @@
                     </div>
                     <div class="hover:shadow-md">
                         <h2 class="text-lg font-bold sm:text-base ">Total Ongoing Deliveries: </h2>
-                        <h2 class="text-xl sm:text-base font-bold text-[#AA0927]">0</h2>
+                        <h2 class="text-xl sm:text-base font-bold text-[#AA0927]">{{ ongoingDeliveries.length }}</h2>
                     </div>
                     <div class="hover:shadow-md">
                         <h2 class="text-lg font-bold sm:text-base ">Total Cancelled Deliveries: </h2>
@@ -432,7 +467,7 @@ import { onMounted, ref, watch } from 'vue';
 import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
-import { customerRetrieveData, addReview } from '@/services/ApiServices';
+import { customerRetrieveData, addReview, addReport } from '@/services/ApiServices';
 import { db } from '@/services/firebaseConfig';
 import { set as rtdbSet, ref as rtdbRef, get as rtdbGet } from 'firebase/database';
 
@@ -440,6 +475,11 @@ const taskTable = ref('all');
 const itemName = ref('');
 const feedback = ref('');
 const rating = ref(0);
+const issueType = ref('');
+const description = ref('');
+const reportFiles = ref(null);
+const trackingNum = ref('');
+
 
 function openDialog(dialogName, action) {
     const dialog = document.getElementById(dialogName);
@@ -452,13 +492,23 @@ function openDialog(dialogName, action) {
 
 let itemData = ref([]);
 function openBooking(dialogName, table, state, trackingNumber) {
-
     itemName.value = table;
     const dialog = document.getElementById(dialogName);
     if (dialog && state === "open") {
         dialog.showModal();
-        itemData.value = pendingDeliveries.value.find(item => item.trackingNumber === trackingNumber);
-        console.log('Item Data:', itemData.value);
+        if (table === 'pendingItem') {
+            itemData.value = pendingDeliveries.value.find(item => item.trackingNumber === trackingNumber);
+            trackingNum.value = itemData.value.trackingNumber;
+        } else if (table === 'ongoingItem') {
+            itemData.value = ongoingDeliveries.value.find(item => item.trackingNumber === trackingNumber);
+            trackingNum.value = itemData.value.trackingNumber;
+        } else if (table === 'canceledItem') {
+            itemData.value = canceledDeliveries.value.find(item => item.trackingNumber === trackingNumber);
+            trackingNum.value = itemData.value.trackingNumber;
+        } else if (table === 'completedItem') {
+            itemData.value = completedDeliveries.value.find(item => item.trackingNumber === trackingNumber);
+            trackingNum.value = itemData.value.trackingNumber;
+        }
     } else {
         dialog.close();
     }
@@ -466,6 +516,7 @@ function openBooking(dialogName, table, state, trackingNumber) {
 
 function viewTableContents(table) {
     taskTable.value = table;
+    console.log('Table:', table);
 }
 
 function submitFeedback() {
@@ -489,36 +540,86 @@ function submitFeedback() {
 const userId = ref('');
 const userCustomerId = ref('');
 const pendingDeliveries = ref([]);
+const ongoingDeliveries = ref([]);
+const completedDeliveries = ref([]);
+const canceledDeliveries = ref([]);
 async function getData() {
     try {
         const data = await customerRetrieveData();
         userId.value = data.data.cust_userOwner;
         userCustomerId.value = data.data.customerID;
-        console.log('User ID:', userId.value);
         const pendingRef = rtdbRef(db, `deliveries/${userId.value}/pending`);
-        console.log('Pending Ref:', pendingRef);
-        if (pendingRef) {
-            const snapshot = await rtdbGet(pendingRef);
-            console.log('Snapshot:', snapshot);
-            if (snapshot.exists()) {
-                const pendingData = snapshot.val();
-                console.log('Pending Data:', pendingData);
+        const ongoingRef = rtdbRef(db, `deliveries/${userId.value}/accepted`);
+        const completedRef = rtdbRef(db, `deliveries/${userId.value}/completed`);
+        const cancelledRef = rtdbRef(db, `deliveries/${userId.value}/cancelled`);
+        if (pendingRef || ongoingRef || completedRef || cancelledRef) {
+            const snapshotPending = await rtdbGet(pendingRef);
+            const snapshotOngoing = await rtdbGet(ongoingRef);
+            const snapshotCompleted = await rtdbGet(completedRef);
+            const snapshotCancelled = await rtdbGet(cancelledRef);
+            if (snapshotPending.exists() || snapshotOngoing.exists() || snapshotCompleted.exists() || snapshotCancelled.exists()) {
+                const pendingData = snapshotPending.val();
+                const ongoingData = snapshotOngoing.val();
+                const completedData = snapshotCompleted.val();
+                const cancelledData = snapshotCancelled.val();
                 pendingDeliveries.value = Object.values(pendingData);
-                console.log('Pending Deliveries:', pendingDeliveries.value.length);
+                console.log('Pending Deliveries:', pendingDeliveries.value);
+                ongoingDeliveries.value = Object.values(ongoingData);
+                console.log('Ongoing Deliveries:', ongoingDeliveries.value);
+                completedDeliveries.value = Object.values(completedData);
+                canceledDeliveries.value = Object.values(cancelledData);
             } else {
                 console.log('No pending deliveries found');
             }
+        } else {
+            console.log('Some error occurred');
         }
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.info('Error fetching data:', error);
     }
 }
 
+function sendReport(trackingNumber) {
+    console.log('Tracking Number:', trackingNumber);
+    const report = {
+        report_id: Date.now() + 10000,
+        rep_tracking_num: trackingNum.value,
+        rep_issue_type: issueType.value,
+        rep_description: description.value,
+        rep_report_file: reportFiles.value,
+    }
+    console.log('Report:', report);
+    addReport(report).then((result) => {
+        console.log('Result:', result.success);
+        if (result.success === true) {
+            console.log('Report submitted successfully');
+        } else {
+            console.log('Failed to submit report');
+        }
+    }).catch((err) => {
+        console.error('Error submitting report:', err);
+    });
+}
+
+const pendingDeliveriesLength = ref(0);
+const ongoingDeliveriesLength = ref(0);
+const completedDeliveriesLength = ref(0);
+const canceledDeliveriesLength = ref(0);
 watch(pendingDeliveries, () => {
+    pendingDeliveriesLength.value = pendingDeliveries.value.length;
+    ongoingDeliveriesLength.value = ongoingDeliveries.value.length;
+    completedDeliveriesLength.value = completedDeliveries.value.length;
+    canceledDeliveriesLength.value = canceledDeliveries.value.length;
+    console.log('Pending Deliveries Length:', pendingDeliveriesLength.value);
+    console.log('Ongoing Deliveries Length:', ongoingDeliveriesLength.value);
+    console.log('Completed Deliveries Length:', completedDeliveriesLength.value);
+    console.log('Canceled Deliveries Length:', canceledDeliveriesLength.value);
     console.log('WATCH: Pending Deliveries:', pendingDeliveries.value);
+    console.log('WATCH: Ongoing Deliveries:', Object.keys(pendingDeliveries).length > 0);
+    console.log('WATCH: Ongoing Deliveries:', ongoingDeliveries.value);
+    console.log('WATCH: Completed Deliveries:', completedDeliveries.value);
+    console.log('WATCH: Canceled Deliveries:', canceledDeliveries.value);
 });
-
-
 
 onMounted(getData);
 
