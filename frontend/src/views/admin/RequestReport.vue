@@ -430,14 +430,16 @@ import icons from "@/assets/icons";
 import SRTable from "@/components/SRTable.vue";
 import SRScroll from "@/components/SRScroll.vue";
 import { getBookingHistory } from "@/services/ApiServices.js";
+import { db } from '@/services/firebaseConfig';
+import { set as rtdbSet, ref as rtdbRef, get as rtdbGet, child } from 'firebase/database';
 
 const taskTable = ref('all');
 const itemName = ref('');
 const bookings = ref([]);
-const ongoingBookings = ref([]);
-const inpoolBookings = ref([]);
-const completedBookings = ref([]);
-const cancelledBookings = ref([]);
+const ongoingDeliveries = ref([]);
+const pendingDeliveries = ref([]);
+const completedDeliveries = ref([]);
+const cancelledDeliveries = ref([]);
 const viewInpoolTask = ref('');
 const viewCompletedTask = ref('');
 const viewCancelledTask = ref('');
@@ -485,16 +487,90 @@ function viewBooking(status, bookingID) {
 
 function load() {
     try {
-        // const getBookings = getBookingHistory();
-        // getBookings.then((response) => {
-        //     bookings.value = response.data;
-        //     inpoolBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "In-pool");
-        //     completedBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "Completed");
-        //     cancelledBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "Cancelled");
-        //     ongoingBookings.value = bookings.value.filter((booking) => booking.bh_booking_status === "On-going");
-        // }).catch((error) => {
-        //     console.log(error);
-        // });
+        const getBookings = getBookingHistory();
+        getBookings.then(async (response) => {
+            console.log(response.data);
+            const dbRef = rtdbRef(db, 'deliveries');
+            const snapshot = await rtdbGet(dbRef);
+            if (snapshot.exists()) {
+                const deliveries = snapshot.val();
+                for (const delivery in deliveries) {
+                    if (deliveries.hasOwnProperty(delivery)) {
+                        const deliveryData = deliveries[delivery];
+
+                        if (deliveryData.hasOwnProperty('pending')) {
+                            const pendingItems = deliveryData.pending;
+                            for (const trackingNumber in pendingItems) {
+                                if (pendingItems.hasOwnProperty(trackingNumber)) {
+                                    const itemDetails = pendingItems[trackingNumber];
+                                    const pendingDelivery = {
+                                        trackingNumber: trackingNumber,
+                                        details: itemDetails
+                                    };
+                                    pendingDeliveries.value.push(pendingDelivery);
+                                    console.log("PENDING DELIVERY:", pendingDelivery);
+                                }
+                            }
+                        }
+
+                        if (deliveryData.hasOwnProperty('cancelled')) {
+                            const cancelledItems = deliveryData.cancelled;
+                            for (const trackingNumber in cancelledItems) {
+                                if (cancelledItems.hasOwnProperty(trackingNumber)) {
+                                    const itemDetails = cancelledItems[trackingNumber];
+                                    const cancelledDelivery = {
+                                        trackingNumber: trackingNumber,
+                                        details: itemDetails
+                                    };
+                                    cancelledDeliveries.value.push(cancelledDelivery);
+                                    console.log("CANCELLED DELIVERY:", cancelledDelivery);
+                                }
+                            }
+                        }
+
+                        if (deliveryData.hasOwnProperty('ongoing')) {
+                            const ongoingItems = deliveryData.ongoing;
+                            for (const trackingNumber in ongoingItems) {
+                                if (ongoingItems.hasOwnProperty(trackingNumber)) {
+                                    const itemDetails = ongoingItems[trackingNumber];
+                                    const ongoingDelivery = {
+                                        trackingNumber: trackingNumber,
+                                        details: itemDetails
+                                    };
+                                    ongoingDeliveries.value.push(ongoingDelivery);
+                                    console.log("ONGOING DELIVERY:", ongoingDelivery);
+                                }
+                            }
+                        }
+
+                        if (deliveryData.hasOwnProperty('completed')) {
+                            const completedItems = deliveryData.completed;
+                            for (const trackingNumber in completedItems) {
+                                if (completedItems.hasOwnProperty(trackingNumber)) {
+                                    const itemDetails = completedItems[trackingNumber];
+                                    const completedDelivery = {
+                                        trackingNumber: trackingNumber,
+                                        details: itemDetails
+                                    };
+                                    completedDeliveries.value.push(completedDelivery);
+                                    console.log("COMPLETED DELIVERY:", completedDelivery);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // You can now log or further process these arrays
+                console.log("Pending Deliveries:", pendingDeliveries);
+                console.log("Cancelled Deliveries:", cancelledDeliveries);
+                console.log("Ongoing Deliveries:", ongoingDeliveries);
+                console.log("Completed Deliveries:", completedDeliveries);
+
+                bookings.value = response.data;
+            } else {
+                console.log('No data available');
+            }
+        });
     } catch (error) {
         console.log(error);
     }

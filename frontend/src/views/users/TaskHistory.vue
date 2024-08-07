@@ -111,10 +111,10 @@
                 <div v-if="pendingDeliveries.length <= 0"></div>
             </div>
             <div v-if="itemName === 'ongoingItem'">
-                <div v-show="ongoingDeliveriesLength.length <= 0">
-                    <h1 class="text-3xl font-bold text-[#AA0927]">No Pending Deliveries</h1>
+                <div v-show="pendingDeliveries.value.length <= 0">
+                    <h1 class="text-3xl font-bold text-[#AA0927]">No Pending Deliveries </h1>
                 </div>
-                <div v-show="ongoingDeliveriesLength.length > 0"
+                <div v-show="pendingDeliveries.value.length > 0"
                     class="flex flex-wrap gap-3 p-3 first:[&>*]:w-full last:[&>*]:w-full last:[&>*]:border-0 [&>*]:w-[49%] [&>*]:p-2 [&>*]:border-2 [&>*]:border-[#D9D9D9]">
                     <div>
                         <h2 class="text-lg font-medium sm:text-lg">Tracking Number</h2>
@@ -494,6 +494,7 @@ let itemData = ref([]);
 function openBooking(dialogName, table, state, trackingNumber) {
     itemName.value = table;
     const dialog = document.getElementById(dialogName);
+    console.log('Table:', table);
     if (dialog && state === "open") {
         dialog.showModal();
         if (table === 'pendingItem') {
@@ -548,34 +549,52 @@ async function getData() {
         const data = await customerRetrieveData();
         userId.value = data.data.cust_userOwner;
         userCustomerId.value = data.data.customerID;
+
         const pendingRef = rtdbRef(db, `deliveries/${userId.value}/pending`);
         const ongoingRef = rtdbRef(db, `deliveries/${userId.value}/accepted`);
         const completedRef = rtdbRef(db, `deliveries/${userId.value}/completed`);
         const cancelledRef = rtdbRef(db, `deliveries/${userId.value}/cancelled`);
-        if (pendingRef || ongoingRef || completedRef || cancelledRef) {
-            const snapshotPending = await rtdbGet(pendingRef);
-            const snapshotOngoing = await rtdbGet(ongoingRef);
-            const snapshotCompleted = await rtdbGet(completedRef);
-            const snapshotCancelled = await rtdbGet(cancelledRef);
-            if (snapshotPending.exists() || snapshotOngoing.exists() || snapshotCompleted.exists() || snapshotCancelled.exists()) {
-                const pendingData = snapshotPending.val();
-                const ongoingData = snapshotOngoing.val();
-                const completedData = snapshotCompleted.val();
-                const cancelledData = snapshotCancelled.val();
-                pendingDeliveries.value = Object.values(pendingData);
-                console.log('Pending Deliveries:', pendingDeliveries.value);
-                ongoingDeliveries.value = Object.values(ongoingData);
-                console.log('Ongoing Deliveries:', ongoingDeliveries.value);
-                completedDeliveries.value = Object.values(completedData);
-                canceledDeliveries.value = Object.values(cancelledData);
-            } else {
-                console.log('No pending deliveries found');
-            }
+
+        const snapshotPending = await rtdbGet(pendingRef);
+        const snapshotOngoing = await rtdbGet(ongoingRef);
+        const snapshotCompleted = await rtdbGet(completedRef);
+        const snapshotCancelled = await rtdbGet(cancelledRef);
+
+        const pendingData = snapshotPending.exists() ? snapshotPending.val() : null;
+        const ongoingData = snapshotOngoing.exists() ? snapshotOngoing.val() : null;
+        const completedData = snapshotCompleted.exists() ? snapshotCompleted.val() : null;
+        const cancelledData = snapshotCancelled.exists() ? snapshotCancelled.val() : null;
+
+        if (pendingData !== null) {
+            pendingDeliveries.value = Object.values(pendingData);
+            console.log('Pending Deliveries Length:', pendingDeliveries.value.length);
         } else {
-            console.log('Some error occurred');
+            console.log('No pending deliveries found');
         }
+
+        if (ongoingData !== null) {
+            ongoingDeliveries.value = Object.values(ongoingData);
+            console.log('Ongoing Deliveries Length:', ongoingDeliveries.value.length);
+        } else {
+            console.log('No ongoing deliveries found');
+        }
+
+        if (completedData !== null) {
+            completedDeliveries.value = Object.values(completedData);
+            console.log('Completed Deliveries Length:', completedDeliveries.value.length);
+        } else {
+            console.log('No completed deliveries found');
+        }
+
+        if (cancelledData !== null) {
+            canceledDeliveries.value = Object.values(cancelledData);
+            console.log('Cancelled Deliveries Length:', canceledDeliveries.value.length);
+        } else {
+            console.log('No cancelled deliveries found');
+        }
+
     } catch (error) {
-        console.info('Error fetching data:', error);
+        console.error('Error fetching data:', error);
     }
 }
 
@@ -610,8 +629,8 @@ watch(pendingDeliveries, () => {
     ongoingDeliveriesLength.value = ongoingDeliveries.value.length;
     completedDeliveriesLength.value = completedDeliveries.value.length;
     canceledDeliveriesLength.value = canceledDeliveries.value.length;
-    console.log('Pending Deliveries Length:', pendingDeliveriesLength.value);
-    console.log('Ongoing Deliveries Length:', ongoingDeliveriesLength.value);
+    console.log('Pending Deliveries Length:', pendingDeliveriesLength.value, '/', pendingDeliveries.value.length > 0);
+    console.log('Ongoing Deliveries Length:', ongoingDeliveriesLength.value, '/', pendingDeliveries.value.length > 0);
     console.log('Completed Deliveries Length:', completedDeliveriesLength.value);
     console.log('Canceled Deliveries Length:', canceledDeliveriesLength.value);
     console.log('WATCH: Pending Deliveries:', pendingDeliveries.value);

@@ -3,7 +3,7 @@
         <div class="flex">
             <div class="flex items-end justify-end p-3 bg-green-100 rounded-lg gap-3 md:w-auto">
                 <div class="flex items-center">
-                    <div class="m-2 size-4 bg-green-500 rounded-full animate-pulse"></div>
+                    <div class="m-2 size-4 bg-green-500 rounded-full animate-ping"></div>
                     <p class="text-base font-light text-green-400 rounded-xl">
                         Ongoing Delivery
                     </p>
@@ -89,7 +89,7 @@ onMounted(async () => {
         }
     }
 
-    .animate-pulse {
+    .pulse-animation {
         animation: pulse 2s infinite;
     }
 }
